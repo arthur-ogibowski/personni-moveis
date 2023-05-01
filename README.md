@@ -16,7 +16,7 @@ Install and start dev server
 
 ```
 npm install
-npm run serve
+npm start
 ```
 
 ## Deployment
