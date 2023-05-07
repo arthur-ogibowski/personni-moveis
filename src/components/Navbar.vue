@@ -6,7 +6,7 @@
   <div class="container-fluid">
 
     <!-- Navbar brand -->
-    <a class="navbar-brand" href="#">MyMoveis</a>
+    <a class="navbar-brand" href="/">MyMoveis</a>
 
     <!-- Toggle button -->
     <button class="navbar-toggler" type="button" data-mdb-toggle="collapse" data-mdb-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,9 @@
 
       <!-- Icons -->
       <ul class="navbar-nav d-flex flex-row me-1">
+        <li class="nav-item">
+          <a class="nav-link" href="/admin">Admin</a>
+        </li>
         <li class="nav-item me-3 me-lg-0">
           <a class="nav-link" href="#"><i class="fas fa-shopping-cart"></i></a>
         </li>
@@ -71,6 +74,8 @@ export default {
 </script>
 
 <style>
-
+#navbar-outer {
+    margin-top: calc(var(--bs-gutter-x) * 0.5 + 112px);
+}
 
 </style>

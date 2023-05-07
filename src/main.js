@@ -10,7 +10,11 @@ import { Tooltip, Toast, Popover } from 'bootstrap';
 import * as mdb from 'mdb-ui-kit';
 window.mdb = mdb;
 
-
+/* import the fontawesome core */
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faUserSecret } from '@fortawesome/free-solid-svg-icons';
+library.add(faUserSecret)
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.VITE_BASE_PUBLIC_PATH),
@@ -18,5 +22,6 @@ const router = createRouter({
 });
 
 const app = createApp(App);
+app.component('font-awesome-icon', FontAwesomeIcon);
 app.use(router);
 app.mount('#app');
