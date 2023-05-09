@@ -1,4 +1,4 @@
-<template v-cloak>
+<template>
   <div v-if="!currentUrl.includes('/admin')">
     <Navbar />
   </div>
@@ -16,9 +16,6 @@ export default {
   components: {
     Navbar,
     Sidenav
-  },
-  data() {
-    isAdminPage: false
   },
   computed: {
     currentUrl() {

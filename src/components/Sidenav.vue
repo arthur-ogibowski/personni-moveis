@@ -1,6 +1,6 @@
 <template>
 <header>
-  <div v-cloak id="sidenav" class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
+  <div id="sidenav" class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
 
     <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
       <span class="fs-4">MyMoveis - Admin</span>
@@ -8,29 +8,19 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
       <li class="nav-item">
-        <a href="#" class="nav-link text-white">
-          Home
-        </a>
+        <router-link class="nav-link text-white" active-class="active" to="/admin" exact><a>Dashboard</a></router-link>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
-            Dashboard
-        </a>
+        <router-link class="nav-link text-white" active-class="active" to="/admin/produtos" exact><a>Produtos</a></router-link>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
-          Orders
-        </a>
+        <router-link class="nav-link text-white" active-class="active" to="/admin/clientes" exact><a>Clientes</a></router-link>
       </li>
       <li>
-        <a href="#" class="nav-link active" aria-current="page">
-          Products
-        </a>
+        <router-link class="nav-link text-white" active-class="active" to="/admin/pedidos" exact><a>Pedidos</a></router-link>
       </li>
       <li>
-        <a href="#" class="nav-link text-white">
-          Customers
-        </a>
+        <router-link class="nav-link text-white" active-class="active" to="/admin/users" exact><a>Usuarios</a></router-link>
       </li>
     </ul>
     <hr>
@@ -39,7 +29,7 @@
         
         <strong>Arthur</strong>
       </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1"> 
         <li><a class="dropdown-item" href="#">Settings</a></li>
         <li><a class="dropdown-item" href="#">Profile</a></li>
         <li><hr class="dropdown-divider"></li>

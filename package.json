@@ -18,8 +18,10 @@
     "@fortawesome/vue-fontawesome": "^3.0.3",
     "@popperjs/core": "^2.11.7",
     "bootstrap": "^5.2.3",
+    "chart.js": "^4.3.0",
     "mdb-ui-kit": "^6.2.0",
     "vue": "^3.2.47",
+    "vue-chartjs": "^5.2.0",
     "vue-router": "^4.1.6"
   },
   "devDependencies": {
