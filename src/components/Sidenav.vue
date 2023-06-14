@@ -20,6 +20,9 @@
         <router-link class="nav-link text-white" active-class="active" to="/admin/pedidos" exact><a>Pedidos</a></router-link>
       </li>
       <li>
+        <router-link class="nav-link text-white" active-class="active" to="/admin/categorias" exact><a>Categorias</a></router-link>
+      </li>
+      <li>
         <router-link class="nav-link text-white" active-class="active" to="/admin/users" exact><a>Usuarios</a></router-link>
       </li>
     </ul>

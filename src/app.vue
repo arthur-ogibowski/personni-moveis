@@ -1,9 +1,9 @@
 <template>
   <div v-if="!currentUrl.includes('/admin')">
-    <Navbar />
+    <!--<Navbar />-->
   </div>
   <div v-else>
-    <Sidenav />
+    <!--<Sidenav />-->
   </div>
   <router-view />
 </template>

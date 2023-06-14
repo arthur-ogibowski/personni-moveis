@@ -15,6 +15,24 @@ body{
 
     .container-admin{
         padding: 50px 50px 50px 330px;
+
+        tbody{
+            td{
+                min-height: 50px;
+                div.table-inner{
+                    display: flex;
+                    align-items: center;
+                    min-height: inherit;
+
+                    span.badge {
+                        margin-right: 5px;
+                    }
+                }
+                div.listagem{
+                    font-weight: bold;
+                }
+            }
+        }
     }
 }
 
