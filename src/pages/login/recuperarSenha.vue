@@ -20,11 +20,11 @@
       Insira seu e-mail ou CPF/CNPJ
     </div>
 
-    <div class="rectangle-34"></div>
+    <input type="email" class="rectangle-34">
 
-    <div class="lorem">Lorem</div>
+    <!-- <div class="lorem">Lorem</div> -->
 
-    <div class="enviar">Enviar</div>
+    <a href="/login" class="enviar">Enviar</a>
 
     <div class="esqueceu-sua-senha">Esqueceu sua senha?</div>
   </div>
@@ -110,6 +110,7 @@
   top: 634.5px;
   width: 316.73px;
   height: 28.04px;
+  text-decoration: none;
 }
 .esqueceu-sua-senha {
   color: #2a58e1;

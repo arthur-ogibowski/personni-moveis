@@ -28,25 +28,25 @@
 
       <div class="senha">Senha</div>
 
-      <div class="rectangle-31"></div>
+      <input class="rectangle-31" placeholder="Login">
 
-      <div class="rectangle-32"></div>
+      <input type="password" class="rectangle-32" placeholder="Senha">
 
-      <div class="rectangle-33"></div>
+      <a href="/" class="rectangle-33"></a>
 
-      <div class="lorem">Lorem</div>
+      <!-- <div class="lorem">Lorem</div> -->
 
-      <div class="lorem2">Lorem</div>
+      <!-- <div class="lorem2">Lorem</div> -->
 
-      <div class="entrar">Entrar</div>
+      <a href="/" class="entrar">Entrar</a>
 
       <div class="login">Login</div>
     </div>
   </div>
 
-  <div class="cadastre-se">Cadastre-se</div>
+  <a href="/login/cadastro" class="cadastre-se">Cadastre-se</a>
 
-  <div class="esqueci-minha-senha">Esqueci minha senha</div>
+  <a href="/login/recuperar-senha" class="esqueci-minha-senha">Esqueci minha senha</a>
 </div>
 </template>
 
@@ -144,6 +144,7 @@
   position: absolute;
   left: 1095.92px;
   top: 426.5px;
+  padding: 10px;
 }
 .rectangle-32 {
   background: #e3e3e2;
@@ -155,6 +156,7 @@
   position: absolute;
   left: 1095.92px;
   top: 530.25px;
+  padding: 10px;
 }
 .rectangle-33 {
   background: #343434;
@@ -191,6 +193,7 @@
   position: absolute;
   left: 1104.83px;
   top: 683.54px;
+  text-decoration: none;
   width: 316.73px;
   height: 28.04px;
 }
@@ -214,6 +217,7 @@
   position: absolute;
   left: 1020px;
   top: 831px;
+  text-decoration: none;
   width: 487px;
   height: 48px;
   display: flex;
@@ -230,6 +234,7 @@
   width: 240px;
   height: 48px;
   display: flex;
+  text-decoration: none;
   align-items: center;
   justify-content: center;
 }

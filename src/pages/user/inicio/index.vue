@@ -25,8 +25,8 @@
 
   <div class="frame-6">
     <div class="group-99">
-      <div class="group-1">
-        <div class="rectangle-6"></div>
+      <a href="/compra" class="group-1">
+        <a href="/compra" class="rectangle-6"></a>
 
         <img class="cadeira-1" src="cadeira-1.png" />
 
@@ -46,7 +46,7 @@
             ></span
           >
         </div>
-      </div>
+      </a>
 
       <div class="group-17">
         <div class="rectangle-62"></div>
@@ -415,14 +415,14 @@
       <div class="group-171">
         <div class="rectangle-103"></div>
 
-        <div class="text">Crie seu móvel</div>
+        <a href="/criacao" class="text">Crie seu móvel</a>
       </div>
     </div>
 
     <div class="text2">Personni móveis</div>
 
     <div class="group-170">
-      <div class="text3">Cadeiras</div>
+      <a href="/cadeiras" class="text3">Cadeiras</a>
 
       <div class="text4">Mesas</div>
 
@@ -1304,6 +1304,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
 }
 .text2 {
   color: #ffffff;
@@ -1335,6 +1336,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  text-decoration: none;
 }
 .text4 {
   color: #ffffff;

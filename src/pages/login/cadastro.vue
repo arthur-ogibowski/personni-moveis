@@ -8,7 +8,7 @@
 
       <div class="email">Email</div>
 
-      <div class="rectangle-31"></div>
+      <input type="email" class="rectangle-31">
 
       <svg
         class="rectangle-33"
@@ -23,25 +23,25 @@
 
       <div class="senha">Senha</div>
 
-      <div class="rectangle-32"></div>
+      <input type="text" class="rectangle-32">
 
-      <div class="lorem">Lorem</div>
+      <!-- <div class="lorem">Lorem</div> -->
 
-      <div class="lorem2">Lorem</div>
+      <!-- <div class="lorem2">Lorem</div> -->
 
       <div class="nome-completo">Nome Completo</div>
 
-      <div class="rectangle-34"></div>
+      <input type="text" class="rectangle-34">
 
-      <div class="lorem3">Lorem</div>
+      <!-- <div class="lorem3">Lorem</div> -->
 
       <div class="cpf">CPF</div>
 
-      <div class="rectangle-35"></div>
+      <input type="text" class="rectangle-35">
 
-      <div class="lorem4">Lorem</div>
+      <!-- <div class="lorem4">Lorem</div> -->
 
-      <div class="criar-conta">Criar conta</div>
+      <a href="/login" class="criar-conta">Criar conta</a>
 
       <div class="crie-sua-conta">Crie sua conta</div>
     </div>
@@ -157,12 +157,11 @@
 }
 .nome-completo {
   color: #000000;
-  text-align: center;
   font: 700 19px "Roboto Flex", sans-serif;
   position: absolute;
   left: 792px;
   top: 335px;
-  width: 144px;
+  width: 160px;
   height: 21px;
 }
 .rectangle-34 {
@@ -226,6 +225,7 @@
   top: 783.5px;
   width: 316.73px;
   height: 28.04px;
+  text-decoration: none;
 }
 .crie-sua-conta {
   color: #2a58e1;
