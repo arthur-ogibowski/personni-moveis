@@ -1,0 +1,93 @@
+$primary-color: #C5C1C0;
+$secondary-color: #0a1612;
+$tertiary-color: #1a2930;
+$cta-color: #f7ce3e; 
+
+// boilerplate
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    border-radius: 0px !important;
+    font-family: lato-regular;
+}
+img {
+    display: block;
+    max-width: 100%;
+}
+menu:not(article menu),
+ol:not(article ol),
+ul:not(article ul) {
+    list-style: none;
+}
+menu,
+ol,
+ul {
+    padding-left: 0;
+}
+article ol,
+article ul {
+    list-style-position: inside;
+}
+a {
+    /*text-underline-position: under;
+    text-decoration-thickness: 8;*/
+    text-decoration: none;
+}
+html {
+    font-size: 62.5%;
+}
+html {
+    -webkit-text-size-adjust: none;
+    text-size-adjust: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+        scroll-behavior: smooth;
+  }
+}
+:focus:not(:focus-visible) {
+    outline: none;
+}
+label,
+button,
+select,
+summary,
+[type=radio],
+[type=submit],
+[type=checkbox] {
+    cursor: pointer;
+}
+
+
+@font-face { font-family: lato-regular;  src: url('../../fonts/Lato/Lato-Regular.ttf'); } 
+@font-face { font-family: shadows-into-light;  src: url('../../fonts/Shadows_Into_Light/ShadowsIntoLight-regular.ttf'); }
+
+body {
+    background-color: $primary-color;
+    margin: 0;
+}
+
+h1,h2,h3 {
+    color: $secondary-color;
+    
+}
+
+p {
+    color: $tertiary-color;
+}
+
+.container{
+    height: 100vh;
+    width: 100vw;
+}
+
+.login{
+    background-color: #CACACA;
+}
+
+button.cta{
+    border: none;
+    background-color: $cta-color;
+    color: white;
+}
