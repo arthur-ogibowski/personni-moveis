@@ -1,62 +1,66 @@
 <template>
-<header>
-  <div id="sidenav" class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="width: 280px;">
-
-    <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-      <span class="fs-4">MyMoveis - Admin</span>
-    </a>
-    <hr>
-    <ul class="nav nav-pills flex-column mb-auto">
-      <li class="nav-item">
-        <router-link class="nav-link text-white" active-class="active" to="/admin" exact><a>Dashboard</a></router-link>
-      </li>
-      <li>
-        <router-link class="nav-link text-white" active-class="active" to="/admin/produtos" exact><a>Produtos</a></router-link>
-      </li>
-      <li>
-        <router-link class="nav-link text-white" active-class="active" to="/admin/clientes" exact><a>Clientes</a></router-link>
-      </li>
-      <li>
-        <router-link class="nav-link text-white" active-class="active" to="/admin/pedidos" exact><a>Pedidos</a></router-link>
-      </li>
-      <li>
-        <router-link class="nav-link text-white" active-class="active" to="/admin/categorias" exact><a>Categorias</a></router-link>
-      </li>
-      <li>
-        <router-link class="nav-link text-white" active-class="active" to="/admin/users" exact><a>Usuarios</a></router-link>
-      </li>
-    </ul>
-    <hr>
-    <div class="dropdown">
-      <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
-        
-        <strong>Arthur</strong>
-      </a>
-      <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1"> 
-        <li><a class="dropdown-item" href="#">Settings</a></li>
-        <li><a class="dropdown-item" href="#">Profile</a></li>
-        <li><hr class="dropdown-divider"></li>
-        <li><a class="dropdown-item" href="#">Sign out</a></li>
-      </ul>
+    <div>
+        <el-col :span="12">
+            <el-menu
+              default-active="2"
+              class="el-menu-vertical"
+            >
+                <h1 >Personni Moveis</h1>
+              <el-menu-item index="1">
+              <el-icon><location /></el-icon>
+                  <span>Produtos</span>
+              </el-menu-item>
+              <el-menu-item index="2">
+                <el-icon><icon-menu /></el-icon>
+                <span>Categorias</span>
+              </el-menu-item>
+              <el-menu-item index="3">
+                <el-icon><document /></el-icon>
+                <span>Usuarios</span>
+              </el-menu-item>
+              <el-menu-item index="4">
+                <el-icon><setting /></el-icon>
+                <span>Configuracoes</span>
+              </el-menu-item>
+            </el-menu>
+        </el-col>
     </div>
-  
-
-  </div>
-  
-  </header>
 </template>
 
 <script>
-
 export default {
-
 
 }
 </script>
 
-<style>
-div#sidenav{
-  height: 100vh;
-  position: fixed;
+<style lang="scss"  scoped>
+.el-menu-vertical {
+    width: 200px;
+    height: 100vh;
+    background-color: #545c64;
+
+    h1 {
+        color: #fff;
+        font-size: 20px;
+        text-align: center;
+        margin: 0;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .el-menu-item {
+        color: #fff;
+        font-size: 16px;
+        text-align: center;
+        margin: 0;
+
+        &:hover{
+            color: #545c64;
+        }
+    }
+
 }
+
 </style>

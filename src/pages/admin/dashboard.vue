@@ -1,12 +1,18 @@
 <template>
     <div>
-        <h1>Dashboard</h1>
+        <SideNav />
     </div>
+  
 </template>
 
 <script>
+import SideNav from '@/components/Sidenav.vue'
+
 export default {
 
+    components: {
+        SideNav
+    }
 }
 </script>
 
