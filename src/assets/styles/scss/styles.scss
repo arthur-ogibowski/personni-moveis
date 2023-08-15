@@ -32,27 +32,140 @@ body{
         }
     }
 
-    .container-admin{
-        padding: 50px 50px 50px 330px;
+    // perfil do usuario
+    div.perfil-content{
+        margin: 50px 0 ;
 
-        tbody{
-            td{
-                min-height: 50px;
-                div.table-inner{
-                    display: flex;
-                    align-items: center;
-                    min-height: inherit;
+        .perfil-table{
 
-                    span.badge {
-                        margin-right: 5px;
-                    }
-                }
-                div.listagem{
-                    font-weight: bold;
-                }
+            tr, th {
+                background-color: #EFEFEF;
             }
         }
     }
+
+
+
+    // paginas do admin
+    div.admin-page {
+        display: flex;
+        flex-direction: row;
+    }
+
+    div.admin-container {
+        padding: 4rem;
+        width: 100%;
+
+        h1 {
+            color: $admin-grey;
+            font-family: lato-regular;
+            font-size: 42px;
+            font-style: normal;
+            font-weight: 500;
+            line-height: normal;
+            margin-top: 2.5%;
+        }
+
+        button.el-button {
+            margin-bottom: 2.5%;
+            margin-top: 1%;
+        }
+        
+        a.underline-router {
+            text-decoration: underline;
+        }
+
+
+
+        div.admin-table{
+        
+            background-color: transparent !important;
+            
+            
+            thead {
+                tr, .el-table__cell {
+                    background-color: transparent;
+                    color: $admin-grey;
+                    text-transform: uppercase;
+                    font-weight: normal;
+                    font-size: 10px;
+                }
+
+                th.el-table__cell {
+                    width: 100%;
+                    text-align: center;
+                    padding: 0;
+                }
+                
+            }
+
+            tbody {
+                tr, td, .el-table__cell {
+                    background-color: transparent !important;
+                    color: $admin-grey;
+                    font-size: 14px;
+                    height: 128px;
+
+                    &:hover{
+                        background-color: transparent !important;
+                    }
+                }
+                tr:hover {
+                    background-color: transparent !important;
+                }
+
+                div.cell {
+                  background: #fff;
+                  height: 100px !important;
+                  padding: 0 !important;
+                  width: 100%;
+                  display: flex;
+                  justify-content: center;
+                  align-items: center;
+                }
+
+                span.el-checkbox__inner {
+                    background: transparent !important;
+                    &::after{
+                        border: 1.5px solid $admin-grey;
+                        border-left: 0;
+                        border-top: 0;
+                    }
+                }
+                
+
+                button.table-edit{
+                    background-color: transparent;
+                    border: 1px solid $admin-grey;
+                    color: $admin-grey;
+
+                    &:hover{
+                        background-color: $admin-grey;
+                        color: #fff;
+                    }
+
+                }
+            }
+        
+        }
+
+    }
+
+    .login{
+        background-color: #CACACA;
+    }
+    
+    button.cta{
+        border: none;
+        background-color: $cta-color;
+        color: white;
+    }
+    button.admin-cta{
+        border: none;
+        background-color: $admin-cta;
+        color: white;
+    }
+
 }
 
 

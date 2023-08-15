@@ -1,11 +1,13 @@
 <template>
   <div v-if="!currentUrl.includes('/admin')">
-    <!--<Navbar />-->
+    <Navbar />
+    <router-view />
   </div>
-  <div v-else>
-    <!--<Sidenav />-->
+  <div v-else class="admin-page">
+    <Sidenav/>
+    <router-view />
   </div>
-  <router-view />
+  
 </template>
 
 <script>

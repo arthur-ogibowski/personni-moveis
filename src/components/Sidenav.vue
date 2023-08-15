@@ -5,23 +5,43 @@
               default-active="2"
               class="el-menu-vertical"
             >
-                <h1 >Personni Moveis</h1>
+               <router-link to="/admin"><h1>Personni Moveis</h1></router-link>
+
+            <router-link to="/admin/produtos">
               <el-menu-item index="1">
-              <el-icon><location /></el-icon>
+                  <el-icon><Handbag /></el-icon>
                   <span>Produtos</span>
               </el-menu-item>
+            </router-link>
+
+            <router-link to="/admin/categorias">
               <el-menu-item index="2">
-                <el-icon><icon-menu /></el-icon>
-                <span>Categorias</span>
+                  <el-icon><Menu /></el-icon>
+                  <span>Categorias</span>
               </el-menu-item>
+            </router-link> 
+
+            <router-link to="/admin/pedidos">
               <el-menu-item index="3">
-                <el-icon><document /></el-icon>
-                <span>Usuarios</span>
+                  <el-icon><List /></el-icon>
+                  <span>Pedidos</span>
               </el-menu-item>
+            </router-link> 
+
               <el-menu-item index="4">
-                <el-icon><setting /></el-icon>
-                <span>Configuracoes</span>
+                <router-link to="/admin/usuarios">
+                  <el-icon><UserFilled /></el-icon>
+                  <span>Usuarios</span>
+                </router-link>
               </el-menu-item>
+
+              <el-menu-item index="5">
+                <router-link to="/admin/configuracoes">
+                  <el-icon><setting /></el-icon>
+                  <span>Configuracoes</span>
+                </router-link>
+              </el-menu-item>
+
             </el-menu>
         </el-col>
     </div>
@@ -37,7 +57,7 @@ export default {
 .el-menu-vertical {
     width: 200px;
     height: 100vh;
-    background-color: #545c64;
+    background-color: #1a2930;
 
     h1 {
         color: #fff;
@@ -59,6 +79,11 @@ export default {
         &:hover{
             color: #545c64;
         }
+    }
+
+    a.router-link-active {
+        color: #f7ce3e !important;
+    
     }
 
 }

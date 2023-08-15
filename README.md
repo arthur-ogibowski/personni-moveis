@@ -48,19 +48,19 @@ Pasta onde guardamos fontes, imagens, svg e princpilmente arquivos css.
 
 ### /src/components
 
-Componentes em vue sao templates reutilizaveis em outras paginas, nenhum componente sera acessado por url, mas sao inseridos em paginas. Por exemplo, a navbar, sera importada pela pagina base da aplicacao, mas a nav nunca sera acessada diretamente, ela e apenas uma parte reutilizavel da pagina. Outro exemplo, se desejarmos ter uma tabela em duas paginas, para nao ter o mesmo codigo em ambas, criamos um componente que contem apenas a tabela, e importamos nas paginas que usaremos.
+Componentes em vue são templates reutilizáveis em outras paginás, nenhum componente será acessado por url, mas são inseridos em páginas. Por exemplo, a navbar, será importada pela página base da aplicacão, mas a nav nunca será acessada diretamente, ela é apenas uma parte reutilizável da página. Outro exemplo, se desejarmos ter uma tabela em duas páginas, para não ter o mesmo código em ambas, criamos um componente que contém apenas a tabela, e importamos nas páginas que usaremos.
 
 
 ### /src/composables
 
-Arquivos javascript, aonde nos comunicaremos com a API e teremos funcoes reutilizaveis
+Arquivos .js, aonde nos comunicaremos com a API e teremos funções reutilizáveis
 
 
 ### /src/pages
 
-As paginas. Serao acessadas pelo url, quando adicionado novas paginas, adicionar o path em routes.js
+Arquivos .vue, serão acessadas pelo url, quando adicionado novas páginas, adicionar o path em routes.js
 
 
 ### IMPORTANTE
 
-Em vue, a estilizacao e scipts sao feitos na propria pagina/componente (arquivo.vue). sempre usar <style scoped> para nao modificar css em paginas nao desejadas. Se o javascript ou o css for feito para modificar mais de uma pagina ou componente, o javascript deve ser feito em um arquivo na pasta /composables e o css na pasta /assets/styles
+Em vue, a estilização e scipts são feitos na própria página/componente (arquivo.vue). sempre usar <style scoped> para não modificar css em páginas não desejadas. Se o javascript ou o css for feito para modificar mais de uma página ou componente, o javascript deve ser feito em um arquivo na pasta /composables e o css na pasta /assets/styles

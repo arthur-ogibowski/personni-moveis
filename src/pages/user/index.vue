@@ -1,8 +1,7 @@
 <template>
-  <div class="container">
-    <NavBar />
+  <div>
     <div class="img-mask">
-      <img src="../../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
+      <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
     </div>
     <div class="content">
       <div class="hero">
@@ -33,7 +32,7 @@
                   <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. </p>
                 </div>
                 <div class="carousel-image">
-                  <img src="../../../assets/img/cadeiras_para_mesa_de_jantar_cafe_2_1_1.jpg">
+                  <img src="../../assets/img/cadeiras_para_mesa_de_jantar_cafe_2_1_1.jpg">
                 </div>
               </div>
             </el-carousel-item>
@@ -48,13 +47,6 @@
 </template>
 
 <script>
-import NavBar from '@/components/Navbar.vue'
-export default {
-  components: {
-    NavBar
-  }
-
-}
 </script>
 
 <style lang="scss" scoped>
