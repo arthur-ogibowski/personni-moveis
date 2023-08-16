@@ -166,6 +166,27 @@ body{
         color: white;
     }
 
+    div.el-breadcrumb {
+        margin-bottom: 50px;
+
+        
+        span.el-breadcrumb__inner[role=link]{
+            color: $user-grey;
+            font-weight: normal;
+
+            &:hover{
+                color: $user-grey;
+            }
+            &.is-link{
+                text-decoration: underline;
+
+                &:hover{
+                    color: $cta-color;
+                }
+            }
+        }
+    }
+
 }
 
 

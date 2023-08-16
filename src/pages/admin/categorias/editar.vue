@@ -21,21 +21,6 @@
                   <el-option label="Categoria 3" value="3"></el-option>
               </el-select>
           </el-form-item>
-          <el-form-item label="Imagem">
-              <el-upload
-                  class="upload-demo"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :on-preview="handlePreview"
-                  :on-remove="handleRemove"
-                  :before-remove="beforeRemove"
-                  multiple
-                  :limit="3"
-                  :on-exceed="handleExceed"
-                  :file-list="fileList">
-                  <el-button size="small" type="primary">Fazer upload</el-button>
-                  <div class="el-upload__tip">jpg/png files with a size less than 500kb</div>
-              </el-upload>
-          </el-form-item>
           <el-form-item>
               <el-button type="primary">Salvar</el-button>
           </el-form-item>

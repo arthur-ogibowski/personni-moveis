@@ -15,21 +15,25 @@
 
             <h1>Produtos</h1>
 
-            <router-link to="">
-            <el-card :body-style="{ padding: '0px' }" >
-                <img
-                  src="@/assets/img/cadeira1.png"
-                  class="image"
-                />
-                <div style="padding: 14px">
-                  <span>Yummy hamburger</span>
-                  <div class="bottom">
-                    <time class="time">{{ currentDate }}</time>
-                    <el-button text class="button">Operating</el-button>
-                  </div>
-                </div>
-            </el-card>
-            </router-link>
+            <div class="produtos-listing">
+              <div class="produto-card" v-for="i in 13" :key="i">
+                <router-link to="">
+                  <el-card :body-style="{ padding: '0px' }">
+                      <img
+                        src="@/assets/img/cadeira1.png"
+                        class="image"
+                      />
+                      <div style="padding: 14px">
+                        <div class="bottom">
+                          <h2>Cadeira Eames</h2>
+                          <span>R$150</span>
+                        </div>
+                      </div>
+                  </el-card>
+                </router-link>
+              </div>
+            </div>
+
         </div>
     </div>
 </template>
@@ -59,6 +63,16 @@ ul.lista-categorias {
   border-radius: 5px !important;
 }
 div.el-card{
-    width: fit-content;
+    width: 200px;
+}
+div.produtos-listing{
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  div.produto-card{
+    margin: 15px;
+  }
 }
 </style>

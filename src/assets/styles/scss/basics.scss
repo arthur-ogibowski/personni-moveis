@@ -71,6 +71,8 @@ summary,
 body {
     background-color: #EFEFEF;
     margin: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 h1{
@@ -86,7 +88,9 @@ p {
 }
 
 .container{
-    height: 100vh;
+    min-height: 100vh;
+    height: auto;
     width: 100vw;
-    padding: 0 5%;
+    padding: 0 5% 150px 5%;
+    position: relative;
 }
