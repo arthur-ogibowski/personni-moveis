@@ -30,156 +30,36 @@
 
 <script>
 
-  export default {
-      data() {
-          return {
-              currentSection: 1,
-              selected: [],
-              categoria:{
-                id: 1,
-                name: "Cadeiras",
-                allowCreation: true,
-                sectionCmps: [
-                    {
-                        sectionCmpId: 1,
-                        name: "Assento",
-                        imgUrl: "",
-                        categoryId: 1,
-                        elementsCmps: [
-                            {
-                                elementCmpId: 1,
-                                name: "altura",
-                                type: null,
-                                sectionCmpId: 1,
-                                optionsCmps: [
-                                    {
-                                        optionCmpId: 1,
-                                        name: "10cm",
-                                        imgUrl: "",
-                                        price: 200,
-                                        elementCmp: 1,
-                                    },
-                                    {
-                                        optionCmpId: 2,
-                                        name: "5cm",
-                                        imgUrl: "",
-                                        price: 150,
-                                        elementCmp: 1,
-                                    }
-                                ]
-                            },
-                            {
-                                elementCmpId: 2,
-                                name: "cor",
-                                type: null,
-                                sectionCmpId: 1,
-                                optionsCmps: [
-                                    {
-                                        optionCmpId: 3,
-                                        name: "bege",
-                                        imgUrl: "",
-                                        price: 200,
-                                        elementCmp: 1,
-                                    },
-                                    {
-                                        optionCmpId: 4,
-                                        name: "preto",
-                                        imgUrl: "",
-                                        price: 300,
-                                        elementCmp: 1,
-                                    }
-                                ]
-                            },
-                        ]
-                    },
-                    {
-                        sectionCmpId: 2,
-                        name: "Encosto",
-                        imgUrl: "",
-                        categoryId: 1,
-                        elementsCmps: [
-                            {
-                                elementCmpId: 3,
-                                name: "altura",
-                                type: null,
-                                sectionCmpId: 2,
-                                optionsCmps: [
-                                    {
-                                        optionCmpId: 5,
-                                        name: "10cm",
-                                        imgUrl: "",
-                                        price: 200,
-                                        elementCmp: 2,
-                                    },
-                                    {
-                                        optionCmpId: 6,
-                                        name: "5cm",
-                                        imgUrl: "",
-                                        price: 150,
-                                        elementCmp: 2,
-                                    }
-                                ]
-                            }
-                        
-                        ]
-                    },
-                    {
-                        sectionCmpId: 3,
-                        name: "Material",
-                        imgUrl: "",
-                        categoryId: 1,
-                        elementsCmps: [
-                            {
-                                elementCmpId: 3,
-                                name: "altura",
-                                type: null,
-                                sectionCmpId: 3,
-                                optionsCmps: [
-                                    {
-                                        optionCmpId: 7,
-                                        name: "10cm",
-                                        imgUrl: "",
-                                        price: 200,
-                                        elementCmp: 1,
-                                    },
-                                    {
-                                        optionCmpId: 8,
-                                        name: "5cm",
-                                        imgUrl: "",
-                                        price: 150,
-                                        elementCmp: 1,
-                                    }
-                                ]
-                            }
-                        
-                        ]
-                    },
-                ]
-              },
-
-          }
-      },
-      methods: {
-        selecionarOpcao(option) {
-          for (let e in this.selected){
-            if (option == e)
-            return
-
-            if (option.elementCmp == e.elementCmp){
-              this.selected = this.selected.splice(e, 1) 
-            }
-          }
-          this.selected.push(option)
-        },
-        nextSection() {
-          this.currentSection += 1
-        },
-        previousSection() {
-          this.currentSection -= 1
-        }
-      },
-  
-  }
+export default {
+  data() {
+    return {
+      currentSection: 1,
+      selected: [],
+      categoria: null, // Inicialize como nulo até carregar os dados da API
+    };
+  },
+  created() {
+    // Faça uma solicitação Axios para buscar os dados da API
+    axios.get('http://localhost:8081/category')
+      .then((response) => {
+        this.categoria = response.data; // Atualize a propriedade categoria com os dados da API
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar dados da API:', error);
+      });
+  },
+  methods: {
+    selecionarOpcao(option) {
+      // Seu código para selecionar opções aqui
+    },
+    nextSection() {
+      this.currentSection += 1;
+    },
+    previousSection() {
+      this.currentSection -= 1;
+    },
+  },
+};
 </script>
 
 <style>
