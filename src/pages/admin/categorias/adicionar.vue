@@ -1,15 +1,12 @@
 <template>
     <div class="admin-container">
-      <h1><router-link class="underline-router" to="/admin/categorias">Categorias</router-link > > Editar</h1>
+      <h1><router-link class="underline-router" to="/admin/categorias">Categorias</router-link > > Adicionar</h1>
       <el-form :model="categoria" label-width="*" label-position="top">
         <h2>Detalhes da categoria</h2>
             <el-form-item label="Nome">
               <el-input v-model="categoria.name"></el-input>
             </el-form-item>
-
           <hr>
-
-
             <h2>Criação</h2>
             <el-form-item label="Possibilitar criação">
                 <el-switch v-model="categoria.allow_creation"></el-switch>
@@ -17,14 +14,14 @@
 
             <div class="criar-content" v-if="categoria.allow_creation">
 
-                <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
+                <div class="section-item" v-for="section in categoria.sectionCmpDtos" v-bind:key="section">
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
                     </el-form-item>
 
                     
                     <div class="elements">
-                        <div class="element-item" v-for="element in section.elementCmps" v-bind:key="element">
+                        <div class="element-item" v-for="element in section.elementCmpDtos" v-bind:key="element">
                             
 
                             <div class="element-card">
@@ -36,7 +33,7 @@
                                 </el-form-item>
 
 
-                                <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
+                                <div class="option-item" v-for="option in element.optionCmpDtos" v-bind:key="option">
 
                                     <el-row :gutter="20">
                                     <el-col :span="12">
@@ -68,52 +65,58 @@
 
                 </div>
 
-                
-
                 <el-button type="primary" v-on:click="newSection"><el-icon><Plus /></el-icon> Seção</el-button>
 
             </div>
 
 
           <el-form-item>
-              <el-button type="primary">Salvar</el-button>
+              <el-button type="primary" @click="criarCategoria">Salvar</el-button>
           </el-form-item>
-      </el-form>
+      </el-form>{{ categoria }}
     </div>
   </template>
   
-  <script>
-  import axios from 'axios';
+  <script> 
+import axios from 'axios';
+
   export default {
       data() {
-          return {
-            categoria:{      
+        return {
+        currentSection: 1,
+        selected: [],
+        categoria:{      
             name : "",
             allow_creation: false,
-            sectionCmps: [
+            sectionCmpDtos: [
+                
             ]          
-            }
-          }
-      },
-      mounted() {
-        const id = this.$route.params.id;
-    // Fazer uma solicitação GET para buscar dados da categoria por ID
-    axios.get(`http://localhost:8081/category/category-cmp/${id}`)
-      .then((response) => {
-        if (response.status === 200) {
-          this.categoria = response.data;
-        } else {
-          console.error('Erro ao buscar dados da API:', response.statusText);
         }
-      })
-      .catch((error) => {
-        console.error('Erro ao buscar dados da API:', error);
-      });
-  },
-      methods: {     
-        },
+        
+        , // Inicialize como nulo até carregar os dados da API
+        };
+      },
+
+    methods: {
+        criarCategoria() {
+            axios.post('http://localhost:8081/category', this.categoria)
+        .then((response) => {
+            if (response.status === 201) {
+            // A resposta da API indica que o recurso foi criado com sucesso.
+            // Você pode realizar ações adicionais aqui, se necessário.
+            console.log('Recurso criado com sucesso', response.data);
+            } else {
+            console.error('Erro ao criar recurso:', response.statusText);
+            }
+        })
+    .catch((error) => {
+    console.error('Erro ao criar recurso:', error);
+        })},
+
+
+
             newSection() {
-                this.categoria.sectionCmps.push({
+                this.categoria.sectionCmpDtos.push({
                     id: Math.ceil(Math.random()*1000000),
                     name: "Nova seção",
                     imgUrl: "",
@@ -123,8 +126,8 @@
             },
 
             newElement(sectionId) {
-                let section = this.categoria.sectionCmps.find(x => x.id == sectionId)
-                section.elementCmps.push({
+                let section = this.categoria.sectionCmpDtos.find(x => x.id == sectionId)
+                section.elementCmpDtos.push({
                     id: Math.ceil(Math.random()*1000000),
                     name: "Novo elemento",
                     type: null,
@@ -135,10 +138,10 @@
             },
 
             newOption(elementId, sectionId) {
-                let section = this.categoria.sectionCmps.find(x => x.id == sectionId)
-                let element = section.elementCmps.find(x => x.id == elementId)
+                let section = this.categoria.sectionCmpDtos.find(x => x.id == sectionId)
+                let element = section.elementCmpDtos.find(x => x.id == elementId)
                 
-                element.optionCmps.push({
+                element.optionCmpDtos.push({
                     id: Math.ceil(Math.random()*1000000),
                     name: "Nova opção",
                     imgUrl: "",
@@ -148,6 +151,8 @@
                 
             }
         }
+  
+  }
 </script>
 
 <style scoped lang="scss">

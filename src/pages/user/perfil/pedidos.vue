@@ -2,11 +2,19 @@
   <div class="container">
     <userNavbar />
 
+
     <div class="perfil-content">
+      <h1 class="page-title">Meus pedidos</h1>
         <el-table :data="tableData" class="perfil-table" style="width: 100%">
-            <el-table-column prop="date" label="Date" width="180" />
-            <el-table-column prop="name" label="Name" width="180" />
-            <el-table-column prop="address" label="Address" />
+            <el-table-column prop="id" label="#" width="100" />
+            <el-table-column prop="data" label="Data" />
+            <el-table-column prop="produtos" label="Produtos"/>
+            <el-table-column prop="pagamento" label="Método de pagamento" />
+            <el-table-column prop="valor" label="Valor total" />
+            <el-table-column prop="status" label="Status" />
+            <el-table-column>
+              <el-button plain>Detalhes</el-button>
+            </el-table-column>
         </el-table>
     </div>
   </div>
@@ -23,25 +31,70 @@ export default {
 <script lang="ts" setup>
 const tableData = [
   {
-    date: '2016-05-03',
-    name: 'Arthur',
-    address: 'No. 189, Grove St, Los Angeles',
+    id: 1,
+    data: '15/04/2023',
+    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
+    pagamento: 'Cartão de crédito',
+    valor: 'R$ 1.300,00',
+    status: 'Aguardando pagamento'
   },
   {
-    date: '2016-05-02',
-    name: 'Gabriel',
-    address: 'No. 189, Grove St, Los Angeles',
+    id: 2,
+    data: '15/04/2023',
+    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
+    pagamento: 'Cartão de crédito',
+    valor: 'R$ 1.300,00',
+    status: 'Aguardando pagamento'
   },
   {
-    date: '2016-05-04',
-    name: 'Aguinaldo',
-    address: 'No. 189, Grove St, Los Angeles',
+    id: 3,
+    data: '15/04/2023',
+    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
+    pagamento: 'Cartão de crédito',
+    valor: 'R$ 1.300,00',
+    status: 'Aguardando pagamento'
   },
   {
-    date: '2016-05-01',
-    name: 'Tom',
-    address: 'No. 189, Grove St, Los Angeles',
+    id: 4,
+    data: '15/04/2023',
+    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
+    pagamento: 'Cartão de crédito',
+    valor: 'R$ 1.300,00',
+    status: 'Aguardando pagamento'
   },
+  {
+    id: 5,
+    data: '15/04/2023',
+    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
+    pagamento: 'Cartão de crédito',
+    valor: 'R$ 1.300,00',
+    status: 'Aguardando pagamento'
+  },
+  {
+    id: 6,
+    data: '15/04/2023',
+    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
+    pagamento: 'Cartão de crédito',
+    valor: 'R$ 1.300,00',
+    status: 'Aguardando pagamento'
+  },
+  {
+    id: 7,
+    data: '15/04/2023',
+    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
+    pagamento: 'Cartão de crédito',
+    valor: 'R$ 1.300,00',
+    status: 'Aguardando pagamento'
+  },
+  {
+    id: 8,
+    data: '15/04/2023',
+    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
+    pagamento: 'Cartão de crédito',
+    valor: 'R$ 1.300,00',
+    status: 'Aguardando pagamento'
+  },
+  
 ]
 </script>
 

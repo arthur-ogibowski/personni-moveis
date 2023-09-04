@@ -7,12 +7,15 @@ import ProdutosListar from '@/pages/user/produtos/listagem.vue';
 import ProdutosSingle from '@/pages/user/produtos/single.vue'
 import ProdutosPersonalizar from '@/pages/user/produtos/personalizar.vue'
 
+import CMP from '@/pages/user/cmp.vue'
+
 import AdminDashboard from '@/pages/admin/dashboard.vue';
 import AdminListarProdutos from '@/pages/admin/produtos/listagem.vue';
 import AdminEditarProduto from '@/pages/admin/produtos/editar.vue';
 import AdminListarCategorias from '@/pages/admin/categorias/listagem.vue';
 import AdminEditarCategoria from '@/pages/admin/categorias/editar.vue';
 import AdminListarPedidos from '@/pages/admin/pedidos/listagem.vue';
+import AdminAdicionarCategoria from '@/pages/admin/categorias/adicionar.vue';
 
 
 import Login from '@/pages/login/login.vue';
@@ -31,6 +34,8 @@ export const routes = [
   { path: '/produtos/:id', component: ProdutosSingle },
   { path: '/produtos/:id/personalizar', component: ProdutosPersonalizar },
 
+  { path: '/criar', component: CMP},
+
 
   { path: '/admin', component: AdminDashboard },
   { path: '/admin/produtos', component: AdminListarProdutos },
@@ -38,6 +43,7 @@ export const routes = [
   { path: '/admin/categorias', component: AdminListarCategorias },
   { path: '/admin/categorias/:id', component: AdminEditarCategoria },
   { path: '/admin/pedidos', component: AdminListarPedidos },
+  { path: '/admin/categorias/adicionar', component: AdminAdicionarCategoria },
 
   { path: '/:path(.*)', component: NotFound },
 ];

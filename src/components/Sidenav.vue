@@ -58,6 +58,8 @@ export default {
     width: 200px;
     height: 100vh;
     background-color: #1a2930;
+    position: fixed;
+    z-index: 999;
 
     h1 {
         color: #fff;
