@@ -51,7 +51,7 @@ Pasta onde guardamos fontes, imagens, svg e princpilmente arquivos css.
 Componentes em vue são templates reutilizáveis em outras paginás, nenhum componente será acessado por url, mas são inseridos em páginas. Por exemplo, a navbar, será importada pela página base da aplicacão, mas a nav nunca será acessada diretamente, ela é apenas uma parte reutilizável da página. Outro exemplo, se desejarmos ter uma tabela em duas páginas, para não ter o mesmo código em ambas, criamos um componente que contém apenas a tabela, e importamos nas páginas que usaremos.
 
 
-### /src/composables
+### /src/store
 
 Arquivos .js, aonde nos comunicaremos com a API e teremos funções reutilizáveis
 

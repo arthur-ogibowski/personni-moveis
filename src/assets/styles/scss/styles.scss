@@ -5,9 +5,6 @@ body{
     h1.page-title{
         font-size: 3.5rem;
         font-weight: 600;
-        color: #333;
-        margin-bottom: 1rem;
-        text-align: center;
         margin-bottom: 2rem;
     }
 
@@ -38,8 +35,19 @@ body{
 
         .perfil-table{
 
-            tr, th {
-                background-color: #EFEFEF;
+            th > .cell{
+                font-weight: normal;
+            }
+
+            tr.el-table__row, td, .el-table__cell {
+                background-color:  #EFEFEF;
+                border-bottom: 1px solid $user-grey;
+                
+
+                div.cell{
+                    word-break: break-word;
+                    padding: 2rem;
+                }
             }
         }
     }
@@ -55,6 +63,8 @@ body{
     div.admin-container {
         padding: 4rem;
         width: 100%;
+        position: relative;
+        margin-left: 200px;
 
         h1 {
             color: $admin-grey;
@@ -100,11 +110,12 @@ body{
             }
 
             tbody {
-                tr, td, .el-table__cell {
+                tr.el-table__row, td, .el-table__cell {
                     background-color: transparent !important;
                     color: $admin-grey;
                     font-size: 14px;
                     height: 128px;
+                    
 
                     &:hover{
                         background-color: transparent !important;
@@ -122,6 +133,7 @@ body{
                   display: flex;
                   justify-content: center;
                   align-items: center;
+                
                 }
 
                 span.el-checkbox__inner {

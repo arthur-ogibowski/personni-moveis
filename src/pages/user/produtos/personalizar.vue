@@ -13,10 +13,11 @@
                         <h2>{{ option.label }}</h2>
                     </div>
                     <div class="dropdown-content">
-                        <div class="dropdown-item" v-for="i in option" :key="i">
-                            <div class="dropdown-item-header">
+                        <div class="dropdown-item" v-for="i in option.opcoes" :key="i" v-on:click="selecionarItem(i)">
+                            <div class="dropdown-item-header" :class="{item_selecionado : i.selected}">
+                                <el-image style="width: 50px; height: 50px" :src="produto.imagem" :fit="fit" />
                                 <h3>{{ i.nome }}</h3>
-                                <span>{{ i.preco}}</span>
+                                <span>(R$ {{ i.preco}})</span>
                         </div>
                     </div>
                 </div>
@@ -26,18 +27,20 @@
             <el-image style="width: 500px; height: 500px" :src="produto.imagem" :fit="fit" />
         </div>
         <div class="resumo">
-            <h1>Resumo da compra</h1>
-            <div class="resumo-item" v-for="option in produto.opcoes" :key="option">
-                <div class="resumo-item-inner">
-                    <h2>{{ option.label }}</h2>
+            <h1>Resumo da personalização</h1>
+            <div class="resumo-item">
+                <div class="resumo-item-inner" v-for="option in produto.opcoes" :key="option">
+                    <h3 class="label">{{ option.label }}</h3>
                     <div class="resumo-item-inner-escolhido">
-                        <h3 class="nome">{{ option.opcao_1.nome }}</h3> 
-                        <h3 class="preco">R$ {{ option.opcao_1.preco }}</h3>
+                        <h2 class="nome">{{ option.opcoes.opcao_1.nome }}</h2> 
+                        <h2 class="preco">R$ {{ option.opcoes.opcao_1.preco }}</h2>
                     </div>
                 </div>
             </div>
 
-            <h2>Total: {{ calcularTotal() }}</h2>
+            <h2 class="total">Total: {{ calcularTotal() }}</h2>
+
+            <el-button class="cta" color="$cta-color" >Adicionar ao carrinho</el-button>
         </div>
     </div>
   </div>
@@ -55,10 +58,25 @@ export default {
                 preco: "1300",
                 imagem: "/src/assets/img/cadeira1.png",
                 opcoes: [
-                    {label: "Cor",opcao_1: {nome: "Bege", preco: 100}, opcao_2: {nome: "Preto", preco: 150}, opcao_3: {nome: "Branco", preco: 150}},
-                    {label: "Madeira", opcao_1: {nome: "Acacia", preco: 200}, opcao_2: {nome: "Carvalho", preco: 200}}
+                    {
+                        label: "Cor",
+                        opcoes: {
+                            opcao_1: {nome: "Bege", preco: 100, selected: false}, 
+                            opcao_2: {nome: "Preto", preco: 150, selected: false}, 
+                            opcao_3: {nome: "Branco", preco: 150, selected:false}
+                        }
+                    },
+                    {
+                        label: "Modelo",
+                        opcoes: {
+                            opcao_1: {nome: "Cadeira", preco: 100, selected:false}, 
+                            opcao_2: {nome: "Poltrona", preco: 150, selected:false}, 
+                            opcao_3: {nome: "Sofá", preco: 150, selected:false}
+                        }
+                    }
 
-                ]
+                ],
+                personalizacoes: {}
             }
         }
     },
@@ -66,10 +84,16 @@ export default {
         calcularTotal(){
             let total = 0;
             for (let i = 0; i < this.produto.opcoes.length; i++) {
-                const element = this.produto.opcoes[i];
+                const element = this.produto.opcoes;
                 total += element.preco;
+                console.log(element)
             }
             return total;
+        },
+        selecionarItem(item){
+            this.produto.personalizacoes += item;
+            item.selected = true;
+        
         }
     }
 }
@@ -96,26 +120,92 @@ div.content{
                 }
 
             }
-            
-        }
+
+            div.dropdown-item {
+              width: 250px;
+              height: fit-content;
+              border: 2px solid $user-grey;
+              border-top: none;
+              text-align: center;
+              
+
+              span,h3{
+                color: #696969;
+              }
+              &:hover{
+                    background-color:  #555;
+                    color: #fff;
+                    cursor: pointer;
+
+                    span, h3{
+                        color: #fff;
+                    }
+              }
+
+              .item_selecionado{
+                background-color: #555;
+                span, h3{
+                    color: #fff;
+                }
+              }
+
+              div.dropdown-item-header{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-around;
+              }
+            }
+
+       }
+        
     }
+    
 
     div.resumo{
+
+        border: 2px solid $user-grey;
+        padding: 2rem 3rem;
+        display: flex;
+        flex-direction: column;
+
+        h1{
+            color: $user-grey;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
         div.resumo-item-inner{
+
+            h3{
+                margin-bottom: 0;
+                margin-top: 2rem;
+                color: $user-grey;
+            }
+            
             div.resumo-item-inner-escolhido{
                 display: flex;
                 flex-direction: row;
                 align-items: center;
 
-                h3.nome{
-                    color: $user-grey;
+
+                h2.nome{
                     margin-right: 10px;
                 }
 
-                h3{
+                h2{
                     font-weight: normal;
                 }
             }
+        }
+
+        .total{
+            margin-top: auto;
+        }
+
+        .cta{
+            height: 50px;
+            font-size: 2rem;
         }
     }
 }

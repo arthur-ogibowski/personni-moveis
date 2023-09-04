@@ -7,6 +7,8 @@ import ProdutosListar from '@/pages/user/produtos/listagem.vue';
 import ProdutosSingle from '@/pages/user/produtos/single.vue'
 import ProdutosPersonalizar from '@/pages/user/produtos/personalizar.vue'
 
+import CMP from '@/pages/user/cmp.vue'
+
 import AdminDashboard from '@/pages/admin/dashboard.vue';
 import AdminListarProdutos from '@/pages/admin/produtos/listagem.vue';
 import AdminEditarProduto from '@/pages/admin/produtos/editar.vue';
@@ -30,6 +32,8 @@ export const routes = [
   { path: '/produtos', component: ProdutosListar },
   { path: '/produtos/:id', component: ProdutosSingle },
   { path: '/produtos/:id/personalizar', component: ProdutosPersonalizar },
+
+  { path: '/criar', component: CMP},
 
 
   { path: '/admin', component: AdminDashboard },
