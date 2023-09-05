@@ -1,17 +1,17 @@
 <template>
   <div class="container">
     <el-steps align-center :active="currentSection">
-    <el-step v-for="section in categoria.sectionCmps" v-bind:key="section" :title="section.name"/>
+<el-step v-for="section in categoria.sectionCmps" v-bind:key="section" :title="section.name"/>
   </el-steps>
 
   <el-form :model="selected">
   <div class="section" v-for="section in categoria.sectionCmps" v-bind:key="section">
-    <div class="inner-section"  v-if="currentSection == section.sectionCmpId" >
+    <div class="inner-section"  v-if="currentSection == section.id" >
     <h1>{{ section.name }}</h1>
-    <div v-for="element in section.elementsCmps" v-bind:key="element" class="ml-4">
+    <div v-for="element in section.elementCmps" v-bind:key="element" class="ml-4">
       <h2>{{ element.name }}</h2>
-      <el-radio-group v-model="element.elementCmpId">
-        <el-radio  v-model="selected" v-for="option in element.optionsCmps" v-bind:key="option" size="large" :label="option.optionCmpId">{{ option.name }} (R${{ option.price }})</el-radio>
+      <el-radio-group v-model="element.id">
+        <el-radio  v-model="selected" v-for="option in element.optionCmps" v-bind:key="option" size="large" :label="option.id">{{ option.name }} (R${{ option.price }})</el-radio>
       </el-radio-group>
     </div>
 
@@ -21,28 +21,38 @@
   </div>
   </el-form>
 
-  <h2>{{ selected }}</h2>
-  <h2>{{ currentSection }} </h2>
+
 
   </div>
 </template>
 
 
 <script>
-
+import axios from 'axios';
 export default {
   data() {
     return {
       currentSection: 1,
       selected: [],
-      categoria: null, // Inicialize como nulo até carregar os dados da API
+      categoria:{      
+            name : "",
+            allow_creation: false,
+            sectionCmps: [
+              
+            ]          
+            }
     };
   },
-  created() {
-    // Faça uma solicitação Axios para buscar os dados da API
-    axios.get('http://localhost:8081/category')
+  mounted() {
+        const id = this.$route.params.id;
+    // Fazer uma solicitação GET para buscar dados da categoria por ID
+    axios.get(`http://localhost:8081/category/1`)
       .then((response) => {
-        this.categoria = response.data; // Atualize a propriedade categoria com os dados da API
+        if (response.status === 200) {
+          this.categoria = response.data;
+        } else {
+          console.error('Erro ao buscar dados da API:', response.statusText);
+        }
       })
       .catch((error) => {
         console.error('Erro ao buscar dados da API:', error);

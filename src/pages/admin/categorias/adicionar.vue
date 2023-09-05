@@ -73,7 +73,7 @@
           <el-form-item>
               <el-button type="primary" @click="criarCategoria">Salvar</el-button>
           </el-form-item>
-      </el-form>{{ categoria }}
+      </el-form>
     </div>
   </template>
   
@@ -105,6 +105,7 @@ import axios from 'axios';
             // A resposta da API indica que o recurso foi criado com sucesso.
             // Você pode realizar ações adicionais aqui, se necessário.
             console.log('Recurso criado com sucesso', response.data);
+        
             } else {
             console.error('Erro ao criar recurso:', response.statusText);
             }

@@ -98,7 +98,7 @@
       mounted() {
         const id = this.$route.params.id;
     // Fazer uma solicitação GET para buscar dados da categoria por ID
-    axios.get(`http://localhost:8081/category/category-cmp/${id}`)
+    axios.get(`http://localhost:8081/category/${id}`)
       .then((response) => {
         if (response.status === 200) {
           this.categoria = response.data;
@@ -130,8 +130,7 @@
                     type: null,
                     sectionCmpId: sectionId,
                     optionCmpDtos: []
-                })
-                
+                })           
             },
 
             newOption(elementId, sectionId) {
