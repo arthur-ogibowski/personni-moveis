@@ -19,8 +19,11 @@
                                 <h3>{{ i.nome }}</h3>
                                 <span>(R$ {{ i.preco}})</span>
                         </div>
+                        </div>
+                        <el-radio-group v-model="radio1" size="large" v-for="i in option.opcoes" :key="i">
+                          <el-radio-button :label="i.nome + ' (' + i.preco + ') '" />
+                        </el-radio-group>
                     </div>
-                </div>
             </div>
         </div>
         <div class="product-image">

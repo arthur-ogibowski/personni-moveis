@@ -1,25 +1,24 @@
 <template>
-  <div class="container login">
-    <div class="side-image"></div>
-    <div class="blue-rectangle">
-        <div class="login-dialog">
-            <h1>Login</h1>
-                <el-input
-                  v-model="email"
-                  size="large"
-                  placeholder="Email"
-                />
-                <el-input
-                  v-model="senha"
-                  size="large"
-                  placeholder="Senha"
-                  type="password"
-                  show-password
-                />
-                <el-button color="#343434" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="processarLogin()">Entrar</el-button>
+    <div class="login">
+        <div class="blue-rectangle">
+            <div class="login-dialog">
+                <h1>Login</h1>
+                    <el-input
+                      v-model="email"
+                      size="large"
+                      placeholder="Email"
+                    />
+                    <el-input
+                      v-model="senha"
+                      size="large"
+                      placeholder="Senha"
+                      type="password"
+                      show-password
+                    />
+                    <el-button color="#343434" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="processarLogin()">Entrar</el-button>
+            </div>
         </div>
     </div>
-  </div>
 </template>
 
 <script>
@@ -47,30 +46,29 @@ export default {
 
 div.login{
     display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
-    background-color: #CACACA;
-}
-div.side-image{
-    background-color: black;
+    width: 100vw;
+    height: 100vh;
 }
 div.blue-rectangle{
-    width: 800px;
-    height: 800px;
-    flex-shrink: 0;
+    width: 100%;
+    margin: 50%;
     background: #2A58E1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 
     :deep(.el-input), :deep(.el-button){
         width: 330px;
         height: 56px;
         margin: 25px;
         color: #FCFAF1;
-text-align: center;
-font-size: 26px;
-font-style: normal;
-line-height: normal;
-letter-spacing: -0.333px;
+        text-align: center;
+        font-size: 26px;
+        font-style: normal;
+        line-height: normal;
+        letter-spacing: -0.333px;
     }
 }
 
