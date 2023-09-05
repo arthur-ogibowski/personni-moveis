@@ -73,7 +73,7 @@
           <el-form-item>
               <el-button type="primary" @click="criarCategoria">Salvar</el-button>
           </el-form-item>
-      </el-form>{{categoria}}
+      </el-form>
     </div>
   </template>
   
