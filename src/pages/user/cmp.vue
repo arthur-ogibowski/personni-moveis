@@ -14,7 +14,6 @@
         <el-radio  v-model="selected" v-for="option in element.optionCmps" v-bind:key="option" size="large" :label="option.id">{{ option.name }} (R${{ option.price }})</el-radio>
       </el-radio-group>
     </div>
-
       <el-button type="primary" v-on:click="previousSection" v-if="currentSection != 1">Voltar</el-button>
       <el-button type="primary" v-on:click="nextSection">Próximo passo</el-button>
     </div>

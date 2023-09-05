@@ -14,14 +14,14 @@
 
             <div class="criar-content" v-if="categoria.allow_creation">
 
-                <div class="section-item" v-for="section in categoria.sectionCmpDtos" v-bind:key="section">
+                <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
                     </el-form-item>
 
                     
                     <div class="elements">
-                        <div class="element-item" v-for="element in section.elementCmpDtos" v-bind:key="element">
+                        <div class="element-item" v-for="element in section.elementCmps" v-bind:key="element">
                             
 
                             <div class="element-card">
@@ -33,7 +33,7 @@
                                 </el-form-item>
 
 
-                                <div class="option-item" v-for="option in element.optionCmpDtos" v-bind:key="option">
+                                <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
 
                                     <el-row :gutter="20">
                                     <el-col :span="12">
@@ -73,7 +73,7 @@
           <el-form-item>
               <el-button type="primary" @click="criarCategoria">Salvar</el-button>
           </el-form-item>
-      </el-form>
+      </el-form>{{categoria}}
     </div>
   </template>
   
@@ -88,7 +88,7 @@ import axios from 'axios';
         categoria:{      
             name : "",
             allow_creation: false,
-            sectionCmpDtos: [
+            sectionCmps: [
                 
             ]          
         }
@@ -117,32 +117,32 @@ import axios from 'axios';
 
 
             newSection() {
-                this.categoria.sectionCmpDtos.push({
+                this.categoria.sectionCmps.push({
                     id: Math.ceil(Math.random()*1000000),
                     name: "Nova seção",
                     imgUrl: "",
                     categoryId: 0,
-                    elementCmpDtos: []
+                    elementCmps: []
                 })
             },
 
             newElement(sectionId) {
-                let section = this.categoria.sectionCmpDtos.find(x => x.id == sectionId)
-                section.elementCmpDtos.push({
+                let section = this.categoria.sectionCmps.find(x => x.id == sectionId)
+                section.elementCmps.push({
                     id: Math.ceil(Math.random()*1000000),
                     name: "Novo elemento",
                     type: null,
                     sectionCmpId: sectionId,
-                    optionCmpDtos: []
+                    optionCmps: []
                 })
                 
             },
 
             newOption(elementId, sectionId) {
-                let section = this.categoria.sectionCmpDtos.find(x => x.id == sectionId)
-                let element = section.elementCmpDtos.find(x => x.id == elementId)
+                let section = this.categoria.sectionCmps.find(x => x.id == sectionId)
+                let element = section.elementCmps.find(x => x.id == elementId)
                 
-                element.optionCmpDtos.push({
+                element.optionCmps.push({
                     id: Math.ceil(Math.random()*1000000),
                     name: "Nova opção",
                     imgUrl: "",
