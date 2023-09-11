@@ -26,8 +26,8 @@
         </div>
       </div>
       <el-button type="primary" @click="previousSection" v-if="isLastSection">Voltar</el-button>    
-      <el-button type="primary" @click="criarCMP">Salvar</el-button>
-    </el-form>
+      <el-button type="primary" @click="criarCMP" v-if="isLastSection">Salvar</el-button>
+    </el-form>{{ selected }}
   </div>
 </template>
 <script>
@@ -103,16 +103,7 @@ export default {
   const correspondencias = this.encontrarElementoESeçãoPorOpção(this.selected);
 
   if (correspondencias.length > 0) {
-    const json = {
-      "id": 0,
-      "value": 0,
-      "quantity": 0,
-      "imgUrl": "string",
-      "description": "string",
-      "sectionProductCmpDtos": []
-    };
-
-    correspondencias.forEach(({ sectionId, elementId, optionId }) => {
+      correspondencias.forEach(({ sectionId, elementId, optionId }) => {
       // Crie um objeto para a seção
       const sectionObj = {
         "sectionId": sectionId,
@@ -144,8 +135,6 @@ export default {
       // Adicione a seção ao array de seções do JSON
       this.products_cmp.sectionProductCmpDtos.push(sectionObj);
     });
-    // Faça a solicitação POST com o JSON
-    const jsonStr = JSON.stringify(json);
     axios.post('http://localhost:8081/products_cmp', this.products_cmp)
     .then((response) => {
             if (response.status === 201) {

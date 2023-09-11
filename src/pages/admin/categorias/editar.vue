@@ -113,7 +113,7 @@
       methods: {     
         },
             newSection() {
-                this.categoria.sectionCmps.push({
+                this.categoria.sectionCmps.push({            
                     id: Math.ceil(Math.random()*1000000),
                     name: "Nova seção",
                     imgUrl: "",
