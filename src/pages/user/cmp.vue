@@ -1,5 +1,7 @@
 <template>
-  <div class="container">
+  <div class="container" v-loading="loading" element-loading-text="Carregando..."
+    :element-loading-spinner="svg"
+    element-loading-background="rgba(122, 122, 122, 0.9)">
     <el-steps align-center :active="currentSection">
       <el-step v-for="section in categoria.sectionCmps" :key="section.id" :title="section.name" />
     </el-steps>
@@ -38,6 +40,7 @@ export default {
     return {
       currentSection: 1,
       selected: [], 
+      loading: true,
       products_cmp: {
         id: 0,
         value: 0,
@@ -59,6 +62,7 @@ export default {
       .then((response) => {
         if (response.status === 200) {
           this.categoria = response.data;
+          this.loading = false;
         } else {
           console.error('Erro ao buscar dados da API:', response.statusText);
         }

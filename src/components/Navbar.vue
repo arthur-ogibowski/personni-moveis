@@ -15,7 +15,7 @@
       <el-menu-item index="2-2">Mesas</el-menu-item>
       <el-menu-item index="2-3">Armários</el-menu-item>
     </el-sub-menu>
-    <el-button class="cta" color="$cta-color">Criar meu móvel</el-button>
+    <router-link to="/criar"><el-button class="cta" color="$cta-color">Criar meu móvel</el-button></router-link>
     <el-menu-item><router-link to="/perfil">Minha Conta</router-link></el-menu-item>
   </el-menu>
 </template>
@@ -37,10 +37,6 @@ export default {
 }
 .el-menu{
   z-index: 2;
-}
-
-.not-homepage {
-  margin-bottom: 50px;
 }
 
 </style>
