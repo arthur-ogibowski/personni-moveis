@@ -15,7 +15,8 @@ import AdminEditarProduto from '@/pages/admin/produtos/editar.vue';
 import AdminListarCategorias from '@/pages/admin/categorias/listagem.vue';
 import AdminEditarCategoria from '@/pages/admin/categorias/editar.vue';
 import AdminListarPedidos from '@/pages/admin/pedidos/listagem.vue';
-import AdminAdicionarCategoria from '@/pages/admin/categorias/adicionar.vue';
+import AdminAdicionarCategoriaCmp from '@/pages/admin/categorias/adicionar_cmp.vue';
+import AdminAdicionarCategoriaProduto from '@/pages/admin/categorias/adicionar_produto.vue';
 
 
 import Login from '@/pages/login/login.vue';
@@ -43,7 +44,8 @@ export const routes = [
   { path: '/admin/categorias', component: AdminListarCategorias },
   { path: '/admin/categorias/:id', component: AdminEditarCategoria },
   { path: '/admin/pedidos', component: AdminListarPedidos },
-  { path: '/admin/categorias/adicionar', component: AdminAdicionarCategoria },
+  { path: '/admin/categorias/adicionar', component: AdminAdicionarCategoriaCmp },
+  { path: '/admin/categorias/adicionar/produto', component: AdminAdicionarCategoriaProduto },
 
   { path: '/:path(.*)', component: NotFound },
 ];
