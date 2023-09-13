@@ -51,12 +51,12 @@
 
                                 </div>
 
-                                <el-button type="primary" v-on:click="newOption(element.id, element.sectionCmpId)"><el-icon><Plus /></el-icon> Opção</el-button>
+                                <el-button type="primary" v-on:click="newOption(element)"><el-icon><Plus /></el-icon> Opção</el-button>
 
                             </div>
 
                         </div>
-                        <el-button type="primary" v-on:click="newElement(section.id)"><el-icon><Plus /></el-icon> Elemento </el-button>
+                        <el-button type="primary" v-on:click="newElement(section)"><el-icon><Plus /></el-icon> Elemento </el-button>
                     </div>    
 
                     
@@ -113,41 +113,28 @@ import axios from 'axios';
     .catch((error) => {
     console.error('Erro ao criar recurso:', error);
         })},
-
-
-
             newSection() {
                 this.categoria.sectionCmps.push({
-                    id: Math.ceil(Math.random()*1000000),
                     name: "Nova seção",
                     imgUrl: "",
-                    categoryId: 0,
                     elementCmps: []
                 })
             },
 
-            newElement(sectionId) {
-                let section = this.categoria.sectionCmps.find(x => x.id == sectionId)
+            newElement(section) {
                 section.elementCmps.push({
-                    id: Math.ceil(Math.random()*1000000),
                     name: "Novo elemento",
                     type: null,
-                    sectionCmpId: sectionId,
                     optionCmps: []
                 })
                 
             },
 
-            newOption(elementId, sectionId) {
-                let section = this.categoria.sectionCmps.find(x => x.id == sectionId)
-                let element = section.elementCmps.find(x => x.id == elementId)
-                
+            newOption(element) {             
                 element.optionCmps.push({
-                    id: Math.ceil(Math.random()*1000000),
                     name: "Nova opção",
                     imgUrl: "",
                     price: 0,
-                    elementCmpId: elementId,
                 })
                 
             }
