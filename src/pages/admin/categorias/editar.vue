@@ -20,7 +20,9 @@
                 <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
-                        <el-icon v-on:click="deleteSection(section.id)"  v-if="section.elementCmps.length === 0" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                        <el-icon v-on:click="deleteSection(section.id)"  v-if="novaSecao && !novoElemento" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                        <el-icon v-on:click="deleteSection(section.id)"  v-else-if="section.elementCmps.length === 0" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+
                     </el-form-item>
 
                     
@@ -29,7 +31,8 @@
                             
 
                             <div class="element-card">
-                                <el-icon v-on:click="deleteElement(element.id)"  v-if="element.optionCmps.length === 0" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                                <el-icon v-on:click="deleteElement(element.id)"  v-if="novoElemento && !novaOpcao" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                                <el-icon v-on:click="deleteElement(element.id)"  v-else-if="element.optionCmps.length === 0" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                 <h2>{{ element.name.toUpperCase() }}</h2>
 
                                 <el-form-item label="Nome">
@@ -81,22 +84,27 @@
           <el-form-item>
               <el-button type="primary" @click="salvarCategoria">Salvar</el-button>
           </el-form-item>
-      </el-form>
+      </el-form>{{ categoria }}
     </div>
   </template>
   
   <script>
   import axios from 'axios';
+import { ElMessage } from 'element-plus';
   export default {
       data() {
           return {
+            novaSecao: false,
+            novoElemento: false,
+            novaOpcao: false,
+
             categoria:{    
             id: 0,  
             name : "",
             allow_creation: false,
             sectionCmps: [
             ]          
-            }
+            },
           }
       },
       mounted() {
@@ -105,8 +113,9 @@
     axios.get(`http://localhost:8081/category/${id}`)
       .then((response) => {
         if (response.status === 200) {
-          this.categoria = response.data;
+          this.categoria = response.data
         } else {
+          ElMessage.error('Categoria salva com Sucesso!')
           console.error('Erro ao buscar dados da API:', response.statusText);
         }
       })
@@ -154,8 +163,10 @@
             if (response.status === 204) {
             // A resposta da API indica que o recurso foi criado com sucesso.
             // Você pode realizar ações adicionais aqui, se necessário.
-            console.log('Recurso criado com sucesso', response.data);
-        
+            ElMessage.success('Categoria salva com Sucesso!')  
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000);
             } else {
             console.error('Erro ao criar recurso:', response.statusText);
             }
@@ -172,8 +183,9 @@
             name: "Nova seção",
             imgUrl: "",
             categoryId: this.categoria.id,
-            elementCmpDtos: []
+            elementCmpDtos: [],    
         })
+        this.novaSecao = true
     },
 
     newElement(section) {
@@ -187,6 +199,8 @@
             sectionCmpId: section.id,
             optionCmpDtos: []
         })           
+        this.novoElemento = true
+
     },
 
     newOption(element) {
@@ -200,6 +214,7 @@
             price: 0,
             elementCmpId: element.id,
         })
+        this.novaOpcao = true;
     }
 },
 
