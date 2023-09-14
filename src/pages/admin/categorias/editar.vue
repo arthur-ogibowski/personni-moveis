@@ -20,6 +20,7 @@
                 <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
+                        <el-icon v-on:click="deleteSection(section.id)"  v-if="section.elementCmps.length === 0" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                     </el-form-item>
 
                     
@@ -28,16 +29,18 @@
                             
 
                             <div class="element-card">
-
+                                <el-icon v-on:click="deleteElement(element.id)"  v-if="element.optionCmps.length === 0" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                 <h2>{{ element.name.toUpperCase() }}</h2>
 
                                 <el-form-item label="Nome">
-                                    <el-input v-model="element.name"></el-input>
+                                    <el-input v-model="element.name"></el-input>      
+                                                                                 
                                 </el-form-item>
+                                
 
 
                                 <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
-
+                                    <el-icon v-on:click="deleteOption(option.id)" style="margin-left: 8px; float: right; margin-top: 33px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                     <el-row :gutter="20">
                                     <el-col :span="12">
                                         <el-form-item label="Opção">
@@ -78,7 +81,7 @@
           <el-form-item>
               <el-button type="primary" @click="salvarCategoria">Salvar</el-button>
           </el-form-item>
-      </el-form>{{ categoria }}
+      </el-form>
     </div>
   </template>
   
@@ -112,6 +115,38 @@
       });
   },
   methods: {     
+    deleteOption(id) {
+      axios.delete(`http://localhost:8081/OptionCmp/${id}`)
+      .then(response => {
+        this.categorias = response.data;
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error('Erro ao deletar Opção', error);
+      });
+    },
+
+    deleteElement(id) {
+      axios.delete(`http://localhost:8081/ElementCmp/${id}`)
+      .then(response => {
+        this.categorias = response.data;
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error('Erro ao deletar Elemento', error);
+      });
+    },
+
+    deleteSection(id) {
+      axios.delete(`http://localhost:8081/SectionCmp/${id}`)
+      .then(response => {
+        this.categorias = response.data;
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error('Erro ao deletar Elemento', error);
+      });
+    },
 
     salvarCategoria() {
             axios.put(`http://localhost:8081/category/${this.$route.params.id}`,this.categoria)
