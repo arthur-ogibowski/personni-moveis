@@ -27,7 +27,7 @@
         </div>
         <div class="preco-final">
             <h2>Total: {{ precoTotal }}</h2>
-            <el-button class="cta" color="$cta-color" >Finalizar compra</el-button>
+            <router-link to="/checkout"><el-button class="cta" color="$cta-color" >Ir para o pagamento</el-button></router-link>
         </div>
     </div>
   </div>

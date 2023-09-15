@@ -9,17 +9,18 @@
     <div class="content">
         <div class="dropdown-list">
             <div class="dropdown-outer" v-for="option in produto.opcoes" :key="option">
-                    <div class="dropdown-header">
-                        <h2>{{ option.label }}</h2>
-                    </div>
-                    <div class="dropdown-content">
-                        <div class="dropdown-item" v-for="i in option.opcoes" :key="i" v-on:click="selecionarItem(i)">
-                            <div class="dropdown-item-header" :class="{item_selecionado : i.selected}">
-                                <el-image style="width: 50px; height: 50px" :src="produto.imagem" :fit="fit" />
-                                <h3>{{ i.nome }}</h3>
-                                <span>(R$ {{ i.preco}})</span>
-                        </div>
-                    </div>
+                <div class="dropdown-header">
+                    <h2>{{ option.label }}</h2>
+                </div>
+                <div class="dropdown-content">
+                    <el-radio-group v-model="personalizacoes" size="large">
+                      <el-radio
+                        v-for="option in option.opcoes"
+                        :key="option.id"
+                        :label="option.id">
+                        {{ option.name }} (R${{ option.price }})
+                      </el-radio>
+                    </el-radio-group>
                 </div>
             </div>
         </div>
