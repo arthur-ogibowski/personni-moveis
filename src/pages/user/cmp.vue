@@ -9,7 +9,7 @@
   </div>
     <el-form :model="selected">
       <div class="section" v-for="section in categoria.sectionCmps" :key="section.id">
-        <div class="inner-section" v-if="currentSection === section.id">
+        <div class="inner-section" >
           <h1>{{ section.name }}</h1>
           <div v-for="element in section.elementCmps" :key="element.id" class="ml-4">
             <h2>{{ element.name }}</h2>
@@ -58,7 +58,7 @@ export default {
   },
   mounted() {
     const id = this.$route.params.id;
-    axios.get(`http://localhost:8081/category/1`)
+    axios.get(`http://localhost:8081/category/52`)
       .then((response) => {
         if (response.status === 200) {
           this.categoria = response.data;

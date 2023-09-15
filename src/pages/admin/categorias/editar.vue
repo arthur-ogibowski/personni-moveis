@@ -20,9 +20,7 @@
                 <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
-                        <el-icon v-on:click="deleteSection(section.id)"  v-if="novaSecao && !novoElemento" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
-                        <el-icon v-on:click="deleteSection(section.id)"  v-else-if="section.elementCmps.length === 0" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
-
+                        <el-icon v-on:click="deleteSection(section.id)" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                     </el-form-item>
 
                     
@@ -31,8 +29,7 @@
                             
 
                             <div class="element-card">
-                                <el-icon v-on:click="deleteElement(element.id)"  v-if="novoElemento && !novaOpcao" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
-                                <el-icon v-on:click="deleteElement(element.id)"  v-else-if="element.optionCmps.length === 0" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                                <el-icon v-on:click="deleteElement(element.id)" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                 <h2>{{ element.name.toUpperCase() }}</h2>
 
                                 <el-form-item label="Nome">
@@ -142,7 +139,7 @@ import { ElMessage } from 'element-plus';
         window.location.reload();
       })
       .catch(error => {
-        console.error('Erro ao deletar Elemento', error);
+       ElMessage.error('Erro ao deletar Elemento! Veja se não tem Opções relacionadas!');
       });
     },
 
@@ -153,7 +150,7 @@ import { ElMessage } from 'element-plus';
         window.location.reload();
       })
       .catch(error => {
-        console.error('Erro ao deletar Elemento', error);
+        console.error('Erro ao Seção! Veja se não tem Elementos relacionados!');
       });
     },
 
@@ -186,6 +183,7 @@ import { ElMessage } from 'element-plus';
             elementCmpDtos: [],    
         })
         this.novaSecao = true
+        this.novoElemento = false
     },
 
     newElement(section) {
@@ -200,6 +198,7 @@ import { ElMessage } from 'element-plus';
             optionCmpDtos: []
         })           
         this.novoElemento = true
+        this.novaOpcao = false
 
     },
 
@@ -214,7 +213,6 @@ import { ElMessage } from 'element-plus';
             price: 0,
             elementCmpId: element.id,
         })
-        this.novaOpcao = true;
     }
 },
 

@@ -25,6 +25,7 @@
 
 <script>
 import axios from 'axios'
+import { ElMessage } from 'element-plus';
 export default {
   data() {
     return {
@@ -58,9 +59,13 @@ export default {
       axios.delete(`http://localhost:8081/category/${id}`)
       .then(response => {
         this.categorias = response.data;
+        ElMessage.success('Categoria deletada com Sucesso!')  
+        setTimeout(() => {
+                window.location.reload()
+            }, 2000);
       })
       .catch(error => {
-        console.error('Erro ao deletar Categoria', error);
+        ElMessage.error('Erro ao deletar Categoria');
       });
     },
   },
