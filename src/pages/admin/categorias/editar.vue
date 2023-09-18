@@ -20,6 +20,7 @@
                 <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
+                        <el-icon v-on:click="deleteSection(section.id)" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                     </el-form-item>
 
                     
@@ -28,16 +29,18 @@
                             
 
                             <div class="element-card">
-
+                                <el-icon v-on:click="deleteElement(element.id)" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                 <h2>{{ element.name.toUpperCase() }}</h2>
 
                                 <el-form-item label="Nome">
-                                    <el-input v-model="element.name"></el-input>
+                                    <el-input v-model="element.name"></el-input>      
+                                                                                 
                                 </el-form-item>
+                                
 
 
                                 <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
-
+                                    <el-icon v-on:click="deleteOption(option.id)" style="margin-left: 8px; float: right; margin-top: 33px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                     <el-row :gutter="20">
                                     <el-col :span="12">
                                         <el-form-item label="Opção">
@@ -54,12 +57,12 @@
 
                                 </div>
 
-                                <el-button type="primary" v-on:click="newOption(element.id, element.sectionCmpId)"><el-icon><Plus /></el-icon> Opção</el-button>
+                                <el-button type="primary" v-on:click="newOption(element)"><el-icon><Plus /></el-icon> Opção</el-button>
 
                             </div>
 
                         </div>
-                        <el-button type="primary" v-on:click="newElement(section.id)"><el-icon><Plus /></el-icon> Elemento </el-button>
+                        <el-button type="primary" v-on:click="newElement(section)"><el-icon><Plus /></el-icon> Elemento </el-button>
                     </div>    
 
                     
@@ -76,33 +79,40 @@
 
 
           <el-form-item>
-              <el-button type="primary">Salvar</el-button>
+              <el-button type="primary" @click="salvarCategoria">Salvar</el-button>
           </el-form-item>
-      </el-form>
+      </el-form>{{ categoria }}
     </div>
   </template>
   
   <script>
   import axios from 'axios';
+import { ElMessage } from 'element-plus';
   export default {
       data() {
           return {
-            categoria:{      
+            novaSecao: false,
+            novoElemento: false,
+            novaOpcao: false,
+
+            categoria:{    
+            id: 0,  
             name : "",
             allow_creation: false,
             sectionCmps: [
             ]          
-            }
+            },
           }
       },
       mounted() {
         const id = this.$route.params.id;
     // Fazer uma solicitação GET para buscar dados da categoria por ID
-    axios.get(`http://localhost:8081/category/category-cmp/${id}`)
+    axios.get(`http://localhost:8081/category/${id}`)
       .then((response) => {
         if (response.status === 200) {
-          this.categoria = response.data;
+          this.categoria = response.data
         } else {
+          ElMessage.error('Categoria salva com Sucesso!')
           console.error('Erro ao buscar dados da API:', response.statusText);
         }
       })
@@ -110,43 +120,103 @@
         console.error('Erro ao buscar dados da API:', error);
       });
   },
-      methods: {     
-        },
-            newSection() {
-                this.categoria.sectionCmps.push({
-                    id: Math.ceil(Math.random()*1000000),
-                    name: "Nova seção",
-                    imgUrl: "",
-                    categoryId: 0,
-                    elementCmpDtos: []
-                })
-            },
+  methods: {     
+    deleteOption(id) {
+      axios.delete(`http://localhost:8081/OptionCmp/${id}`)
+      .then(response => {
+        this.categorias = response.data;
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error('Erro ao deletar Opção', error);
+      });
+    },
 
-            newElement(sectionId) {
-                let section = this.categoria.sectionCmps.find(x => x.id == sectionId)
-                section.elementCmps.push({
-                    id: Math.ceil(Math.random()*1000000),
-                    name: "Novo elemento",
-                    type: null,
-                    sectionCmpId: sectionId,
-                    optionCmpDtos: []
-                })
-                
-            },
+    deleteElement(id) {
+      axios.delete(`http://localhost:8081/ElementCmp/${id}`)
+      .then(response => {
+        this.categorias = response.data;
+        window.location.reload();
+      })
+      .catch(error => {
+       ElMessage.error('Erro ao deletar Elemento! Veja se não tem Opções relacionadas!');
+      });
+    },
 
-            newOption(elementId, sectionId) {
-                let section = this.categoria.sectionCmps.find(x => x.id == sectionId)
-                let element = section.elementCmps.find(x => x.id == elementId)
-                
-                element.optionCmps.push({
-                    id: Math.ceil(Math.random()*1000000),
-                    name: "Nova opção",
-                    imgUrl: "",
-                    price: 0,
-                    elementCmpId: elementId,
-                })
-                
+    deleteSection(id) {
+      axios.delete(`http://localhost:8081/SectionCmp/${id}`)
+      .then(response => {
+        this.categorias = response.data;
+        window.location.reload();
+      })
+      .catch(error => {
+        console.error('Erro ao Seção! Veja se não tem Elementos relacionados!');
+      });
+    },
+
+    salvarCategoria() {
+            axios.put(`http://localhost:8081/category/${this.$route.params.id}`,this.categoria)
+        .then((response) => {
+            if (response.status === 204) {
+            // A resposta da API indica que o recurso foi criado com sucesso.
+            // Você pode realizar ações adicionais aqui, se necessário.
+            ElMessage.success('Categoria salva com Sucesso!')  
+            setTimeout(() => {
+                window.location.reload()
+            }, 2000);
+            } else {
+            console.error('Erro ao criar recurso:', response.statusText);
             }
+        })
+    .catch((error) => {
+    console.error('Erro ao criar recurso:', error);
+        })},
+    newSection() {
+        if (!this.categoria.sectionCmps) {
+            this.categoria.sectionCmps = [];
+        }
+        this.categoria.sectionCmps.push({            
+            id: 0,
+            name: "Nova seção",
+            imgUrl: "",
+            categoryId: this.categoria.id,
+            elementCmpDtos: [],    
+        })
+        this.novaSecao = true
+        this.novoElemento = false
+    },
+
+    newElement(section) {
+        if (!section.elementCmps) {
+            section.elementCmps = [];
+        }
+        section.elementCmps.push({
+            id: 0,
+            name: "Novo elemento",
+            type: null,
+            sectionCmpId: section.id,
+            optionCmpDtos: []
+        })           
+        this.novoElemento = true
+        this.novaOpcao = false
+
+    },
+
+    newOption(element) {
+        if (!element.optionCmps) {
+            element.optionCmps = [];
+        }
+        element.optionCmps.push({
+            id: 0,
+            name: "Nova opção",
+            imgUrl: "",
+            price: 0,
+            elementCmpId: element.id,
+        })
+    }
+},
+
+            
         }
 </script>
 

@@ -12,6 +12,9 @@ import ProdutosPersonalizar from '@/pages/user/produtos/personalizar.vue'
 
 import CMP from '@/pages/user/cmp.vue'
 
+import CarrinhoResumo from '@/pages/user/carrinho/resumo.vue'
+import CarrinhoPagamento from '@/pages/user/carrinho/pagamento.vue'
+
 import AdminDashboard from '@/pages/admin/dashboard.vue';
 import AdminListarProdutos from '@/pages/admin/produtos/listagem.vue';
 import AdminEditarProduto from '@/pages/admin/produtos/editar.vue';
@@ -42,6 +45,8 @@ export const routes = [
 
   { path: '/criar', component: CMP},
 
+  { path: '/carrinho', component: CarrinhoResumo },
+  { path: '/checkout', component: CarrinhoPagamento },
 
   { path: '/admin', component: AdminDashboard },
   { path: '/admin/produtos', component: AdminListarProdutos },

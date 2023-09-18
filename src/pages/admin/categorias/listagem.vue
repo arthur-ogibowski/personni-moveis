@@ -14,7 +14,7 @@
           <el-table-column label="Ações" prop="id"> 
             <template #default="scope">  
               <router-link :to="{path: '/admin/categorias/' + scope.row.id}"><el-button class="table-edit" color="#A8A8A8" plain>Editar</el-button></router-link>
-              <el-button class="table-delete" color="#F56C6C" plain>Deletar</el-button>
+              <el-button v-on:click="deleteCategory(scope.row.id)" class="table-delete" color="#F56C6C" plain>Deletar</el-button>
             </template>
           </el-table-column>
           <!--<el-pagination layout="prev, pager, next" :total="this.categorias.length" @current-change="setPage">
@@ -25,6 +25,7 @@
 
 <script>
 import axios from 'axios'
+import { ElMessage } from 'element-plus';
 export default {
   data() {
     return {
@@ -54,6 +55,19 @@ export default {
     /*setPage(page) {
       this.page = page
     },*/
+    deleteCategory(id) {
+      axios.delete(`http://localhost:8081/category/${id}`)
+      .then(response => {
+        this.categorias = response.data;
+        ElMessage.success('Categoria deletada com Sucesso!')  
+        setTimeout(() => {
+                window.location.reload()
+            }, 2000);
+      })
+      .catch(error => {
+        ElMessage.error('Erro ao deletar Categoria');
+      });
+    },
   },
 }
 </script>
