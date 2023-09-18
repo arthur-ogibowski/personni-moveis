@@ -2,7 +2,7 @@
     <div class="container">
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/produtos' }">Produtos</el-breadcrumb-item>
-          <el-breadcrumb-item>{{ produto.nome }}</el-breadcrumb-item>
+          <el-breadcrumb-item>{{ produto.name }}</el-breadcrumb-item>
         </el-breadcrumb>
 
         <div class="main-single">
@@ -12,17 +12,17 @@
               :autoplay="false"
             >
               <el-carousel-item v-for="item in 4" :key="item" class>
-                <el-image style="width: 100px; height: 100px" :src="produto.imagem" :fit="fit" />
+                <el-image style="width: 100px; height: 100px" :src="produto.imgUrl" :fit="fit" />
               </el-carousel-item>
             </el-carousel>
-            <el-image style="width: 500px; height: 500px" :src="produto.imagem" :fit="fit" />
+            <el-image style="width: 500px; height: 500px" :src="produto.imgUrl" :fit="fit" />
 
             <div class="info-box">
-                <h2 style="font-size: 2rem;">{{  produto.nome }}</h2>
-                <p style="font-size: 1.6rem;">{{ produto.descricao }}</p>
-                <h3 style="font-size: 1.8rem;">R${{ produto.preco }}</h3>
+                <h2 style="font-size: 2rem;">{{  produto.name }}</h2>
+                <p style="font-size: 1.6rem;">{{ produto.description }}</p>
+                <h3 style="font-size: 1.8rem;">R${{ produto.value }}</h3>
                 <div class="info-box-action">
-                    <router-link  :to="{path: '/produtos/' + produto.id + '/personalizar'}"><el-button color="#1a2930" size="small">Personalizar</el-button></router-link>
+                    <router-link  :to="{path: '/produtos/' + produto.productId + '/personalizar'}"><el-button color="#1a2930" size="small">Personalizar</el-button></router-link>
                     <el-button class="cta" color="$cta-color">Adicionar ao carrinho</el-button>
                 </div>
             </div>
@@ -35,9 +35,9 @@
         <div class="about-single">
             <h1>Descrição do Produto</h1>
 
-            <el-table :data="produto.sobre" style="width: 100%">
-              <el-table-column prop="label" label="Date" width="180" />
-              <el-table-column prop="value" label="Name" width="*" />
+            <el-table :data="produto.details" style="width: 100%">
+              <el-table-column prop="detailField" width="180" />
+              <el-table-column prop="fieldContent" width="*" />
             </el-table>
 
         </div>
@@ -50,22 +50,132 @@ export default {
     data(){
         return{
             produto: {
-                nome: "Cadeira 1",
-                id: 1,
-                descricao: "Lorem ipsum dolor sit amet, consectetur ad ipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed eleifend tristique, tortor mauris molestie elit, et lacinia ipsum quam nec dui. Quisque nec mauris sit amet elit iaculis pretium sit amet quis magna.",
-                preco: "1300",
-                imagem: "/src/assets/img/cadeira1.png",
-                sobre: [
-                    {label: "Cor", value: "Bege"},
-                    {label: "Modelo", value: "Cadeira"},
-                    {label: "Garantia", value: "1 ano"},
-                    {label: "Cuidados", value: "Produto recomendado para uso doméstico. Limpar com pano macio seco ou levemente umedecido com água."},
-                    {label: "Conteúdo", value: "1 Cadeira de Escritório"},
-                    {label: "Tamanho", value: "Altura: 109 - 119 cm | Largura: 66 cm | Profundidade: 70 cm | Altura do braço ao chão: 65 - 75 cm | Altura do assento ao chão: 45 - 55 cm"},
-                    {label: "Montagem", value: "Sim, a montagem é simples mas sugerimos a contratação do nosso serviço de montagem (para os CEPs em que o serviço está disponível) ou de algum profissional experiente de sua preferência"},
-                    {label: "Encosto", value: "Encosto com regulagem de altura e inclinação"},
-                    {label: "Peso", value: "Suportado: 120 kg"},
-
+                productId: 1,
+                name: "cadeira asdfg",
+                value: 123,
+                quantity: 2,
+                editable: true,
+                imgUrl: "cadeira1.png",
+                description: "descrição blablabla",
+                details: [
+                    {
+                        detailId: 1,
+                        detailField: "Cuidados",
+                        fieldContent: "Produto recomendado para uso doméstico..."
+                    },
+                    {
+                        detailId: 2,
+                        detailField: "Garantia",
+                        fieldContent: "1 ano..."
+                    },
+                    {
+                        detailId: 3,
+                        detailField: "Peso",
+                        fieldContent: "1kg..."
+                    },
+                    {
+                        detailId: 4,
+                        detailField: "Dimensões",
+                        fieldContent: "1m x 1m x 1m..."
+                    },
+                    {
+                        detailId: 5,
+                        detailField: "Material",
+                        fieldContent: "Madeira..."
+                    }
+                ],
+                materials: [
+                    {
+                        materialId: 1,
+                        materialName: "carvalho",
+                        imgUrl: "carv.png",
+                        price: 100
+                    }
+                ],
+                tags: [
+                    {
+                        tagId: 1,
+                        tagName: "escritório"
+                    }
+                ],
+                sections: [
+                {
+                    sectionId: 1,
+                    name: "braços",
+                    imgUrl: "braco.png",
+                    options: [
+                        {
+                            optionId: 1,
+                            name: "braço custom",
+                            imgUrl: "custom.png",
+                            price: 250
+                        },
+                        {   
+                            optionId: 2,
+                            name: "braço custom 2",
+                            imgUrl: "custom2.png",
+                            price: 200
+                        }
+                    ]
+                },
+                {
+                    sectionId: 2,
+                    name: "rodinhas",
+                    imgUrl: "rodinha.png",
+                    options: [
+                        {
+                            optionId: 3,
+                            name: "rodinha custom",
+                            imgUrl: "custom.png",
+                            price: 250
+                        },
+                        {   
+                            optionId: 4,
+                            name: "rodinha custom 2",
+                            imgUrl: "custom2.png",
+                            price: 200
+                        }
+                    ]
+                },
+                {
+                    sectionId: 3,
+                    name: "encosto",
+                    imgUrl: "encosto.png",
+                    options: [
+                        {
+                            optionId: 5,
+                            name: "encosto custom",
+                            imgUrl: "custom.png",
+                            price: 250
+                        },
+                        {   
+                            optionId: 6,
+                            name: "encosto custom 2",
+                            imgUrl: "custom2.png",
+                            price: 200
+                        }
+                    ]
+                },
+                {
+                    sectionId: 4,
+                    name: "assento",
+                    imgUrl: "assento.png",
+                    options: [
+                        {
+                            optionId: 7,
+                            default: true,
+                            name: "assento custom",
+                            imgUrl: "custom.png",
+                            price: 250
+                        },
+                        {   
+                            optionId: 8,
+                            name: "assento custom 2",
+                            imgUrl: "custom2.png",
+                            price: 200
+                        }
+                    ]
+                }
                 ]
             }
         }
