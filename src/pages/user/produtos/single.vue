@@ -46,29 +46,68 @@
 </template>
 
 <script>
-export default {
-    data(){
-        return{
-            produto: {
-                nome: "Cadeira 1",
-                id: 1,
-                descricao: "Lorem ipsum dolor sit amet, consectetur ad ipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed eleifend tristique, tortor mauris molestie elit, et lacinia ipsum quam nec dui. Quisque nec mauris sit amet elit iaculis pretium sit amet quis magna.",
-                preco: "1300",
-                imagem: "/src/assets/img/cadeira1.png",
-                sobre: [
-                    {label: "Cor", value: "Bege"},
-                    {label: "Modelo", value: "Cadeira"},
-                    {label: "Garantia", value: "1 ano"},
-                    {label: "Cuidados", value: "Produto recomendado para uso doméstico. Limpar com pano macio seco ou levemente umedecido com água."},
-                    {label: "Conteúdo", value: "1 Cadeira de Escritório"},
-                    {label: "Tamanho", value: "Altura: 109 - 119 cm | Largura: 66 cm | Profundidade: 70 cm | Altura do braço ao chão: 65 - 75 cm | Altura do assento ao chão: 45 - 55 cm"},
-                    {label: "Montagem", value: "Sim, a montagem é simples mas sugerimos a contratação do nosso serviço de montagem (para os CEPs em que o serviço está disponível) ou de algum profissional experiente de sua preferência"},
-                    {label: "Encosto", value: "Encosto com regulagem de altura e inclinação"},
-                    {label: "Peso", value: "Suportado: 120 kg"},
+import axios from 'axios';
 
-                ]
+export default {
+    data() {
+        return {
+            // produto: {
+            //     nome: "Cadeira 1",
+            //     id: 1,
+            //     descricao: "Lorem ipsum dolor sit amet, consectetur ad ipiscing elit. Nulla quam velit, vulputate eu pharetra nec, mattis ac neque. Duis vulputate commodo lectus, ac blandit elit tincidunt id. Sed rhoncus, tortor sed eleifend tristique, tortor mauris molestie elit, et lacinia ipsum quam nec dui. Quisque nec mauris sit amet elit iaculis pretium sit amet quis magna.",
+            //     preco: "1300",
+            //     imagem: "/src/assets/img/cadeira1.png",
+            //     sobre: [
+            //         {label: "Cor", value: "Bege"},
+            //         {label: "Modelo", value: "Cadeira"},
+            //         {label: "Garantia", value: "1 ano"},
+            //         {label: "Cuidados", value: "Produto recomendado para uso doméstico. Limpar com pano macio seco ou levemente umedecido com água."},
+            //         {label: "Conteúdo", value: "1 Cadeira de Escritório"},
+            //         {label: "Tamanho", value: "Altura: 109 - 119 cm | Largura: 66 cm | Profundidade: 70 cm | Altura do braço ao chão: 65 - 75 cm | Altura do assento ao chão: 45 - 55 cm"},
+            //         {label: "Montagem", value: "Sim, a montagem é simples mas sugerimos a contratação do nosso serviço de montagem (para os CEPs em que o serviço está disponível) ou de algum profissional experiente de sua preferência"},
+            //         {label: "Encosto", value: "Encosto com regulagem de altura e inclinação"},
+            //         {label: "Peso", value: "Suportado: 120 kg"},
+            //     ],
+            // }
+            product: {
+                productId: null,
+                name: '',
+                value: 0,
+                quantity: 0,
+                editable: false,
+                mainImgurl: '',
+                description: '',
+                secondaryImages: [],
+                details: [],
+                materials: [],
+                sections: [],
+                tags: []
             }
         }
+    },
+
+    created() {
+        // Carrega dados necessários ao entrar na tela.
+        //this.getproduct();
+    },
+
+    methods: {
+
+        /** Faz requisição para obter produto pelo id. */
+        getProduct() {
+            // pega id do produto pela URL.
+            const productId = this.$route.params.id;
+            if (productId != null) {
+                axios.get(`http://localhost:8081/product/${productId}`)
+                    .then(response => {
+                        this.product = response.data;
+                    }).catch(error => {
+                        console.error('Erro ao obter produto:', error);
+                    });
+            }
+        },
+
+
     }
 }
 </script>
