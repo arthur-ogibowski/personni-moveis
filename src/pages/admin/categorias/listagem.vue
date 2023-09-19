@@ -7,7 +7,6 @@
           <el-table-column type="selection" width="50"/>
           <el-table-column prop="id" label="ID" sortable width="80" />
           <el-table-column prop="name" label="Nome" sortable width="250"/>
-          <el-table-column prop="quantidade" sortable label="Produtos Cadastrados" width="250"/>
           <el-table-column prop="allow_creation" sortable label="Possibilitar Criação">
 
           </el-table-column>
