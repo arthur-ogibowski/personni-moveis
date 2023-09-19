@@ -1,5 +1,8 @@
 <template>
-  <div v-if="!currentUrl.includes('/admin')">
+  <div v-if="currentUrl.includes('/login')">
+    <router-view />
+  </div>
+  <div v-else-if="!currentUrl.includes('/admin')">
     <Navbar />
       <router-view />
     <Footer />

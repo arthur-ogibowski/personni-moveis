@@ -1,7 +1,10 @@
 import Index from '@/pages/user/index.vue';
 import NotFound from '@/pages/user/not-found.vue';
+
 import UserDashboard from '@/pages/user/perfil/dashboard.vue';
 import UserListarPedidos from '@/pages/user/perfil/pedidos.vue';
+import UserListarOrcamentos from '@/pages/user/perfil/orcamentos.vue';
+import UserListarEnderecos from '@/pages/user/perfil/enderecos.vue';
 
 import ProdutosListar from '@/pages/user/produtos/listagem.vue';
 import ProdutosSingle from '@/pages/user/produtos/single.vue'
@@ -10,9 +13,11 @@ import ProdutosPersonalizar from '@/pages/user/produtos/personalizar.vue'
 import CMP from '@/pages/user/cmp.vue'
 
 import CarrinhoResumo from '@/pages/user/carrinho/resumo.vue'
+import CarrinhoPagamento from '@/pages/user/carrinho/pagamento.vue'
 
 import AdminDashboard from '@/pages/admin/dashboard.vue';
 import AdminListarProdutos from '@/pages/admin/produtos/listagem.vue';
+import AdminAdicionarProduto from '@/pages/admin/produtos/adicionar.vue'
 import AdminEditarProduto from '@/pages/admin/produtos/editar.vue';
 import AdminListarCategorias from '@/pages/admin/categorias/listagem.vue';
 import AdminEditarCategoria from '@/pages/admin/categorias/editar.vue';
@@ -34,16 +39,21 @@ export const routes = [
   { path: '/', component: Index },
   { path: '/perfil', component: UserDashboard},
   { path: '/perfil/pedidos', component: UserListarPedidos},
+  { path: '/perfil/orcamentos', component: UserListarOrcamentos},
+  { path: '/perfil/enderecos', component: UserListarEnderecos},
+
   { path: '/produtos', component: ProdutosListar },
   { path: '/produtos/:id', component: ProdutosSingle },
   { path: '/produtos/:id/personalizar', component: ProdutosPersonalizar },
 
   { path: '/criar', component: CMP},
 
-  {path: '/carrinho', component: CarrinhoResumo},
+  { path: '/carrinho', component: CarrinhoResumo },
+  { path: '/checkout', component: CarrinhoPagamento },
 
   { path: '/admin', component: AdminDashboard },
   { path: '/admin/produtos', component: AdminListarProdutos },
+  { path: '/admin/produtos/adicionar', component: AdminAdicionarProduto },
   { path: '/admin/produtos/:id', component: AdminEditarProduto },
   { path: '/admin/categorias', component: AdminListarCategorias },
   { path: '/admin/categorias/:id', component: AdminEditarCategoria },

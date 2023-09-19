@@ -23,6 +23,7 @@
   
   </template>
 
+
 <script>
 import axios from 'axios';
 import AuthService from '@/authService.js';
@@ -61,13 +62,10 @@ export default {
 
 div.login{
     display: flex;
-    flex-direction: row;
     justify-content: center;
     align-items: center;
-    background-color: #CACACA;
-}
-div.side-image{
-    background-color: black;
+    width: 100vw;
+    height: 100vh;
 }
 // div.blue-rectangle{
 //     width: 800px;
@@ -87,7 +85,6 @@ div.side-image{
 // letter-spacing: -0.333px;
 //     }
 // }
-
 
 
 div.login-dialog{

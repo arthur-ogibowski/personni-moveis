@@ -75,7 +75,7 @@
           </el-form-item>
       </el-form>
     </div>
-  </template>
+</template>
   
   <script> 
 import axios from 'axios';
@@ -111,7 +111,6 @@ import AuthService from '@/authService';
             // A resposta da API indica que o recurso foi criado com sucesso.
             // Você pode realizar ações adicionais aqui, se necessário.
             console.log('Recurso criado com sucesso', response.data);
-        
             } else {
             console.error('Erro ao criar recurso:', response.statusText);
             }
