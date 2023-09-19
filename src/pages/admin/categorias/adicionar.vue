@@ -79,6 +79,7 @@
   
   <script> 
 import axios from 'axios';
+import AuthService from '@/authService';
 
   export default {
       data() {
@@ -99,7 +100,12 @@ import axios from 'axios';
 
     methods: {
         criarCategoria() {
-            axios.post('http://localhost:8081/category', this.categoria)
+            // const token = AuthService.getToken();
+            axios.post('http://localhost:8081/category', this.categoria, {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`, // Adiciona o token no cabeçalho
+        //   },
+        }) 
         .then((response) => {
             if (response.status === 201) {
             // A resposta da API indica que o recurso foi criado com sucesso.

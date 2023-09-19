@@ -1,46 +1,60 @@
 <template>
-  <div class="container login">
-    <div class="side-image"></div>
-    <div class="blue-rectangle">
-        <div class="login-dialog">
-            <h1>Login</h1>
-                <el-input
-                  v-model="email"
-                  size="large"
-                  placeholder="Email"
-                />
-                <el-input
-                  v-model="senha"
-                  size="large"
-                  placeholder="Senha"
-                  type="password"
-                  show-password
-                />
-                <el-button color="#343434" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="processarLogin()">Entrar</el-button>
-        </div>
+    <div class="container login">
+      <div class="side-image"></div>
+      <!-- <div class="blue-rectangle"> -->
+          <div class="login-dialog">
+              <h1>Login</h1>
+                  <el-input
+                    v-model="login.email"
+                    size="large"
+                    placeholder="Email"
+                  />
+                  <el-input
+                    v-model="login.password"
+                    size="large"
+                    placeholder="Senha"
+                    type="password"
+                    show-password
+                  />
+                  <el-button color="#343434" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="fazerLogin()">Entrar</el-button>
+          </div>
+      <!-- </div> -->
     </div>
-  </div>
-</template>
+  
+  </template>
 
 <script>
-
+import axios from 'axios';
+import AuthService from '@/authService.js';
 
 export default {
     data() {
         return {
-            email: '',
-            senha: '',
+            login:{
+            email: "",
+            password: "",
+        },
             carregando: false
         }
     },
     methods: {
-        processarLogin() {
-            console.log(this.email)
-            console.log(this.senha)
-            this.carregando = true
-        }
+        fazerLogin() {
+            axios.post('http://localhost:8081/login', this.login)
+            .then(response => {
+          if (response.status === 200) {
+            const token = response.data.token;
+            AuthService.setToken(token);
+            this.$router.push('/');
+          } else {
+            console.error('Erro ao fazer login. Código de status:', response.status);
+          }
+        })
+        .catch(error => {
+          console.error('Erro ao fazer login:', error);
+        })
     }
-}
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -55,28 +69,30 @@ div.login{
 div.side-image{
     background-color: black;
 }
-div.blue-rectangle{
-    width: 800px;
-    height: 800px;
-    flex-shrink: 0;
-    background: #2A58E1;
+// div.blue-rectangle{
+//     width: 800px;
+//     height: 800px;
+//     flex-shrink: 0;
+//     background: #2A58E1;
 
-    :deep(.el-input), :deep(.el-button){
-        width: 330px;
-        height: 56px;
-        margin: 25px;
-        color: #FCFAF1;
-text-align: center;
-font-size: 26px;
-font-style: normal;
-line-height: normal;
-letter-spacing: -0.333px;
-    }
-}
+//     :deep(.el-input), :deep(.el-button){
+//         width: 330px;
+//         height: 56px;
+//         margin: 25px;
+//         color: #FCFAF1;
+// text-align: center;
+// font-size: 26px;
+// font-style: normal;
+// line-height: normal;
+// letter-spacing: -0.333px;
+//     }
+// }
+
+
 
 div.login-dialog{
     background: #FCFAF1;
-    box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.50);
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.50);
     margin: 160px;
     display: flex;
     flex-direction: column;
@@ -84,10 +100,16 @@ div.login-dialog{
     justify-content: center;
     width: 480px;
     height: 480px;
+    :deep(.el-input), :deep(.el-button){
+         width: 330px;
+         height: 56px;
+         margin: 25px;
+         color: #FCFAF1;
+    }
 }
 
 h1{
-    color: #2A58E1;
+    color: #1a2930;
     text-align: center;
     font-family: Inter;
     font-size: 41px;
