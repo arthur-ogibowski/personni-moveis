@@ -293,7 +293,7 @@ export default {
             }
 
             // Fazendo requisição para criação do produto e seus subitens.
-            axios.put('http://localhost:8081/products/save-full-product', this.product, { params: categoryId })
+            axios.post('http://localhost:8081/products/save-full-product', this.product)
                 .then((response) => {
                     console.log('Sucesso: ' + response.statusText);
                 })
