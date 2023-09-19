@@ -17,6 +17,7 @@ import CarrinhoPagamento from '@/pages/user/carrinho/pagamento.vue'
 
 import AdminDashboard from '@/pages/admin/dashboard.vue';
 import AdminListarProdutos from '@/pages/admin/produtos/listagem.vue';
+import AdminAdicionarProduto from '@/pages/admin/produtos/adicionar.vue'
 import AdminEditarProduto from '@/pages/admin/produtos/editar.vue';
 import AdminListarCategorias from '@/pages/admin/categorias/listagem.vue';
 import AdminEditarCategoria from '@/pages/admin/categorias/editar.vue';
@@ -50,6 +51,7 @@ export const routes = [
 
   { path: '/admin', component: AdminDashboard },
   { path: '/admin/produtos', component: AdminListarProdutos },
+  { path: '/admin/produtos/adicionar', component: AdminAdicionarProduto },
   { path: '/admin/produtos/:id', component: AdminEditarProduto },
   { path: '/admin/categorias', component: AdminListarCategorias },
   { path: '/admin/categorias/:id', component: AdminEditarCategoria },
