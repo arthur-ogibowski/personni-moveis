@@ -179,7 +179,6 @@
 
 
             </div>
-            <h1>{{ product }}</h1>
             
             <el-form-item>
                 <el-button type="primary" @click="createProduct">Salvar</el-button>
