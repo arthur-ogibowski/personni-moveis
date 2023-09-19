@@ -17,7 +17,7 @@
 
             <div class="produtos-listing">
               <div class="produto-card" v-for="i in 13" :key="i">
-                <router-link to="">
+                <router-link to="/produtos/1">
                   <el-card :body-style="{ padding: '0px' }">
                       <img
                         src="@/assets/img/cadeira1.png"

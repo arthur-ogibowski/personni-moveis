@@ -57,7 +57,7 @@
             </el-select>
         </el-form-item>
         <el-form-item>
-            <template #default="scope">
+            <template default="scope">
                 <el-button type="primary" @click="editProduct">Editar</el-button>
             </template>
         </el-form-item>
