@@ -189,6 +189,7 @@
 
 <script>
 import axios from 'axios';
+import { ElMessage } from 'element-plus'
 
 export default {
     data() {
@@ -264,14 +265,14 @@ export default {
         },
 
         /** Faz requisição para criar tag e seta tag criada como selecionada. */
-        createTag() {
+        /*createTag() {
             axios.get('http://localhost:8081/tags')
                 .then(response => {
                     this.product.tags = response.data;
                 }).catch(error => {
                     console.error('Erro ao obter tags: ', error);
                 });
-        },
+        },*/
 
         /** Faz requisição para criar produto. */
         createProduct() {
@@ -296,9 +297,18 @@ export default {
             axios.post('http://localhost:8081/products/save-full-product', this.product)
                 .then((response) => {
                     console.log('Sucesso: ' + response.statusText);
+                    ElMessage({
+                      message: 'Produto criado com sucesso.',
+                      type: 'success',
+                    })
+                    this.$router.push('/admin/produtos')
                 })
                 .catch((error) => {
                     console.error('Erro ao criar recurso:', error);
+                    ElMessage({
+                      message: 'Erro ao criar produto.',
+                      type: 'error',
+                    })
                 })
         },
 

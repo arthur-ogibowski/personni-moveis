@@ -3,7 +3,7 @@
       <h1><router-link class="underline-router" to="/admin/categorias">Categorias</router-link > > Adicionar</h1>
       <el-form :model="categoria" label-width="*" label-position="top">
         <h2>Detalhes da categoria</h2>
-            <el-form-item label="Nome">
+            <el-form-item label="Nome" required>
               <el-input v-model="categoria.name"></el-input>
             </el-form-item>
           <hr>
@@ -71,7 +71,7 @@
 
 
           <el-form-item>
-              <el-button type="primary" @click="criarCategoria">Salvar</el-button>
+              <el-button type="primary" @click="criarCategoria" :disabled="!categoria.name">Salvar</el-button>
           </el-form-item>
       </el-form>
     </div>
@@ -80,6 +80,7 @@
   <script> 
 import axios from 'axios';
 import AuthService from '@/authService';
+import { ElMessage } from 'element-plus'
 
   export default {
       data() {
@@ -110,9 +111,17 @@ import AuthService from '@/authService';
             if (response.status === 201) {
             // A resposta da API indica que o recurso foi criado com sucesso.
             // Você pode realizar ações adicionais aqui, se necessário.
-            console.log('Recurso criado com sucesso', response.data);
+                ElMessage({
+                  message: 'Categoria criada com sucesso.',
+                  type: 'success',
+                })
+                this.$router.push('/admin/categorias')
+
             } else {
-            console.error('Erro ao criar recurso:', response.statusText);
+                ElMessage({
+                  message: 'Erro ao criar a categoria.',
+                  type: 'error',
+                })
             }
         })
     .catch((error) => {

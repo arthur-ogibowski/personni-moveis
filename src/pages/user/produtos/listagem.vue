@@ -1,23 +1,24 @@
 <template>
-    <div class="container">
+    <div class="container" v-loading="loading" element-loading-text="Carregando..."
+    :element-loading-spinner="svg"
+    element-loading-background="rgba(122, 122, 122, 0.9)">
         <div class="categorias">
             <el-menu
               class="lista-categorias"
               mode="horizontal"
-              @select="handleSelect"
               background-color="transparent"
               active-text-color="#000000"
             >
             <div v-for="categoria in categorias" v-bind:key="categoria">
-              <router-link to="/produtos/"><el-menu-item index="1">{{categoria.nome}}</el-menu-item></router-link>
+              <el-menu-item index="1" @click="filtrarPorCategoria(categoria.categoryId)">{{categoria.name}}</el-menu-item>
             </div>
             </el-menu>
 
             <h1>Produtos</h1>
 
             <div class="produtos-listing">
-              <div class="produto-card" v-for="i in 13" :key="i">
-                <router-link to="/produtos/1">
+              <div class="produto-card" v-for="product in products" :key="product">
+                <router-link :to='"/produtos/" + product.productId'>
                   <el-card :body-style="{ padding: '0px' }">
                       <img
                         src="@/assets/img/cadeira1.png"
@@ -25,9 +26,18 @@
                       />
                       <div style="padding: 14px">
                         <div class="bottom">
-                          <h2>Cadeira Eames</h2>
-                          <span>R$150</span>
+                          <h2>{{  product.name }}</h2>
+                          <el-text v-if="product.quantity > 0" class="mx-1" type="success" size="small">Disponível</el-text>
+                          <el-text v-else class="mx-1" type="danger" size="small">Fora de estoque</el-text>
+                          <br>
+                          <el-text v-if="product.editable == true" class="mx-1" type="success" size="small">Personalizável</el-text>
+                          <el-text v-else class="mx-1" type="danger" size="small"></el-text>
+                          <br>
+                          <span v-if="product.quantity > 0">R$ {{ product.value }}</span>
+                          
                         </div>
+                        <br>
+                        <el-button type="primary" class="cta" color="$cta-color">Detalhes</el-button>
                       </div>
                   </el-card>
                 </router-link>
@@ -39,18 +49,49 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data(){
         return{
-            categorias: [
-                {id: 1, nome: 'Cadeiras'},
-                {id: 2, nome: 'Mesas'},
-                {id: 3, nome: 'Armários'},
-                {id: 4, nome: 'Estantes'},
-                {id: 5, nome: 'Racks'},
-            ]
+            categorias: [],
+            products: [],
+            loading: true,
         }
+    },
+    created() {
+    axios.get('http://localhost:8081/products')
+      .then(response => {
+        response.data.forEach(product => this.products.push(product));
+        this.loading = false;
+      })
+      .catch(error => {
+        console.error('Erro ao obter dados da API:', error);
+      });
+    axios.get('http://localhost:8081/category')
+      .then(response => {
+        response.data.forEach(categoria => this.categorias.push(categoria));
+      })
+      .catch(error => {
+        console.error('Erro ao obter dados da API:', error);
+      });
+    
+  },
+  methods: {
+    filtrarPorCategoria(categoryId) {
+      axios.get("http://localhost:8081/category/products-in-category/" + categoryId)
+        .then(response => {
+          this.product = [];
+          this.loading = true;
+          response.data.forEach(product => this.products.push(product));
+          console.log(this.products);
+          this.loading = false;
+        })
+        .catch(error => {
+          console.error('Erro ao obter dados da API:', error);
+        });
     }
+  }
 
 }
 </script>
