@@ -1,49 +1,89 @@
 <template>
     <div class="container">
-        <div class="categorias">
-            <el-menu
-              class="lista-categorias"
-              mode="horizontal"
-              background-color="transparent"
-              active-text-color="#000000"
-            >
-            <div v-for="categoria in categorias" v-bind:key="categoria">
-              <el-menu-item index="1" @click="filtrarPorCategoria(categoria.id)">{{categoria.name}}</el-menu-item>
-            </div>
-            </el-menu>
 
-            <h1>Produtos</h1>
+      <div class="catalogo-top">
+            <h1>Catálogo</h1>
 
-            <div class="produtos-listing">
-              <div class="produto-card" v-for="product in products" :key="product">
-                <router-link :to='"/produtos/" + product.productId'>
-                  <el-card :body-style="{ padding: '0px' }">
-                      <img
-                        src="@/assets/img/cadeira1.png"
-                        class="image"
-                      />
-                      <div style="padding: 14px">
-                        <div class="bottom">
-                          <h2>{{  product.name }}</h2>
-                          <el-text v-if="product.quantity > 0" class="mx-1" type="success" size="small">Disponível</el-text>
-                          <el-text v-else class="mx-1" type="danger" size="small">Fora de estoque</el-text>
-                          <br>
-                          <el-text v-if="product.editable == true" class="mx-1" type="success" size="small">Personalizável</el-text>
-                          <el-text v-else class="mx-1" type="danger" size="small"></el-text>
-                          <br>
-                          <span v-if="product.quantity > 0">R$ {{ product.value }}</span>
-                          
-                        </div>
-                        <br>
-                        <el-button type="primary" class="cta" color="$cta-color">Detalhes</el-button>
-                      </div>
-                  </el-card>
-                </router-link>
+            <el-input v-model="input4" placeholder="Procurar produto">
+              <template #prefix>
+                <el-icon class="el-input__icon"><search /></el-icon>
+              </template>
+            </el-input>
+      </div>
+
+            <el-divider />
+
+            <div class="catalogo-content">
+              <div class="filters">
+                <div class="filters-item">
+                <el-divider content-position="center">Categoria</el-divider>
+                <el-radio-group v-model="selected" size="large">
+                  <el-radio-button
+                    v-for="categoria in categorias"
+                    :key="categoria"
+                    :label="categoria.name">
+                    {{ categoria.name }}
+                  </el-radio-button>
+                </el-radio-group>
+              </div>
+
+              <div class="filters-item">
+                <el-divider content-position="center">Preço</el-divider>
+                <el-radio-group v-model="selected" size="large">
+                  <el-radio-button>
+                    Menor para maior <el-icon><CaretTop /></el-icon>
+                  </el-radio-button>
+                  <el-radio-button>
+                    Maior para Menor <el-icon><CaretBottom /></el-icon>
+                  </el-radio-button>
+                </el-radio-group>
+              </div>
+              
+              <div class="filters-item">
+                <el-divider content-position="center">Material</el-divider>
+                <el-radio-group v-model="selected" size="large">
+                  <el-radio-button>
+                    Madeira
+                  </el-radio-button>
+                  <el-radio-button>
+                    Metal
+                  </el-radio-button>
+                </el-radio-group>
               </div>
             </div>
 
+
+              <div class="produtos-listing">
+                <div class="produto-card" v-for="product in products" :key="product">
+                  <router-link :to='"/produtos/" + product.productId'>
+                    <el-card :body-style="{ padding: '0px' }">
+                        <img
+                          src="@/assets/img/cadeira1.png"
+                          class="image"
+                        />
+                        <div style="padding: 14px">
+                          <div class="card-bottom">
+                            <h2>{{  product.name }}</h2>
+                            <div class="card-bottom-details">
+                              <div class="details-left">                            
+                                <el-text v-if="product.quantity > 0" class="mx-1" type="success" size="small">Disponível</el-text>
+                              <el-text v-else class="mx-1" type="danger" size="small">Fora de estoque</el-text>
+                              <br>
+                              <el-text v-if="product.editable == true" class="mx-1" type="success" size="small">Personalizável</el-text>
+                              <el-text v-else class="mx-1" type="danger" size="small"></el-text></div>
+                              <h3 v-if="product.quantity > 0">R$ {{ product.value }}</h3>
+                            </div>
+
+                          </div>
+                        </div>
+                    </el-card>
+                  </router-link>
+                </div>
+              </div>
+
+          </div>
+
         </div>
-    </div>
 </template>
 
 <script>
@@ -56,6 +96,7 @@ export default {
             categorias: [],
             products: [],
             loading: true,
+            selected: '',
         }
     },
     async created() {
@@ -112,23 +153,101 @@ export default {
 </script>
 
 <style scoped lang="scss">
-ul.lista-categorias {
+@import '@/assets/styles/scss/basics.scss';
+
+div.catalogo-top{
   display: flex;
-  justify-content: center;
-  border: 1px solid #A6A6A6;
-  border-radius: 5px !important;
+  justify-content: space-between;
+
+  .el-input{
+    height: 40px;
+    width: 200px;
+  }
+
+}
+div.catalogo-content{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  margin-top: 50px;
+  margin-bottom: 50px;
+
+  .filters-item{
+    margin-bottom: 4rem;
+  }
+
+  :deep(.el-divider__text){
+    background-color: #EFEFEF;
+  }
+
+  .el-radio-group {
+    display: flex;
+    flex-direction: column;
+    :deep(.el-radio-button--large .el-radio-button__inner) {
+      padding: 16px 24px;
+      font-size: var(--el-font-size-base);
+      margin: 5px 0;
+      border: none !important;
+      width: 200px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      box-shadow: none;
+
+      &:hover{
+        background-color: $tertiary-color !important;
+        color: $cta-color !important;
+      }
+
+    }
+    :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner){
+        background-color: $tertiary-color !important;
+        color: $cta-color !important;
+    }
+  }
 }
 div.el-card{
-    width: 200px;
+    width: 250px;
+    transition: all 0.2s ease-in-out;
+    box-shadow: none;
+
+      &:hover{
+        transform: scale(1.05);
+      }
+
+      div.card-bottom{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 100px;
+        max-height: 100px;
+
+        h3{
+          margin: 0;
+          font-size: 1.5rem;
+        }
+        h2{
+          font-size: 2rem;
+        }
+
+        span{
+          word-break: normal;
+        }
+
+        div.card-bottom-details{
+          display: flex;
+          justify-content: space-between;
+          align-items: end;
+        }
+      }
 }
 div.produtos-listing{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
+  width: 70vw;
 
   div.produto-card{
-    margin: 15px;
+    margin: 0 15px 15px 15px;
   }
 }
 </style>

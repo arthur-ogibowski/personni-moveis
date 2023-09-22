@@ -23,6 +23,7 @@
                 <div class="carousel-text">
                   <h3>Cadeira {{ item }} </h3>
                   <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. </p>
+                  <router-link to="/produtos"><el-button class="cta" color="$cta-color">Detalhes</el-button></router-link>
                 </div>
                 <div class="carousel-image">
                   <img src="../../assets/img/cadeiras_para_mesa_de_jantar_cafe_2_1_1.jpg">
@@ -33,6 +34,21 @@
         </div>
       </div>
 
+      <div class="categorias">
+        <h2> Categorias </h2>
+        <div class="categorias-grid">
+          <router-link to="/produtos" v-for="i in categorias" :key="i">
+          <div class="categoria-item">
+            <h3> {{  i.name }} </h3>
+          </div>
+        </router-link>
+        </div>
+        
+        <div class="sobre-catalogo">
+          <router-link to="/produtos"><el-button class="cta" color="$cta-color">Ver catálogo completo</el-button></router-link>
+        </div>
+      </div>
+
       
     </div>
 
@@ -40,6 +56,24 @@
 </template>
 
 <script>
+import axios from 'axios';
+
+export default {
+  data() {
+    return {
+      categorias: []
+    }
+  },
+  async created() {
+      axios.get('http://localhost:8081/category')
+        .then(response => {
+          response.data.forEach(categoria => this.categorias.push(categoria));
+        })
+        .catch(error => {
+          console.error('Erro ao obter dados da API:', error);
+      });
+    }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -51,6 +85,12 @@ div.content{
   align-items: center;
   justify-content: center;
   flex-direction: column;
+
+  .cta{
+        text-transform: uppercase;
+        padding: 20px 40px !important;
+        letter-spacing: 0.5px;
+      }
 
 
    
@@ -99,11 +139,6 @@ div.content{
         font-weight: lighter;
       }
 
-      .cta{
-        text-transform: uppercase;
-        padding: 20px 40px !important;
-        letter-spacing: 0.5px;
-      }
       
     }
     img.img-item{
@@ -111,49 +146,11 @@ div.content{
     }
   }
 
-  div.choice{
-    display: flex;
-    flex-direction: row;
-
-    div.catalogo{
-      background-color: $tertiary-color;
-
-      & h2:hover{
-        color: $cta-color;
-      }
-    }
-
-    div.criar{
-      background-color: $cta-color;
-
-      & h2:hover{
-        color: $tertiary-color;
-      }
-    }
-
-    div.catalogo, div.criar{
-      width: 50vw;
-      min-height: 200px;
-      height: 50vh;
-      text-align: center;
-      h2{
-        font-size: 4vw;
-        font-family: shadows-into-light;
-        transition: 0.2s all ease-in-out;
-      }
-      p{
-        font-size: 2vw;
-      }
-    }
-
-    h2, p{
-      color: #fff;
-    }
-  }
 
 
   div.novidades{
       width: 100vw;
+      margin-top: 2rem;
       //background-color: #fff;
 
     h2 {
@@ -163,8 +160,9 @@ div.content{
       color: inherit;     
       text-align: center; 
       font-family: shadows-into-light;
-      color: $tertiary-color;
+      color: $cta-color;
     }
+
 
     h3 {
       font-family: shadows-into-light;
@@ -202,7 +200,6 @@ div.content{
     .el-carousel {
       width: 100vw;
       min-height: 400px;
-      margin-bottom: 100px;
     }
 
     :deep(.el-carousel__mask){
@@ -212,6 +209,63 @@ div.content{
       height: 400px;
     }
 
+  }
+
+  div.categorias{
+    margin-top: 2rem;
+    padding: 0 20rem;
+
+    h2 {
+      font-size: 4rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: inherit;     
+      text-align: center; 
+      font-family: shadows-into-light;
+      color: $cta-color;
+    }
+
+    div.sobre-catalogo{
+      margin-top: 2rem;
+      display: flex;
+      justify-content: center;
+    }
+    div.categorias-grid{
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    div.categoria-item{
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      margin: 2rem;
+      padding: 2rem;
+      transition: all 0.3s ease-in-out;
+      background-color: $tertiary-darker;
+      height: 200px;
+      width: 30vw;
+
+      &:hover{
+        transform: scale(1.1);
+      }
+
+      img{
+        width: 100%;
+        max-width: 150px;
+        height: auto;
+        border-radius: 10px;
+      }
+
+      h3{
+        font-size: 5rem;
+        color: $secondary-color;
+        font-family: shadows-into-light;
+      }
+    }
   }
 
 

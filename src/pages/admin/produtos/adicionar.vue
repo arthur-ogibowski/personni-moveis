@@ -34,7 +34,7 @@
             <el-form-item required label="Estoque">
                 <el-input-number 
                     v-model="product.quantity"
-                    :min="1"
+                    :min="0"
                     controls-position="right">
                 </el-input-number>
             </el-form-item>
