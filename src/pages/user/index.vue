@@ -1,22 +1,15 @@
 <template>
   <div>
-    <div class="img-mask">
-      <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
-    </div>
     <div class="content">
       <div class="hero">
-        <h1> Personni Móveis </h1>
-        <p> Lorem ipsum dolor, sit amet consectetur adipisicing elit. Commodi, quisquam? Sint animi ex culpa tempora laboriosam dolor repellat nesciunt, labore soluta qui ducimus ab, fugit id in sed ipsum odio? </p>
-      </div>
+        <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
+        <div class="about">
+          <h2> Personni Móveis </h2>
+          <h1> Crie e personalize móveis do seu jeito </h1>
+          <p> Lorem ipsum dolor, sit amet consectetur adipisicing elit. Commodi, quisquam? Sint animi ex culpa tempora laboriosam dolor repellat nesciunt, labore soluta qui ducimus ab, fugit id in sed ipsum odio? </p>
+          <br>
+          <router-link to="/criar"><el-button class="cta" color="$cta-color">Criar meu móvel</el-button></router-link>
 
-      <div class="choice">
-        <div class="catalogo">
-          <router-link class="para-catalogo" to="/produtos"><h2>Catálogo <el-icon><Right /></el-icon></h2></router-link>
-          <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. </p>
-        </div>
-        <div class="criar">
-          <router-link to="/criar"><h2> Criação de móveis <el-icon><Right /></el-icon></h2></router-link>
-          <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. </p>
         </div>
       </div>
 
@@ -50,22 +43,8 @@
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/styles/scss/basics.scss';
 
-div.img-mask{
-  width: 100vw;
-  height: 100%;
-  position: fixed;
-  top: -60px;
-  filter: brightness(0.3);
-  z-index: -1;
-
-  img.img-item{
-    width: 100vw;
-    max-width: 100%;
-    height: 750px;
-    object-fit: cover;
-  }
-}
 
 div.content{
   display: flex;
@@ -73,28 +52,62 @@ div.content{
   justify-content: center;
   flex-direction: column;
 
-  div.hero{
-    color: #fff;
-    padding: 2rem;
-    text-align: center;
-    max-width: 50vw;
-    margin-top: 14rem;
-    margin-bottom: 18rem;
 
-    h1 {
-      font-size: 6vw;
-      font-weight: 700;
-      margin-bottom: 0;
-      color: inherit;
-      //font-family: shadows-into-light;      
+   
+  div.hero{
+    display:flex;
+    flex-direction: row;
+
+    img.img-item, div.about{
+      width: 50vw;
+      height: 700px;
     }
 
-    p {
-      font-size: 1.5rem;
+    div.about{
+      padding: 8rem;
+      
+      h1 {
+      font-size: 6rem;
       font-weight: 400;
-      margin-bottom: 1rem;
-      color: #C5C1C0;
-      margin-top: 0;
+      margin-bottom: 0;
+      margin-top: 20px;
+      color: $cta-color;
+      font-family: playfair-display;
+      text-transform: uppercase;      
+      }
+
+      h2{
+        font-size: 3rem;
+        color: $primary-color;
+        font-family: shadows-into-light;
+        margin-top  : 0;
+      }
+
+      p {
+        font-size: 1.5rem;
+        letter-spacing: 0.5px;
+        font-weight: 400;
+        margin: 4rem 0;
+        color: $secondary-color;
+        line-height: 3rem;
+      }
+
+      a {
+        font-size: 1.5rem;
+        color: $user-grey;
+        text-decoration: underline;
+        font-weight: lighter;
+      }
+
+      .cta{
+        text-transform: uppercase;
+        padding: 20px 40px !important;
+        letter-spacing: 0.5px;
+      }
+      
+    }
+    img.img-item{
+      object-fit: cover;
     }
   }
 
@@ -103,18 +116,18 @@ div.content{
     flex-direction: row;
 
     div.catalogo{
-      background-color: #1a2930;
+      background-color: $tertiary-color;
 
       & h2:hover{
-        color: #f7ce3e;
+        color: $cta-color;
       }
     }
 
     div.criar{
-      background-color: #f7ce3e;
+      background-color: $cta-color;
 
       & h2:hover{
-        color: #1a2930;
+        color: $tertiary-color;
       }
     }
 
@@ -141,7 +154,7 @@ div.content{
 
   div.novidades{
       width: 100vw;
-      background-color: #fff;
+      //background-color: #fff;
 
     h2 {
       font-size: 4rem;
@@ -150,7 +163,7 @@ div.content{
       color: inherit;     
       text-align: center; 
       font-family: shadows-into-light;
-      color: #1a2930;
+      color: $tertiary-color;
     }
 
     h3 {
@@ -165,13 +178,12 @@ div.content{
     img {
       max-width: 600px;
       width: 100%;
-      object-fit: cover;
     }
 
     .el-carousel__item {
       color: #0a1612;
       text-align: center;
-      background-color: #C5C1C0;
+      background-color: #FEFEFE;
       display: flex;
       flex-direction: row;
       justify-content: center;

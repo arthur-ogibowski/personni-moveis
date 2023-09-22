@@ -5,6 +5,7 @@ import '@/assets/styles/main.css';
 import App from '@/app.vue';
 import { routes } from '@/routes.js';
 import '@/assets/styles/scss/styles.scss'
+import '@/store/index.js'
 
 import ElementPlus from 'element-plus'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'

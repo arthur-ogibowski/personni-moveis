@@ -144,7 +144,7 @@ div.login-dialog{
 }
 
 h1{
-    color: #1a2930;
+    color: #112620;
     text-align: center;
     font-family: Inter;
     font-size: 41px;

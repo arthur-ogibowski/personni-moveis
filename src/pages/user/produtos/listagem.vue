@@ -1,7 +1,5 @@
 <template>
-    <div class="container" v-loading="loading" element-loading-text="Carregando..."
-    :element-loading-spinner="svg"
-    element-loading-background="rgba(122, 122, 122, 0.9)">
+    <div class="container">
         <div class="categorias">
             <el-menu
               class="lista-categorias"
@@ -10,7 +8,7 @@
               active-text-color="#000000"
             >
             <div v-for="categoria in categorias" v-bind:key="categoria">
-              <el-menu-item index="1" @click="filtrarPorCategoria(categoria.categoryId)">{{categoria.name}}</el-menu-item>
+              <el-menu-item index="1" @click="filtrarPorCategoria(categoria.id)">{{categoria.name}}</el-menu-item>
             </div>
             </el-menu>
 
@@ -50,6 +48,7 @@
 
 <script>
 import axios from 'axios';
+import { ElLoading } from 'element-plus'
 
 export default {
     data(){
@@ -59,33 +58,49 @@ export default {
             loading: true,
         }
     },
-    created() {
-    axios.get('http://localhost:8081/products')
-      .then(response => {
-        response.data.forEach(product => this.products.push(product));
-        this.loading = false;
-      })
-      .catch(error => {
-        console.error('Erro ao obter dados da API:', error);
+    async created() {
+      const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
       });
-    axios.get('http://localhost:8081/category')
-      .then(response => {
-        response.data.forEach(categoria => this.categorias.push(categoria));
-      })
-      .catch(error => {
-        console.error('Erro ao obter dados da API:', error);
+      axios.get('http://localhost:8081/category')
+        .then(response => {
+          response.data.forEach(categoria => this.categorias.push(categoria));
+        })
+        .catch(error => {
+          console.error('Erro ao obter dados da API:', error);
+      });
+      axios.get('http://localhost:8081/products')
+        .then(response => {
+          response.data.forEach(product => this.products.push(product));
+          setTimeout(() => {
+            loading.close()
+          }, 250)
+        })
+        .catch(error => {
+          console.error('Erro ao obter dados da API:', error);
       });
     
   },
   methods: {
     filtrarPorCategoria(categoryId) {
+      const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+      });
       axios.get("http://localhost:8081/category/products-in-category/" + categoryId)
         .then(response => {
           this.product = [];
-          this.loading = true;
           response.data.forEach(product => this.products.push(product));
           console.log(this.products);
-          this.loading = false;
+          this.$forceUpdate();
+
+          setTimeout(() => {
+            loading.close()
+          }, 250)
+
         })
         .catch(error => {
           console.error('Erro ao obter dados da API:', error);

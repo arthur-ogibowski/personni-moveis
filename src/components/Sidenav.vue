@@ -57,7 +57,7 @@ export default {
 .el-menu-vertical {
     width: 200px;
     height: 100vh;
-    background-color: #1a2930;
+    background-color: #112620;
     position: fixed;
     z-index: 999;
 
@@ -84,7 +84,7 @@ export default {
     }
 
     a.router-link-active {
-        color: #f7ce3e !important;
+        color: #B68D40 !important;
     
     }
 

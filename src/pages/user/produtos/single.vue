@@ -1,7 +1,5 @@
 <template>
-    <div class="container" v-loading="loading" element-loading-text="Carregando..."
-    :element-loading-spinner="svg"
-    element-loading-background="rgba(122, 122, 122, 0.9)">
+    <div class="container">
         <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/produtos' }">Produtos</el-breadcrumb-item>
           <el-breadcrumb-item>{{ product.name }}</el-breadcrumb-item>
@@ -25,7 +23,7 @@
                 <p style="font-size: 1.6rem;">{{ product.description }}</p>
                 <h3 style="font-size: 1.8rem;">R${{ product.value }}</h3>
                 <div class="info-box-action">
-                    <router-link  :to="{path: '/produtos/' + product.productId + '/personalizar'}"><el-button color="#1a2930" size="small">Personalizar</el-button></router-link>
+                    <router-link  :to="{path: '/produtos/' + product.productId + '/personalizar'}"><el-button color="#112620" size="small">Personalizar</el-button></router-link>
                     <el-button class="cta" color="$cta-color">Adicionar ao carrinho</el-button>
                 </div>
             </div>
@@ -50,23 +48,31 @@
 
 <script>
 import axios from 'axios';
+import { ElLoading } from 'element-plus';
+
 export default {
     data(){
         return{
             product: '',
-            loading: true
         }
     },
-    created() {
-    axios.get('http://localhost:8081/products/' + this.$route.params.id)
-      .then(response => {
-        this.product = response.data
-        this.loading = false;
-      })
-      .catch(error => {
-        console.error('Erro ao obter dados da API:', error);
-      });
-    }
+    async created() {
+        const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+        });
+        axios.get('http://localhost:8081/products/' + this.$route.params.id)
+          .then(response => {
+            this.product = response.data
+            setTimeout(() => {
+                loading.close()
+            }, 250)
+          })
+          .catch(error => {
+            console.error('Erro ao obter dados da API:', error);
+          });
+        }
     
 }
 </script>

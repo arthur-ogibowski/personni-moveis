@@ -171,11 +171,16 @@ body{
         border: none;
         background-color: $cta-color;
         color: white;
+        text-transform: uppercase;
     }
     button.admin-cta{
         border: none;
         background-color: $admin-cta;
         color: white;
+    }
+
+    button.el-button{
+        padding: 10px 20px !important;
     }
 
     div.el-breadcrumb {
