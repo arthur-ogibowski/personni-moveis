@@ -87,7 +87,8 @@ import { ElMessage } from 'element-plus'
         return {
         currentSection: 1,
         selected: [],
-        categoria:{      
+        categoria:{  
+            id: 0,   
             name : "",
             allow_creation: false,
             sectionCmps: [

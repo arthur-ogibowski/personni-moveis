@@ -20,7 +20,7 @@
                 <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
-                        <el-icon v-on:click="deleteSection(section.id)" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                        <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                     </el-form-item>
 
                     
@@ -29,7 +29,7 @@
                             
 
                             <div class="element-card">
-                                <el-icon v-on:click="deleteElement(element.id)" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                                <el-icon v-on:click="deleteCascade(section, element, null)" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                 <h2>{{ element.name.toUpperCase() }}</h2>
 
                                 <el-form-item label="Nome">
@@ -40,7 +40,7 @@
 
 
                                 <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
-                                    <el-icon v-on:click="deleteOption(option.id)" style="margin-left: 8px; float: right; margin-top: 33px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                                    <el-icon v-on:click="deleteCascade(section, element, option)" style="margin-left: 8px; float: right; margin-top: 33px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                     <el-row :gutter="20">
                                     <el-col :span="12">
                                         <el-form-item label="Opção">
@@ -121,38 +121,64 @@ import { ElMessage } from 'element-plus';
       });
   },
   methods: {     
-    deleteOption(id) {
-      axios.delete(`http://localhost:8081/OptionCmp/${id}`)
-      .then(response => {
-        this.categorias = response.data;
-        window.location.reload();
-      })
-      .catch(error => {
-        console.error('Erro ao deletar Opção', error);
-      });
-    },
+    deleteCascade(Seccao, Elemento, Option) {
+    // Encontre a categoria
+    const categoria = this.categoria;
 
-    deleteElement(id) {
-      axios.delete(`http://localhost:8081/ElementCmp/${id}`)
-      .then(response => {
-        this.categorias = response.data;
-        window.location.reload();
-      })
-      .catch(error => {
-       ElMessage.error('Erro ao deletar Elemento! Veja se não tem Opções relacionadas!');
-      });
-    },
+    // Se o ID da seção for fornecido, exclua tudo dentro dessa seção
+    if (Seccao != null && Elemento == null && Option == null) {
+      const sectionCmpIndex = categoria.sectionCmps.findIndex(section => section === Seccao);
 
-    deleteSection(id) {
-      axios.delete(`http://localhost:8081/SectionCmp/${id}`)
-      .then(response => {
-        this.categorias = response.data;
-        window.location.reload();
-      })
-      .catch(error => {
-        console.error('Erro ao Seção! Veja se não tem Elementos relacionados!');
+      if (sectionCmpIndex !== -1 && Seccao.id != 0) {
+        axios.delete(`http://localhost:8081/SectionCmp/${Seccao.id}`)
+        .then(response => {
+          this.categorias = response.data;
+          window.location.reload();
+        })
+        .catch(error => {
+          ElMessage.error('Erro ao deletar Seção! Veja se não tem Elementos relacionados!');
+        });
+       
+      }else{
+        categoria.sectionCmps.splice(sectionCmpIndex, 1);
+      }
+    } else if (Elemento != null && Option == null) { // Se o ID do elemento for fornecido, exclua todas as opções desse elemento
+      categoria.sectionCmps.forEach(sectionCmp => {
+        const elementCmpIndex = sectionCmp.elementCmps.findIndex(element => element === Elemento);
+        if (elementCmpIndex !== -1 && Elemento.id != 0) {
+          axios.delete(`http://localhost:8081/ElementCmp/${Elemento.id}`)
+          .then(response => {
+            this.categorias = response.data;
+            window.location.reload();
+          })
+          .catch(error => {
+          ElMessage.error('Erro ao deletar Elemento! Veja se não tem Opções relacionadas!');
+          });          
+        }else{
+          sectionCmp.elementCmps.splice(elementCmpIndex, 1)
+        }
       });
-    },
+    } else if (Elemento != null && Option != null) { // Se o ID do elemento e da opção forem fornecidos, exclua a opção específica
+      categoria.sectionCmps.forEach(sectionCmp => {
+        const elementCmp = sectionCmp.elementCmps.find(element => element === Elemento);
+        if (elementCmp) {
+          const optionIndex = elementCmp.optionCmps.findIndex(option => option === Option);
+          if (optionIndex !== -1 && Option.id != 0) {
+            axios.delete(`http://localhost:8081/OptionCmp/${Option.id}`)
+            .then(response => {
+              this.categorias = response.data;
+              window.location.reload();
+            })
+            .catch(error => {
+            ElMessage.error('Erro ao deletar Elemento! Veja se não tem Opções relacionadas!');
+            });
+          }else{
+            elementCmp.optionCmps.splice(optionIndex, 1);
+          }
+        }
+      });
+    } 
+  },
 
     salvarCategoria() {
             axios.put(`http://localhost:8081/category/${this.$route.params.id}`,this.categoria)

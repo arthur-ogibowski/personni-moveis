@@ -58,7 +58,7 @@ export default {
   },
   mounted() {
     const id = this.$route.params.id;
-    axios.get(`http://localhost:8081/category/52`)
+    axios.get(`http://localhost:8081/category/1`)
       .then((response) => {
         if (response.status === 200) {
           this.categoria = response.data;
