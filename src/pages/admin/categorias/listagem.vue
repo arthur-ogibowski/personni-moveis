@@ -12,7 +12,9 @@
           </el-table-column>
           <el-table-column label="Ações" prop="id"> 
             <template #default="scope">  
-              <router-link :to="{path: '/admin/categorias/' + scope.row.id}"><el-button class="table-edit" color="#A8A8A8" plain>Editar</el-button></router-link>
+              <el-button class="table-edit" color="#A8A8A8" plain>
+              <router-link :to="{path: '/admin/categorias/' + scope.row.id}">Editar</router-link>
+            </el-button>
               <el-button v-on:click="deleteCategory(scope.row.id)" class="table-delete" color="#F56C6C" plain>Deletar</el-button>
             </template>
           </el-table-column>

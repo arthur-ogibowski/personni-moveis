@@ -20,7 +20,7 @@
                 <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
-                        <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                        <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                     </el-form-item>
 
                     
@@ -29,7 +29,7 @@
                             
 
                             <div class="element-card">
-                                <el-icon v-on:click="deleteCascade(section, element, null)" style="margin-left: 8px; float: right; margin-top: 8px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                                <el-icon v-on:click="deleteCascade(section, element, null)" style="margin-left: 8px; float: right; margin-top: 8px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                 <h2>{{ element.name.toUpperCase() }}</h2>
 
                                 <el-form-item label="Nome">
@@ -40,7 +40,7 @@
 
 
                                 <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
-                                    <el-icon v-on:click="deleteCascade(section, element, option)" style="margin-left: 8px; float: right; margin-top: 33px;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                                    <el-icon v-on:click="deleteCascade(section, element, option)" style="margin-left: 8px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                                     <el-row :gutter="20">
                                     <el-col :span="12">
                                         <el-form-item label="Opção">
@@ -81,7 +81,7 @@
           <el-form-item>
               <el-button type="primary" @click="salvarCategoria">Salvar</el-button>
           </el-form-item>
-      </el-form>{{ categoria }}
+      </el-form>
     </div>
   </template>
   
