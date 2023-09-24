@@ -16,8 +16,8 @@
             <div class="catalogo-content">
               <div class="filters">
                 <div class="filters-item">
-                <el-divider content-position="center">Categoria</el-divider>
-                <el-radio-group v-model="selected" size="large">
+                <el-divider content-position="center">Categorias</el-divider>
+                <el-radio-group v-model="categoriaFiltro" size="large">
                   <el-radio-button
                     v-for="categoria in categorias"
                     :key="categoria"
@@ -29,19 +29,19 @@
 
               <div class="filters-item">
                 <el-divider content-position="center">Preço</el-divider>
-                <el-radio-group v-model="selected" size="large">
-                  <el-radio-button>
+                <el-radio-group v-model="precoFiltro" size="large">
+                  <el-radio-button label="crescente">
                     Menor para maior <el-icon><CaretTop /></el-icon>
                   </el-radio-button>
-                  <el-radio-button>
+                  <el-radio-button label="decrescente">
                     Maior para Menor <el-icon><CaretBottom /></el-icon>
                   </el-radio-button>
                 </el-radio-group>
               </div>
               
               <div class="filters-item">
-                <el-divider content-position="center">Material</el-divider>
-                <el-radio-group v-model="selected" size="large">
+                <el-divider content-position="center">Materiais</el-divider>
+                <el-radio-group v-model="materialFiltro" size="large">
                   <el-radio-button>
                     Madeira
                   </el-radio-button>
@@ -96,7 +96,9 @@ export default {
             categorias: [],
             products: [],
             loading: true,
-            selected: '',
+            categoriaFiltro: [],
+            precoFiltro: [],
+            materialFiltro: [],
         }
     },
     async created() {
@@ -194,7 +196,6 @@ div.catalogo-content{
       box-shadow: none;
 
       &:hover{
-        background-color: $tertiary-color !important;
         color: $cta-color !important;
       }
 

@@ -32,14 +32,12 @@ export default {
   },
   watch: {
     $route(to, from) {
-      // Check if the current route is the homepage
-      const isHomePage = to.path === '/';
+      const isAdminPage = to.path.includes('/admin');
 
-      // Add or remove a class from the body element accordingly
-      if (isHomePage) {
-        document.body.classList.add('homepage');
+      if (isAdminPage) {
+        document.body.classList.add('admin-body');
       } else {
-        document.body.classList.remove('homepage');
+        document.body.classList.remove('admin-body');
       }
     }
   }

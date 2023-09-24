@@ -156,11 +156,11 @@ div.content{
     h2 {
       font-size: 4rem;
       font-weight: 700;
-      margin-bottom: 1rem;
       color: inherit;     
       text-align: center; 
       font-family: shadows-into-light;
       color: $cta-color;
+      margin: 6rem 0 3rem 0;
     }
 
 
@@ -218,11 +218,11 @@ div.content{
     h2 {
       font-size: 4rem;
       font-weight: 700;
-      margin-bottom: 1rem;
       color: inherit;     
       text-align: center; 
       font-family: shadows-into-light;
       color: $cta-color;
+      margin: 6rem 0 3rem 0;
     }
 
     div.sobre-catalogo{
