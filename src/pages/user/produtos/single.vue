@@ -19,19 +19,22 @@
             <el-image style="width: 500px; height: 500px" :src="product.imgUrl" :fit="fit" />
 
             <div class="info-box">
-                <h2 style="font-size: 2rem;">{{  product.name }}</h2>
+                <h2 style="font-size: 4rem;">{{  product.name }}</h2>
+                <el-text v-if="product.quantity > 0" class="mx-1" type="success" size="large">Disponível</el-text>
+                <el-text v-else class="mx-1" type="danger" size="large">Fora de estoque</el-text>
+                <h3 style="font-size: 2.5rem;">R${{ product.value }}</h3>
                 <p style="font-size: 1.6rem;">{{ product.description }}</p>
-                <h3 style="font-size: 1.8rem;">R${{ product.value }}</h3>
-                <div class="info-box-action">
-                    <router-link  :to="{path: '/produtos/' + product.productId + '/personalizar'}"><el-button color="#112620" size="small">Personalizar</el-button></router-link>
+                <div class="info-box-action" v-if="product.quantity > 0">
                     <el-button class="cta" color="$cta-color">Adicionar ao carrinho</el-button>
+                    <el-divider>OU</el-divider>
+                    <router-link  :to="{path: '/produtos/' + product.productId + '/personalizar'}"><h1>Personalizar <el-icon><Right /></el-icon></h1></router-link>
                 </div>
             </div>
 
 
         </div>
 
-        <hr>
+        <el-divider></el-divider>
 
         <div class="about-single">
             <h1>Descrição do Produto</h1>
@@ -80,15 +83,16 @@ export default {
 <style scoped lang="scss">
 
 @import '@/assets/styles/scss/basics.scss';
+
+
 div.container {
+
+    :deep(.el-divider__text){
+        background-color: #EFEFEF;
+    }
 
     p {
         color: $user-grey;
-    }
-    hr{
-        margin: 75px 0;
-        color: $user-grey;
-        border: 1px solid $user-grey;
     }
     div.main-single{
         display: flex;
@@ -97,7 +101,7 @@ div.container {
         flex-direction: row;
 
         .el-image{
-            border: 2px solid #BABABA; 
+            border: 1px solid #BABABA; 
         }
         div.el-carousel{
             div.el-carousel__item{
@@ -109,9 +113,14 @@ div.container {
         }
         div.info-box{
             width: 600px;
-            border: 2px solid #BABABA;
-            background: #F1F1F1;
             padding: 2rem;
+
+            h2{
+                margin-bottom: 0;
+            }
+            h3{
+                color: $cta-color !important;
+            }
 
             div.info-box-action{
                 display: flex;
@@ -122,6 +131,13 @@ div.container {
                 button {
                     width: fit-content;
                     margin: 0.5rem 0;
+                }
+
+
+                h1{
+                    color: $cta-color;
+                    width: 250px;
+                    text-decoration: underline;
                 }
             }
         }

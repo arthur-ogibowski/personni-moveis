@@ -5,42 +5,52 @@
               default-active="2"
               class="el-menu-vertical"
             >
-               <router-link to="/admin"><h1>Personni Moveis</h1></router-link>
 
-            <router-link to="/admin/produtos">
-              <el-menu-item index="1">
-                  <el-icon><Handbag /></el-icon>
-                  <span>Produtos</span>
-              </el-menu-item>
-            </router-link>
+               <div class="menu-items">         
+                
+                <router-link to="/admin"><h1>Personni Moveis</h1></router-link>
 
-            <router-link to="/admin/categorias">
-              <el-menu-item index="2">
-                  <el-icon><Menu /></el-icon>
-                  <span>Categorias</span>
-              </el-menu-item>
-            </router-link> 
 
-            <router-link to="/admin/pedidos">
-              <el-menu-item index="3">
-                  <el-icon><List /></el-icon>
-                  <span>Pedidos</span>
-              </el-menu-item>
-            </router-link> 
-
-              <el-menu-item index="4">
-                <router-link to="/admin/usuarios">
-                  <el-icon><UserFilled /></el-icon>
-                  <span>Usuarios</span>
+                <router-link to="/admin/produtos">
+                  <el-menu-item index="1">
+                      <el-icon><Handbag /></el-icon>
+                      <span>Produtos</span>
+                  </el-menu-item>
                 </router-link>
-              </el-menu-item>
+              
+                <router-link to="/admin/categorias">
+                  <el-menu-item index="2">
+                      <el-icon><Menu /></el-icon>
+                      <span>Categorias</span>
+                  </el-menu-item>
+                </router-link> 
+              
+                <router-link to="/admin/pedidos">
+                  <el-menu-item index="3">
+                      <el-icon><List /></el-icon>
+                      <span>Pedidos</span>
+                  </el-menu-item>
+                </router-link> 
+              
+                  <el-menu-item index="4">
+                    <router-link to="/admin/usuarios">
+                      <el-icon><UserFilled /></el-icon>
+                      <span>Usuários</span>
+                    </router-link>
+                  </el-menu-item>
+                
+                  <el-menu-item index="5">
+                    <router-link to="/admin/configuracoes">
+                      <el-icon><setting /></el-icon>
+                      <span>Configurações</span>
+                    </router-link>
+                  </el-menu-item></div>
 
-              <el-menu-item index="5">
-                <router-link to="/admin/configuracoes">
-                  <el-icon><setting /></el-icon>
-                  <span>Configuracoes</span>
+
+                <router-link to="/" class="voltar">
+                  <el-icon><Back /></el-icon>
+                  <span>Voltar ao site</span>
                 </router-link>
-              </el-menu-item>
 
             </el-menu>
         </el-col>
@@ -60,6 +70,9 @@ export default {
     background-color: #112620;
     position: fixed;
     z-index: 999;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 
     h1 {
         color: #fff;
@@ -87,6 +100,28 @@ export default {
         color: #B68D40 !important;
     
     }
+
+    .voltar{
+        color: #fff;
+      font-size: 16px;
+      text-align: center;
+      margin: 0;
+
+
+      display: flex;
+      align-items: center;
+      height: var(--el-menu-item-height);
+      line-height: var(--el-menu-item-height);
+
+      padding: 0 var(--el-menu-base-level-padding);
+      list-style: none;
+      cursor: pointer;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+  
+
 
 }
 

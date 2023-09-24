@@ -2,13 +2,13 @@
   <div class="container">
     <el-breadcrumb separator="/">
           <el-breadcrumb-item :to="{ path: '/produtos' }">Produtos</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{path: '/produtos/' + produto.productId}">{{ produto.name }}</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{path: '/produtos/' + product.productId}">{{ product.name }}</el-breadcrumb-item>
           <el-breadcrumb-item>Personalizar</el-breadcrumb-item>
     </el-breadcrumb>
 
     <div class="content">
         <div class="dropdown-list">
-            <div class="dropdown-outer" v-for="section in produto.sections" :key="section">
+            <div class="dropdown-outer" v-for="section in product.sections" :key="section">
                 <div class="dropdown-header">
                     <h2>{{ section.name }}</h2>
                 </div>
@@ -25,7 +25,7 @@
             </div>
         </div>
         <div class="product-image">
-            <el-image style="width: 500px; height: 500px" :src="produto.imgUrl" :fit="fit" />
+            <el-image style="width: 500px; height: 500px" :src="product.imgUrl" :fit="fit" />
         </div>
         <div class="resumo">
             <h1>Resumo da personalização</h1>
@@ -49,131 +49,21 @@
 
 
 <script>
+import { ElLoading } from 'element-plus';
+import axios from 'axios';
+
 export default {
     data(){
         return{
             selected: [],
-            produto: {
-                productId: 1,
-                name: "cadeira asdfg",
-                value: 123,
-                quantity: 2,
-                editable: true,
-                imgUrl: "cadeira1.png",
-                description: "descrição blablabla",
-                details: [
-                    {
-                        detailId: 1,
-                        detailField: "cuidados",
-                        fieldContent: "Produto recomendado para uso doméstico..."
-                    },
-                    {
-                        detailId: 2,
-                        detailField: "Garantia",
-                        fieldContent: "1 ano..."
-                    }
-                ],
-                materials: [
-                    {
-                        materialId: 1,
-                        materialName: "carvalho",
-                        imgUrl: "carv.png",
-                        price: 100
-                    }
-                ],
-                tags: [
-                    {
-                        tagId: 1,
-                        tagName: "escritório"
-                    }
-                ],
-                sections: [
-                {
-                    sectionId: 1,
-                    name: "braços",
-                    imgUrl: "braco.png",
-                    options: [
-                        {
-                            optionId: 1,
-                            name: "braço custom",
-                            imgUrl: "custom.png",
-                            price: 250
-                        },
-                        {   
-                            optionId: 2,
-                            name: "braço custom 2",
-                            imgUrl: "custom2.png",
-                            price: 200
-                        }
-                    ]
-                },
-                {
-                    sectionId: 2,
-                    name: "rodinhas",
-                    imgUrl: "rodinha.png",
-                    options: [
-                        {
-                            optionId: 3,
-                            name: "rodinha custom",
-                            imgUrl: "custom.png",
-                            price: 250
-                        },
-                        {   
-                            optionId: 4,
-                            name: "rodinha custom 2",
-                            imgUrl: "custom2.png",
-                            price: 200
-                        }
-                    ]
-                },
-                {
-                    sectionId: 3,
-                    name: "encosto",
-                    imgUrl: "encosto.png",
-                    options: [
-                        {
-                            optionId: 5,
-                            name: "encosto custom",
-                            imgUrl: "custom.png",
-                            price: 250
-                        },
-                        {   
-                            optionId: 6,
-                            name: "encosto custom 2",
-                            imgUrl: "custom2.png",
-                            price: 200
-                        }
-                    ]
-                },
-                {
-                    sectionId: 4,
-                    name: "assento",
-                    imgUrl: "assento.png",
-                    options: [
-                        {
-                            optionId: 7,
-                            default: true,
-                            name: "assento custom",
-                            imgUrl: "custom.png",
-                            price: 250
-                        },
-                        {   
-                            optionId: 8,
-                            name: "assento custom 2",
-                            imgUrl: "custom2.png",
-                            price: 200
-                        }
-                    ]
-                }
-                ]
-            }
+            product: [],
         }
     },
     methods: {
         calcularTotal(){
             let total = 0;
-            for(let i = 0; i < this.produto.sections.length; i++){
-                let section = this.produto.sections[i];
+            for(let i = 0; i < this.product.sections.length; i++){
+                let section = this.product.sections[i];
                 let selected = this.selected[section.sectionId];
                 if(selected){
                     total += section.options.find(option => option.name == selected).price;
@@ -182,11 +72,28 @@ export default {
             return total;
         },
         selecionarItem(item){
-            this.produto.personalizacoes += item;
+            this.product.personalizacoes += item;
             item.selected = true;
         
         }
-    }
+    },
+    async created() {
+        const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+        });
+        axios.get('http://localhost:8081/products/' + this.$route.params.id)
+          .then(response => {
+            this.product = response.data
+            setTimeout(() => {
+                loading.close()
+            }, 250)
+          })
+          .catch(error => {
+            console.error('Erro ao obter dados da API:', error);
+          });
+        }
 }
 </script>
 

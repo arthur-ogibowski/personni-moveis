@@ -65,6 +65,7 @@ body{
         width: 100%;
         position: relative;
         margin-left: 200px;
+        background-color: $secondary-color;
 
         h1 {
             color: $admin-grey;
@@ -172,6 +173,7 @@ body{
         background-color: $cta-color;
         color: white;
         text-transform: uppercase;
+        letter-spacing: 0.5px;
     }
     button.admin-cta{
         border: none;
@@ -180,7 +182,7 @@ body{
     }
 
     button.el-button{
-        padding: 10px 20px !important;
+        padding: 20px 40px !important;
     }
 
     div.el-breadcrumb {

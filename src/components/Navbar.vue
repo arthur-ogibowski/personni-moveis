@@ -9,6 +9,7 @@
   >
     <el-menu-item><router-link to="/">Personni Móveis</router-link></el-menu-item>
     <div class="flex-grow" />
+    <el-menu-item><router-link to="/admin">Admin</router-link></el-menu-item>
     <el-menu-item><router-link to="/produtos">Catálogo</router-link></el-menu-item>
     <el-menu-item><router-link to="/perfil">Meu perfil</router-link></el-menu-item>
     <el-menu-item><router-link to="/carrinho">Carrinho</router-link></el-menu-item>
@@ -35,6 +36,7 @@ export default {
   z-index: 2;
   padding-right: 10px;
   text-transform: uppercase;
+  height: 75px;
 }
 .cta{
   margin: 0 20px;
