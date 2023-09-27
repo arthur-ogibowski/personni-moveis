@@ -25,7 +25,7 @@
                 <h3 style="font-size: 2.5rem;">R${{ product.value }}</h3>
                 <p style="font-size: 1.6rem;">{{ product.description }}</p>
                 <div class="info-box-action" v-if="product.quantity > 0">
-                    <el-button class="cta" color="$cta-color">Adicionar ao carrinho</el-button>
+                    <el-button class="cta" color="$cta-color" @click="addToCart">Adicionar ao carrinho</el-button>
                     <el-divider>OU</el-divider>
                     <router-link  :to="{path: '/produtos/' + product.productId + '/personalizar'}"><h1>Personalizar <el-icon><Right /></el-icon></h1></router-link>
                 </div>
@@ -50,6 +50,7 @@
 </template>
 
 <script>
+import cartService from '@/cartService';
 import axios from 'axios';
 import { ElLoading } from 'element-plus';
 
@@ -75,8 +76,12 @@ export default {
           .catch(error => {
             console.error('Erro ao obter dados da API:', error);
           });
+    },
+    methods: {
+        addToCart() {
+            cartService.addToCart(this.product);
         }
-    
+    }
 }
 </script>
 

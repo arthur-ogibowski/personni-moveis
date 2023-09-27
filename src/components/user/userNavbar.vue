@@ -19,8 +19,41 @@
 </template>
 
 <script>
-export default {
+import cartService from '../../cartService.js';
 
+export default {
+  data() {
+    return {
+      cartProducts: [],
+      cartCMP: [
+        {
+
+        }
+      ]
+    };
+  },
+  methods: {
+    addToCart(product) {
+      product.amount = 1;
+      cartService.addToCart(product);
+      this.cartProducts = cartService.getCartItens();
+    },
+    removeItemFromCart(product) {
+      cartService.removeFromCart(product);
+      // Atualiza a exibição localmente.
+      index = this.cartProducts.indexOf(product);
+      this.cartProducts.splice(index, 1);
+    },
+    removeAllfromCart() {
+      cartService.removeAllfromCart();
+      // Atualiza localmente.
+      this.cartProducts = cartService.getCartItens();
+    }
+  },
+  // Ao inicializar aplicação, carrega produtos do carrinho.
+  created() {
+    this.cartProducts = cartService.getCartItens();
+  }
 }
 </script>
 

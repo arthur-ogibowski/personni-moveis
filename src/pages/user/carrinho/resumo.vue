@@ -2,22 +2,26 @@
   <div class="container">
     <h1 class="page-title">Carrinho</h1>
 
+    <div class="criar-content" v-if="this.cartProducts.length > 0">
+        <el-button class="cta" color="$cta-color" @click="this.removeAll()">Esvaziar carrinho</el-button>
+    </div>
+    
     <div class="carrinho-content">
         <div class="listagem-produtos">
-            <div class="produto-card" v-for="i in 13" :key="i">
+            <div class="produto-card" v-for="product in cartProducts" :key="product">
                 <el-card class="carrinho-item">
                     <img
                     src="@/assets/img/cadeira1.png"
                     class="image"
                     />
-                    <h2>Cadeira Eames</h2>
+                    <h2> {{ product.productName }} </h2>
                     <div class="quantidade">
                         <p>Quantidade</p>
-                        <el-input-number v-model="quantidade" size="small" :min="1" :max="10" label="Quantidade"></el-input-number>
+                        <el-input-number v-model="product.amount" size="small" :min="1" :max="100" label="Quantidade"></el-input-number>
                     </div>
                     <div class="preco">
                         <p>Preço</p>
-                        <h2>R$ 150</h2>
+                        <h2> {{ product.value }} </h2>
                     </div>
                     <div class="deletar">
                         <el-icon><Delete /></el-icon>
@@ -26,7 +30,7 @@
             </div>
         </div>
         <div class="preco-final">
-            <h2>Total: {{ precoTotal }}</h2>
+            <h2>Total: {{ this.calcularTotal() }}</h2>
             <router-link to="/checkout"><el-button class="cta" color="$cta-color" >Ir para o pagamento</el-button></router-link>
         </div>
     </div>
@@ -34,16 +38,40 @@
 </template>
 
 <script>
+import axios from 'axios';
+import cartService from '../../../cartService';
+
 export default {
-    data(){
+    data() {
         return{
             quantidade: 1,
             precoTotal: 0,
+            cartProducts: [
+                {
+                    productId: null,
+                    productName: '',
+                    value: null,
+                    imageurl: null,
+                    amount: 0
+                }
+            ]
         }
     },
+    created() {
+        this.getCartProductsFromLocalStorage();
+    },
     methods: {
-        calcularTotal(){
-            this.precoTotal = this.quantidade * 150;
+        calcularTotal() {
+            //const calcularTotalDaCompra = (listaDeProdutos) => listaDeProdutos.reduce((total, produto) => total + produto.preco, 0);
+            console.log(this.cartProducts.reduce((total, product) => total + product.value * product.amount, 0));
+            return this.cartProducts.reduce((total, product) => total + product.value * product.amount, 0);
+        },
+        getCartProductsFromLocalStorage() {
+            this.cartProducts = cartService.getCartItens();
+        },
+        removeAll() {
+            // Atualiza localStorage e lista de produtos em tela.
+            cartService.removeAllfromCart(this.cartProducts);
         }
     },
 
