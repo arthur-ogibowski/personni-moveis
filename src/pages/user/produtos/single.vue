@@ -66,16 +66,19 @@ export default {
             text: 'Carregando',
             background: 'rgba(0, 0, 0, 0.7)'
         });
-        axios.get('http://localhost:8081/products/' + this.$route.params.id)
-          .then(response => {
-            this.product = response.data
-            setTimeout(() => {
-                loading.close()
-            }, 250)
-          })
-          .catch(error => {
-            console.error('Erro ao obter dados da API:', error);
-          });
+        const id = this.$route.params.id;
+        if (id != null) {
+            axios.get(`http://localhost:8081/products/${this.$route.params.id}`)
+                .then(response => {
+                    this.product = response.data
+                setTimeout(() => {
+                    loading.close()
+                }, 250)
+            })
+            .catch(error => {
+                console.error('Erro ao obter dados da API:', error);
+            });
+        }
     },
     methods: {
         addToCart() {

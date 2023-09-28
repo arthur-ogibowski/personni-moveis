@@ -2,8 +2,10 @@
   <div class="container">
     <h1 class="page-title">Carrinho</h1>
 
-    <div class="criar-content" v-if="this.cartProducts.length > 0">
-        <el-button class="cta" color="$cta-color" @click="this.removeAll()">Esvaziar carrinho</el-button>
+    <h2 class="page-title" v-if="cartIsEmpty()">Seu carrinho está vazio no momento.</h2>
+
+    <div class="criar-content" v-if="!cartIsEmpty()">
+        <el-button class="cta" color="$cta-color" @click="removeAll()">Esvaziar carrinho</el-button>
     </div>
     
     <div class="carrinho-content">
@@ -24,13 +26,14 @@
                         <h2> {{ product.value }} </h2>
                     </div>
                     <div class="deletar">
-                        <el-icon><Delete /></el-icon>
+                        <el-icon @click="removeOneProduct(product)"><Delete /></el-icon>
                     </div>
                 </el-card>
             </div>
         </div>
-        <div class="preco-final">
-            <h2>Total: {{ this.calcularTotal() }}</h2>
+        
+        <div class="preco-final" v-if="!cartIsEmpty()">
+            <h2>Total: {{ calcularTotal() }}</h2>
             <router-link to="/checkout"><el-button class="cta" color="$cta-color" >Ir para o pagamento</el-button></router-link>
         </div>
     </div>
@@ -40,6 +43,7 @@
 <script>
 import axios from 'axios';
 import cartService from '../../../cartService';
+import { ElMessageBox } from 'element-plus';
 
 export default {
     data() {
@@ -52,26 +56,50 @@ export default {
                     productName: '',
                     value: null,
                     imageurl: null,
-                    amount: 0
+                    amount: 1
                 }
             ]
         }
     },
     created() {
+        // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
         this.getCartProductsFromLocalStorage();
     },
     methods: {
         calcularTotal() {
-            //const calcularTotalDaCompra = (listaDeProdutos) => listaDeProdutos.reduce((total, produto) => total + produto.preco, 0);
-            console.log(this.cartProducts.reduce((total, product) => total + product.value * product.amount, 0));
             return this.cartProducts.reduce((total, product) => total + product.value * product.amount, 0);
         },
         getCartProductsFromLocalStorage() {
-            this.cartProducts = cartService.getCartItens();
+            this.cartProducts = cartService.getCartItems();
         },
+        /** Remove todos os itens do carrinho (no local storage e na lista em tela). */
         removeAll() {
-            // Atualiza localStorage e lista de produtos em tela.
-            cartService.removeAllfromCart(this.cartProducts);
+            ElMessageBox.confirm('Tem certeza que deseja esvaziar o carrinho?', 'Confirmação', {
+                confirmButtonText: 'Sim',
+                cancelButtonText: 'Não', // Nesse caso não faz nada.
+                type: 'warning',
+            })
+            .then(() => {
+                // Esvazia o carrinho em local storage.
+                cartService.removeAllfromCart();
+                // Esvazia lista de produtos em tela.
+                this.cartProducts = [];
+            })
+            .catch(() => {
+                // Se o usuário clicar em "Não" ou fechar a caixa de diálogo, nada precisa ser feito.
+            });
+        },
+
+        removeOneProduct(product) {
+            cartService.removeFromCart(product);
+            // remove da lista em tela.
+            const itemIndex = this.cartProducts.findIndex((item) => item.productId === product.productId);
+            this.cartProducts.splice(itemIndex, 1);
+        },
+
+        /** Retorna um boolean para indicar se carrinho está vazio. */
+        cartIsEmpty() {
+            return this.cartProducts.length < 1;
         }
     },
 

@@ -18,13 +18,30 @@
 </template>
 
 <script>
+import cartService from '../cartService';
+
 export default {
+  data() {
+    return {
+      cartProducts: [],
+      cartCMP: [],
+      amount: 1
+    };
+  },
+  methods: {
+    showAmountOfProductsInCart(value) {
+      // A fazer...
+    },
+  },
+  // Ao inicializar aplicação, carrega produtos do carrinho.
+  created() {
+    this.cartProducts = cartService.getCartItems();
+  },
   computed: {
     isHomepage() {
       return this.$route.path === '/';
     },
   },
-
 }
 </script>
 
