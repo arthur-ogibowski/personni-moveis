@@ -177,9 +177,8 @@
                         </el-icon> Elemento </el-button>
                 </div>
 
-
             </div>
-            
+            <h1>{{ product }}</h1>
             <el-form-item>
                 <el-button type="primary" @click="createProduct">Salvar</el-button>
             </el-form-item>
@@ -199,7 +198,7 @@ export default {
                 value: 0,
                 quantity: 1,
                 editable: false,
-                imgUrl: '',
+                mainImgUrl: '',
                 description: '',
                 sections: [],
                 details: [],
@@ -319,7 +318,7 @@ export default {
         newSection() {
             this.product.sections.push({
                 name: "Nova seção",
-                imgUrl: "",
+                mainImgUrl: "",
                 options: []
             })
         },
@@ -331,14 +330,14 @@ export default {
         newOption(section) {
             section.options.push({
                 name: '',
-                imgUrl: '',
+                mainImgUrl: '',
                 price: 0
             });
         },
 
         handleImageChange(file, fileList) {
-            //'Somente uma imagem principal permitida.'
-            this.product.imgUrl = `C:/personniMoveis/personniMoveisFront/src/assets/img/${file.name}`;
+            //Somente uma imagem principal permitida.
+            this.product.mainImgUrl = file.name;
         },
 
         /**Insere novo detalhe do produto */

@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import cartService from '../cartService';
+import cartService from '@/store/cartService.js';
 
 export default {
   data() {

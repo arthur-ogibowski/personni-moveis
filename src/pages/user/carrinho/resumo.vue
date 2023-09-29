@@ -13,13 +13,13 @@
             <div class="produto-card" v-for="product in cartProducts" :key="product">
                 <el-card class="carrinho-item">
                     <img
-                    src="@/assets/img/cadeira1.png"
+                    :src="getImgPath(product.mainImgUrl)"
                     class="image"
                     />
-                    <h2> {{ product.productName }} </h2>
+                    <h2> {{ product.name }} </h2>
                     <div class="quantidade">
                         <p>Quantidade</p>
-                        <el-input-number v-model="product.amount" size="small" :min="1" :max="100" label="Quantidade"></el-input-number>
+                        <el-input-number v-model="product.amount" size="small" :min="0" :max="100" label="Quantidade" @input="updateCurrentProduct(product)"></el-input-number>
                     </div>
                     <div class="preco">
                         <p>Preço</p>
@@ -34,7 +34,7 @@
         
         <div class="preco-final" v-if="!cartIsEmpty()">
             <h2>Total: {{ calcularTotal() }}</h2>
-            <router-link to="/checkout"><el-button class="cta" color="$cta-color" >Ir para o pagamento</el-button></router-link>
+            <router-link to="/checkout"><el-button class="cta" color="$cta-color" @click="updateProducts()">Ir para o pagamento</el-button></router-link>
         </div>
     </div>
   </div>
@@ -42,20 +42,18 @@
 
 <script>
 import axios from 'axios';
-import cartService from '../../../cartService';
+import cartService from '@/store/cartService.js';
 import { ElMessageBox } from 'element-plus';
 
 export default {
     data() {
         return{
-            quantidade: 1,
-            precoTotal: 0,
             cartProducts: [
                 {
                     productId: null,
-                    productName: '',
+                    name: '',
                     value: null,
-                    imageurl: null,
+                    mainImgUrl: '',
                     amount: 1
                 }
             ]
@@ -89,17 +87,33 @@ export default {
                 // Se o usuário clicar em "Não" ou fechar a caixa de diálogo, nada precisa ser feito.
             });
         },
-
         removeOneProduct(product) {
             cartService.removeFromCart(product);
             // remove da lista em tela.
             const itemIndex = this.cartProducts.findIndex((item) => item.productId === product.productId);
             this.cartProducts.splice(itemIndex, 1);
         },
-
         /** Retorna um boolean para indicar se carrinho está vazio. */
         cartIsEmpty() {
             return this.cartProducts.length < 1;
+        },
+        getImgPath(img) {
+            // Carrega imagem do contexto local em tempo de excução,
+            // permitindo alterar imagens estáticas dinamicamente.
+            return new URL(`/src/assets/img/${img}`, import.meta.url).href
+        },
+        updateProducts() {
+            cartService.updateCart(this.cartProducts);
+        },
+        /** Atualiza carrinho em local storage com valores inseridos pelo usuário em tela */
+        updateCurrentProduct(product) {
+            if (product.amount < 1) {
+                // Se quantidade do produto foi reduzida até 0, remove da lista e local storage.
+                this.removeOneProduct(product);
+            } else {
+                // Senão, só faz atualização dos novos valores.
+                this.updateProducts();
+            }
         }
     },
 

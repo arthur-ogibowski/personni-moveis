@@ -60,7 +60,7 @@
             </div>
 
             <div class="revisao" v-if="currentStep == 2">
-                <el-table border :data="produtos" style="width: 50%">
+                <el-table border :data="products" style="width: 50%">
                     <el-table-column prop="name" label="Produto" width="*"></el-table-column>
                     <el-table-column prop="price" label="Preço" width="auto"></el-table-column>
                 </el-table>
@@ -73,7 +73,7 @@
                       <h2>Resumo da compra</h2>
                     </div>
                     <div class="card-item">
-                        <h3>Subtotal ({{ produtos.length }} itens): {{ totalPrice() != 0 ? "R$" + totalPrice() : "--"}}</h3>
+                        <h3>Subtotal ({{ products.length }} itens): {{ totalPrice() != 0 ? "R$" + totalPrice() : "--"}}</h3>
                     </div>
                     <div class="card-item">
                         <h3>Frete: {{ totalPrice() != 0 ? "R$" + totalPrice() : "--"}}</h3>
@@ -95,19 +95,25 @@
 </template>
 
 <script>
+import cartService from '@/store/cartService.js';
+
 export default {
     data() {
         return {
             currentStep: 0,
             selected: [],
             loading: false,
-            products_cmp: {
+            productsCmp: {
                 id: 0,
                 value: 0,
                 quantity: 0,
                 imgUrl: "string",
                 description: "string",
                 sectionProductCmpDtos: [],
+            },
+            product: {
+                sections: [],
+                amount: 1,
             },
             categoria: {
                 name: "",
@@ -124,19 +130,7 @@ export default {
                 estado: "",
                 pais: "",
             },
-            produtos: [
-                {
-                    name: "Cadeira 1",
-                    price: "150",
-                },
-                {
-                    name: "Cadeira 2",
-                    price: "150",
-                },
-                {
-                    name: "Cadeira 3",
-                    price: "150",
-                },]
+            products: []
         };
     },
     methods: {
@@ -146,15 +140,40 @@ export default {
         previousStep() {
             this.currentStep--;
         },
+        /** Calcula o valor de todos os produtos selecionados pelo usuário. */
         totalPrice() {
-            let total = 0;
-            for (let i = 0; i < this.selected.length; i++) {
-                const element = this.selected[i];
-                total += element.price;
-            }
-            return total;
+            let productsTotal = this.products.reduce((total, product) => {
+                // Se o produto é personalizável, calcula o total das personalizações
+                let personalizationTotal = 0;
+                if (product.editable && product.sections && product.sections.length > 0) {
+                    personalizationTotal = this.totalOption(product.sections);
+                }
+                // Calcula o total do produto considerando o valor base e as personalizações
+                let productTotal = (product.value + personalizationTotal) * product.quantity;
+                    // Soma o total do produto ao total geral
+                return total + productTotal;
+            }, 0);
+            return productsTotal;
+        },
+        /** Calcula valor total das opções selecionadas em um produto. */
+        totalOption(sections) {
+            return sections.reduce((sectionTotal, section) => {
+                // Soma o preço de todas as opções selecionadas na seção
+                let optionsTotal = section.options.reduce((optionTotal, option) => {
+                    return optionTotal + option.price;
+                }, 0);
+                // Soma o total da seção ao total da personalização.
+                return sectionTotal + optionsTotal;
+            }, 0);
+        },
+        /** Popula lista em tela com os produtos do carrinho armazenados em local storage. */
+        getCartProductsFromLocalStorage() {
+            this.products = cartService.getCartItems();
         }
     },
+    created() {
+        this.getCartProductsFromLocalStorage();
+    }
 }
 </script>
 

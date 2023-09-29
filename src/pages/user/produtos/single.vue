@@ -50,7 +50,7 @@
 </template>
 
 <script>
-import cartService from '@/cartService';
+import cartService from '@/store/cartService.js';
 import axios from 'axios';
 import { ElLoading } from 'element-plus';
 
