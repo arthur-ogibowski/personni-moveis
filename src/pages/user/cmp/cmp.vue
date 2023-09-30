@@ -1,46 +1,59 @@
 <template>
-  <div class="container" v-loading="loading" element-loading-text="Carregando..."
-    :element-loading-spinner="svg"
-    element-loading-background="rgba(122, 122, 122, 0.9)">
+  <div class="container">
     <el-steps align-center :active="currentSection">
       <el-step v-for="section in categoria.sectionCmps" :key="section.id" :title="section.name" />
     </el-steps>
-    <div class="mb-2 flex items-center text-sm">
-  </div>
-    <el-form :model="selected">
-      <div class="section" v-for="section in categoria.sectionCmps" :key="section.id">
-        <div class="inner-section" >
-          <h1>{{ section.name }}</h1>
-          <div v-for="element in section.elementCmps" :key="element.id" class="ml-4">
-            <h2>{{ element.name }}</h2>
-            <el-radio-group v-model="selected[element.id]">
-              <el-radio
-                v-for="option in element.optionCmps"
-                :key="option.id"
-                size="large"
-                :label="option.id">
-                {{ option.name }} (R${{ option.price }})
-              </el-radio>
-            </el-radio-group>
+
+    <div class="cmp-container">
+      <div class="cmp-sections">
+        <el-form :model="selected">
+          <div class="section" v-for="section in categoria.sectionCmps" :key="section.id">
+            <div class="inner-section" v-if="currentSection == categoria.sectionCmps.indexOf(section) + 1">
+              <h1>{{ section.name }}</h1>
+              <div class="section-elements">
+                <div v-for="element in section.elementCmps" :key="element.id" class="ml-4 element-item">
+                  <el-divider>{{ element.name }}</el-divider>
+                  <el-radio-group v-model="selected[element.id]">
+                    <el-radio-button
+                      v-for="option in element.optionCmps"
+                      :key="option.id"
+                      size="large"
+                      :label="option.id">
+                      {{ option.name }} (R${{ option.price }})
+                    </el-radio-button>
+                  </el-radio-group>
+                </div>
+              </div>
+              <div class="actions">
+                <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="currentSection !== 1">Voltar</el-button>
+                <el-button class="cta" color="$cta-color" style="visibility: hidden;" type="primary" @click="previousSection" v-else></el-button>
+                <el-button class="cta" color="$cta-color" type="primary" @click="nextSection">Próximo passo</el-button>
+              </div>
+            </div>
           </div>
-          <el-button type="primary" @click="previousSection" v-if="currentSection !== 1">Voltar</el-button>
-          <el-button type="primary" @click="nextSection">Próximo passo</el-button>
-        </div>
+            <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="isLastSection">Voltar</el-button>    
+            <el-button class="cta" color="$cta-color" type="primary" @click="criarCMP" v-if="isLastSection">Salvar</el-button>
+        </el-form>{{ selected }}
       </div>
-      <el-button type="primary" @click="previousSection" v-if="isLastSection">Voltar</el-button>    
-      <el-button type="primary" @click="criarCMP" v-if="isLastSection">Salvar</el-button>
-    </el-form>{{ selected }}
+
+      <div class="resumo">
+      <h1>Resumo</h1>
+
+      </div>
+    </div>
   </div>
+
 </template>
 <script>
 import axios from 'axios';
+import { ElLoading } from 'element-plus'
+
 
 export default {
   data() {
     return {
       currentSection: 1,
       selected: [], 
-      loading: true,
       products_cmp: {
         id: 0,
         value: 0,
@@ -56,13 +69,20 @@ export default {
       },
     };
   },
-  mounted() {
+  async created() {
+    const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+      });
     const id = this.$route.params.id;
     axios.get(`http://localhost:8081/category/` + id)
       .then((response) => {
         if (response.status === 200) {
           this.categoria = response.data;
-          this.loading = false;
+          setTimeout(() => {
+            loading.close()
+          }, 250)
         } else {
           console.error('Erro ao buscar dados da API:', response.statusText);
         }
@@ -160,5 +180,58 @@ export default {
 };
 </script>
 
-<style>
+<style scoped lang="scss">
+@import '@/assets/styles/scss/basics.scss';
+:deep(.el-step__head.is-finish) {
+  color: $cta-color;
+  border-color: $cta-color;
+}
+
+:deep(.el-step__title.is-finish) {
+  color: $cta-color;
+}
+
+.cmp-container{
+  display: flex;
+  flex-direction: columns;
+  justify-content: space-between;
+
+  .cmp-sections{
+    width: 60%;
+    height: 100%;
+    border-radius: 10px;
+    margin-right: 20px;
+    padding: 20px;
+
+    .inner-section{
+      display: flex;
+      flex-direction: column;
+      .section-elements{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+
+        .element-item{
+          margin: 20px;
+        }
+      }
+
+
+      div.actions{
+        display: flex;
+        justify-content: space-between;
+      }
+    }
+    
+  }
+
+  .resumo{
+    width: 30%;
+    height: 100%;
+    background-color: #f5f5f5;
+    border-radius: 10px;
+    margin-left: 20px;
+    padding: 20px;
+  }
+}
 </style>

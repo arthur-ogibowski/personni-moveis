@@ -124,34 +124,7 @@ div.content{
             label.el-radio-button, :deep(span.el-radio-button__inner){
                 width: 250px;
             }
-        
-            :deep(.el-divider__text){
-              background-color: #EFEFEF;
-            }
 
-            .el-radio-group {
-              display: flex;
-              flex-direction: column;
-              :deep(.el-radio-button--large .el-radio-button__inner) {
-                padding: 16px 24px;
-                font-size: var(--el-font-size-base);
-                margin: 5px 0;
-                border: none !important;
-                width: 250px;
-                text-transform: uppercase;
-                letter-spacing: 0.5px;
-                box-shadow: none;
-                
-                &:hover{
-                  color: $cta-color !important;
-                }
-            
-              }
-              :deep(.el-radio-button__original-radio:checked + .el-radio-button__inner){
-                  background-color: $tertiary-color !important;
-                  color: $cta-color !important;
-              }
-            }
 
 
             div.dropdown-item {
