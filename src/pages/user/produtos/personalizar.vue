@@ -9,9 +9,7 @@
     <div class="content">
         <div class="dropdown-list">
             <div class="dropdown-outer" v-for="section in product.sections" :key="section">
-                <div class="dropdown-header">
-                    <h2>{{ section.name }}</h2>
-                </div>
+                    <el-divider>{{ section.name }}</el-divider>
                 <div class="dropdown-content">
                     <el-radio-group v-model="selected[section.sectionId]" size="large">
                       <el-radio-button
@@ -55,6 +53,7 @@ import axios from 'axios';
 export default {
     data(){
         return{
+            selecionados: [],
             selected: [],
             product: [],
         }
@@ -70,7 +69,7 @@ export default {
                 }
             }
             return total;
-        },
+        },        
         selecionarItem(item){
             this.product.personalizacoes += item;
             item.selected = true;
@@ -107,7 +106,7 @@ div.content{
     div.dropdown-list{
         div.dropdown-outer{
 
-            margin-bottom: 20px;
+            margin-bottom: 4rem;
 
             div.dropdown-header{
                 width: 250px;
@@ -126,10 +125,7 @@ div.content{
                 width: 250px;
             }
 
-            div.el-radio-group{
-                display: flex;
-                flex-direction: column;
-            }
+
 
             div.dropdown-item {
               width: 250px;

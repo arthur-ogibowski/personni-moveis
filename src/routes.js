@@ -10,7 +10,8 @@ import ProdutosListar from '@/pages/user/produtos/listagem.vue';
 import ProdutosSingle from '@/pages/user/produtos/single.vue'
 import ProdutosPersonalizar from '@/pages/user/produtos/personalizar.vue'
 
-import CMP from '@/pages/user/cmp.vue'
+import CMP from '@/pages/user/cmp/cmp.vue'
+import CMPselecionarCategoria from '@/pages/user/cmp/selecionar-categoria.vue'
 
 import CarrinhoResumo from '@/pages/user/carrinho/resumo.vue'
 import CarrinhoPagamento from '@/pages/user/carrinho/pagamento.vue'
@@ -46,7 +47,8 @@ export const routes = [
   { path: '/produtos/:id', component: ProdutosSingle },
   { path: '/produtos/:id/personalizar', component: ProdutosPersonalizar },
 
-  { path: '/criar', component: CMP},
+  { path: '/criar', component: CMPselecionarCategoria},
+  { path: '/criar/:id', component: CMP},
 
   { path: '/carrinho', component: CarrinhoResumo },
   { path: '/checkout', component: CarrinhoPagamento },
