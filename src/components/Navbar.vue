@@ -12,35 +12,37 @@
     <el-menu-item><router-link to="/admin">Admin</router-link></el-menu-item>
     <el-menu-item><router-link to="/produtos">Catálogo</router-link></el-menu-item>
     <el-menu-item><router-link to="/perfil">Meu perfil</router-link></el-menu-item>
-    <el-menu-item><router-link to="/carrinho">Carrinho</router-link></el-menu-item>
+    <el-menu-item><router-link to="/carrinho">Carrinho {{ cartItemsCounter }}</router-link></el-menu-item>
     <router-link to="/criar"><el-button class="cta" color="$cta-color">Criar meu móvel</el-button></router-link>
   </el-menu>
 </template>
 
 <script>
-import cartService from '@/store/cartService.js';
-
 export default {
   data() {
     return {
       cartProducts: [],
       cartCMP: [],
-      amount: 1
+      cartItemsCounter: JSON.parse(localStorage.getItem('carrinho')).length || ''
     };
-  },
-  methods: {
-    showAmountOfProductsInCart(value) {
-      // A fazer...
-    },
-  },
-  // Ao inicializar aplicação, carrega produtos do carrinho.
-  created() {
-    this.cartProducts = cartService.getCartItems();
   },
   computed: {
     isHomepage() {
       return this.$route.path === '/';
     },
+  },
+  created() {
+    this.getAmountOfProductsInCart();
+  },
+  methods: {
+    /** Cria o eventListner e atualiza a quantidade de itens no icone do carrinho. */
+    getAmountOfProductsInCart() {
+      window.addEventListener('cartUpdated', () => {
+        const localStorageCart = JSON.parse(localStorage.getItem('carrinho'));
+        // Se carrinho foi criado com sucesso e tem ao menos um produto, coloca qtde de produtos, senão uma string vazia.
+        this.cartItemsCounter = (localStorageCart && localStorageCart.length > 0) ? localStorageCart.length : '';
+      });
+    }
   },
 }
 </script>
