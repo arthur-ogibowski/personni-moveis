@@ -18,6 +18,7 @@
                       v-for="option in element.optionCmps"
                       :key="option.id"
                       size="large"
+                      @change="resumoCmp"
                       :label="option.id">
                       {{ option.name }} (R${{ option.price }})
                     </el-radio-button>
@@ -33,12 +34,21 @@
           </div>
             <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="isLastSection">Voltar</el-button>    
             <el-button class="cta" color="$cta-color" type="primary" @click="criarCMP" v-if="isLastSection">Salvar</el-button>
-        </el-form>{{ selected }}
+        </el-form>
       </div>
 
       <div class="resumo">
-      <h1>Resumo</h1>
-
+        <h1>Resumo</h1>
+        <div class="nome">
+          <h2>Opções Escolhidas</h2>
+          <ul>
+            <li v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">{{ optionInfo }}</li>
+          </ul>
+        </div>
+        <div class="preco">
+          <h2>Total</h2>
+          <h3>R$ {{ products_cmp.value }}</h3>
+        </div>
       </div>
     </div>
   </div>
@@ -54,10 +64,11 @@ export default {
     return {
       currentSection: 1,
       selected: [], 
+      selectedOptionsInfo: [], 
       products_cmp: {
         id: 0,
         value: 0,
-        quantity: 0,
+        quantity: 1,
         imgUrl: "string",
         description: "string",
         sectionProductCmpDtos: [],
@@ -114,7 +125,7 @@ export default {
           for (const optionId of optionIds) {
             const option = element.optionCmps.find((opt) => opt.id === optionId);
               if (option) {
-                correspondencias.push({ sectionId: section.id, elementId: element.id, optionId: option.id });
+                correspondencias.push({ section: section, element: element, option: option });
               }
           }
         }
@@ -122,58 +133,93 @@ export default {
       return correspondencias;
     },
 
-    criarCMP() {
+    resumoCmp() {
   // Encontre os IDs da seção e do elemento com base na opção selecionada
   const correspondencias = this.encontrarElementoESeçãoPorOpção(this.selected);
 
   if (correspondencias.length > 0) {
-      correspondencias.forEach(({ sectionId, elementId, optionId }) => {
-      // Crie um objeto para a seção
-      const sectionObj = {
-        "sectionId": sectionId,
-        "name": "string",
-        "imgUrl": "string",
-        "categoryId": 0,
-        "elementProductCmpDtos": []
-      };
+    const selectedOptionsInfo = []; // Array para armazenar as informações de cada opção escolhida
 
-      // Crie um objeto para o elemento
-      const elementObj = {
-        "id": elementId,
-        "name": "string",
-        "imgUrl": "string",
-        "type": "string",
-        "sectionCmpId": 0,
-        "optionProductCmpDto": {
-          "id": optionId,
-          "name": "string",
-          "price": 0,
+  correspondencias.forEach(({ section, element, option }) => {
+    // Verifique se a seção já existe na lista de seções
+    const existingSection = this.products_cmp.sectionProductCmpDtos.find(sec => sec.sectionId === section.id);
+
+    if (existingSection) {
+      const existingElement = existingSection.elementProductCmpDtos.find(ele => ele.id === element.id);
+
+      if (existingElement) {
+        // Se o elemento já existe, substitua a opção existente
+        existingElement.optionProductCmpDto = {
+          "id": option.id,
+          "name": option.name,
+          "price": option.price,
           "imgUrl": "string",
           "elementCmpId": 0
-        }
+        };
+      } else {
+        // Caso contrário, crie um novo objeto para o elemento e a opção
+        const elementObj = {
+          "id": element.id,
+          "name": element.name,
+          "imgUrl": "string",
+          "type": "string",
+          "sectionCmpId": 0,
+          "optionProductCmpDto": {
+            "id": option.id,
+            "name": option.name,
+            "price": option.price,
+            "imgUrl": "string",
+            "elementCmpId": 0
+          }
+        };
+
+        existingSection.elementProductCmpDtos.push(elementObj);
+      }
+    } else {
+      // Se a seção não existir, crie uma nova seção com o elemento e a opção
+      const sectionObj = {
+        "sectionId": section.id,
+        "name": section.name,
+        "imgUrl": "string",
+        "categoryId": 0,
+        "elementProductCmpDtos": [{
+          "id": element.id,
+          "name": element.name,
+          "imgUrl": "string",
+          "type": "string",
+          "sectionCmpId": 0,
+          "optionProductCmpDto": {
+            "id": option.id,
+            "name": option.name,
+            "price": option.price,
+            "imgUrl": "string",
+            "elementCmpId": 0
+          }
+        }]
       };
 
-      // Adicione o elemento ao array de elementos da seção
-      sectionObj.elementProductCmpDtos.push(elementObj);
-
-      // Adicione a seção ao array de seções do JSON
       this.products_cmp.sectionProductCmpDtos.push(sectionObj);
-    });
-    axios.post('http://localhost:8081/products_cmp', this.products_cmp)
-    .then((response) => {
-            if (response.status === 201) {
-            // A resposta da API indica que o recurso foi criado com sucesso.
-            // Você pode realizar ações adicionais aqui, se necessário.
-            console.log('Recurso criado com sucesso', response.data);
-        
-            } else {
-            console.error('Erro ao criar recurso:', response.statusText);
-            }
-        })
-    .catch((error) => {
-    console.error('Erro ao criar recurso:', error);
-        }) 
-  }
+    }
+         // Construa uma string com as informações da opção escolhida
+      const optionInfo = `${section.name} - ${element.name} - ${option.name} (R$${option.price})`;
+
+      selectedOptionsInfo.push(optionInfo);
+  });
+
+  // Atualize o valor total
+  this.products_cmp.value = this.products_cmp.sectionProductCmpDtos.reduce((total, section) => {
+    return total + section.elementProductCmpDtos.reduce((eleTotal, element) => {
+      return eleTotal + element.optionProductCmpDto.price;
+    }, 0);
+  }, 0);
+
+  this.selectedOptionsInfo = selectedOptionsInfo;
+}
+
+
+
+
+
 }
 
   },
