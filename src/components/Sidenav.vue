@@ -8,7 +8,7 @@
 
                <div class="menu-items">         
                 
-                <router-link to="/admin"><h1>Personni Moveis</h1></router-link>
+                <router-link to="/admin/produtos"><h1>Personni Moveis</h1></router-link>
 
 
                 <router-link to="/admin/produtos">
@@ -31,15 +31,22 @@
                       <span>Pedidos</span>
                   </el-menu-item>
                 </router-link> 
-              
+
+                <router-link to="/admin/materiais">
                   <el-menu-item index="4">
+                      <el-icon><ElementPlus /></el-icon>
+                      <span>Materiais</span>
+                  </el-menu-item>
+                </router-link> 
+              
+                  <el-menu-item index="5">
                     <router-link to="/admin/usuarios">
                       <el-icon><UserFilled /></el-icon>
                       <span>Usuários</span>
                     </router-link>
                   </el-menu-item>
                 
-                  <el-menu-item index="5">
+                  <el-menu-item index="6">
                     <router-link to="/admin/configuracoes">
                       <el-icon><setting /></el-icon>
                       <span>Configurações</span>

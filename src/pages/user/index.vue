@@ -18,15 +18,15 @@
         <h2> Novidades </h2>
         <div class="block text-center">
           <el-carousel interval="5000" type="card" indicator-position="outside">
-            <el-carousel-item v-for="item in 4" :key="item">
+            <el-carousel-item v-for="product in newestProducts" :key="product">
               <div class="carousel-content">
                 <div class="carousel-text">
-                  <h3>Cadeira {{ item }} </h3>
-                  <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Quisquam, voluptatum. </p>
-                  <router-link to="/produtos"><el-button class="cta" color="$cta-color">Detalhes</el-button></router-link>
+                  <h3> {{ product.name }} </h3>
+                  <p> {{ product.desciption }} </p>
+                  <router-link :to="`/produtos/${product.productId}`"><el-button class="cta" color="$cta-color">Detalhes</el-button></router-link>
                 </div>
                 <div class="carousel-image">
-                  <img src="../../assets/img/cadeiras_para_mesa_de_jantar_cafe_2_1_1.jpg">
+                  <img :src=getImgPath(product.mainImgUrl)>
                 </div>
               </div>
             </el-carousel-item>
@@ -34,14 +34,14 @@
         </div>
       </div>
 
-      <div class="categorias">
+      <div class="categorias" v-if="categorias.length > 0">
         <h2> Categorias </h2>
         <div class="categorias-grid">
-          <router-link to="/produtos" v-for="i in categorias" :key="i">
-          <div class="categoria-item">
-            <h3> {{  i.name }} </h3>
-          </div>
-        </router-link>
+          <router-link to="/produtos" v-for="i in categorias.slice(0, 4)" :key="i">
+            <div class="categoria-item">
+              <h3> {{ i.name }} </h3>
+            </div>
+          </router-link>
         </div>
         
         <div class="sobre-catalogo">
@@ -61,18 +61,44 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      categorias: []
+      categorias: [],
+      newestProducts: []
     }
   },
   async created() {
+    // Adquirindo produtos para o carousel.
+    this.getMostRecentProducts();
+    // Adquirindo categorias.
+    this.getProductCategories();
+  },
+  methods: {
+    /** Retorna os produtos mais recentemente adicinados. */
+    getMostRecentProducts(amount) {
+      // Configuração do parâmetro opcional para qtde de produtos.
+      const config = { params: { amountOfProducts: amount ? amount : 5 } };
+      // Default da api é retornar os 4 produtos mais recentes se 'amountOfProducts' não for informado.
+      axios.get('http://localhost:8081/products/most-recent', config)
+        .then(response => {
+          this.newestProducts = response.data;
+        })
+        .catch(error => {
+          console.error("Não foi possível arquirir os produtos mais recentes.", error);
+        });
+    },
+    /** Adquire categorias. */
+    getProductCategories() {
       axios.get('http://localhost:8081/category')
         .then(response => {
-          response.data.forEach(categoria => this.categorias.push(categoria));
+          this.categorias = response.data;
         })
         .catch(error => {
           console.error('Erro ao obter dados da API:', error);
-      });
+        });
+    },
+    getImgPath(img) {
+      return new URL(`/src/assets/img/${img}`, import.meta.url).href;
     }
+  }
 }
 </script>
 
@@ -80,7 +106,7 @@ export default {
 @import '@/assets/styles/scss/basics.scss';
 
 
-div.content{
+div.content {
   display: flex;
   align-items: center;
   justify-content: center;

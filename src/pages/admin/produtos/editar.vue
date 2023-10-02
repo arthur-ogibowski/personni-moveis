@@ -1,114 +1,226 @@
 <template>
-  <div class="admin-container">
-    <h1><router-link class="underline-router" to="/admin/produtos">Produtos</router-link> > Editar</h1>
-    <el-form :model="form" label-width="120px">
-        <el-form-item label="Nome do produto">
-            <el-input v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="Preço">
-            <el-input v-model="form.price"></el-input>
-        </el-form-item>
-        <el-form-item label="Estoque">
-            <el-input v-model="form.stock"></el-input>
-        </el-form-item>
-        <el-form-item label="Descrição">
-            <el-input v-model="form.description"></el-input>
-        </el-form-item>
-        <el-form-item label="Detalhes">
-            <el-select v-model="form.details" multiple placeholder="Selecione">
-            </el-select>
-        </el-form-item>
-        <el-form-item label="Materiais">
-            <el-select v-model="form.materials" multiple placeholder="Selecione">
-            </el-select>
-        </el-form-item>
-        <el-form-item label="Tags">
-            <el-select multiple
-                       filterable
-                       collapse-tags
-                       v-model="form.tags" placeholder="Selecione">
-                       <el-option
-                            v-for="tag in form.tags"
-                            :key="tag.tagId"
-                            :label="tag.tagName"
-                            :value="tag.tagId"/>
-            </el-select>
-        </el-form-item>
-        <el-form-item label="Imagem">
-            <el-upload
-                class="upload-demo"
-                action="https://jsonplaceholder.typicode.com/posts/"
-                :on-preview="handlePreview"
-                :on-remove="handleRemove"
-                :before-remove="beforeRemove"
-                multiple
-                :limit="3"
-                :on-exceed="handleExceed"
-                :file-list="fileList">
-                <el-button size="small" type="primary">Fazer upload</el-button>
-                <div class="el-upload__tip">jpg/png files with a size less than 500kb</div>
-            </el-upload>
-        </el-form-item>
-        <el-form-item label="Personalizável">
-            <el-switch inline-prompt active-text="Sim" inactive-text="Não" v-model="form.editable"></el-switch>
-        </el-form-item>
-        <el-form-item label="Seções">
-            <el-select v-model="form.sections" multiple placeholder="Selecione">
-            </el-select>
-        </el-form-item>
-        <el-form-item>
-            <template default="scope">
-                <el-button type="primary" @click="editProduct">Editar</el-button>
-            </template>
-        </el-form-item>
-    </el-form>
-  </div>
+    <div class="admin-container">
+        <h1><router-link class="underline-router" to="/admin/produtos">Produtos</router-link> > Adicionar</h1>
+        <el-form :model="product" label-width="*" label-position="top">
+            <h2>Produto</h2>
+            <!-- Categoria -->
+            <el-form-item label="Categoria">
+                <el-select
+                    filterable
+                    collapse-tags
+                    clearable
+                    v-model="this.selectedCategory"
+                    placeholder="Selecione">
+                    <el-option v-for="category in this.fetchedCategories"
+                        :key="category.id"
+                        :label="category.name"
+                        :value="category.id" />
+                </el-select>
+            </el-form-item>
+            <!-- Nome -->
+            <el-form-item required label="Nome">
+                <el-input placeholder="Novo produto" v-model="product.name"></el-input>
+            </el-form-item>
+            <!-- Preço -->
+            <el-form-item required label="Preço">
+                <el-input-number 
+                    :precision="2" 
+                    :min="1"
+                    controls-position="right"
+                    v-model="product.value">
+                </el-input-number>
+            </el-form-item>
+            <!-- Estoque -->
+            <el-form-item required label="Estoque">
+                <el-input-number 
+                    v-model="product.quantity"
+                    :min="0"
+                    controls-position="right">
+                </el-input-number>
+            </el-form-item>
+            <!-- Descrição -->
+            <el-form-item required label="Descrição">
+                <el-input 
+                    type="textarea" 
+                    maxlength= "250"
+                    placeholder="Descrição..."
+                    show-word-limit
+                    v-model="product.description"></el-input>
+            </el-form-item>
+            <!-- Disponível -->
+            <el-form-item required label="Produto esta disponível">
+                <el-switch active-text="Sim" inactive-text="Não" v-model="product.available"></el-switch>
+            </el-form-item>
+            <!-- Detalhes do produto -->
+            <h2>Detalhes do produto</h2>
+            <div class="elements">
+                <div class="element-item" v-for="detail in product.details" v-bind:key="detail">
+                    <el-icon v-on:click="removeItem(product.details, detail)" style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                    <div class="element-card">
+                        <h2>{{ detail.fieldContent.toUpperCase() }}</h2>
+                        <el-row :gutter="20">
+                            <el-col :span="12">
+                                <el-form-item label="Nome do detalhe">
+                                    <el-input v-model="detail.fieldContent" size="small"></el-input>
+                                </el-form-item>
+                            </el-col>
+                            <el-col :span="12">
+                                <el-form-item label="Texto do detalhe">
+                                    <el-input 
+                                        type="textarea" 
+                                        maxlength= "250"
+                                        placeholder="Descrição..."
+                                        show-word-limit label="Conteúdo"
+                                        v-model="detail.detailContent" size="small"></el-input>
+                                </el-form-item>
+                            </el-col>
+                        </el-row>
+                    </div>
+                </div>
+                <el-button type="primary" v-on:click="newDetail()"><el-icon>
+                            <Plus />
+                        </el-icon> Detalhe </el-button>
+            </div>
+            <!-- Tags -->
+            <el-form-item label="Tags">
+                <el-select
+                    filterable
+                    clearable
+                    multiple
+                    allow-create
+                    collapse-tags
+                    collapse-tags-tooltip
+                    :max-collapse-tags="3"
+                    v-model="this.selectedTags"
+                    placeholder="Selecione">
+                    <el-option v-for="tag in this.fetchedTags"
+                        :key="tag.tagId"
+                        :label="tag.tagName"
+                        :value="tag.tagId" />
+                </el-select>
+            </el-form-item>
+            <!-- Material -->
+            <el-form-item required label="Material">
+                <el-select
+                    filterable
+                    clearable
+                    v-model="this.product.material"
+                    placeholder="Selecione">
+                    <el-option v-for="material in this.fetchedMaterials"
+                        :key="material.materiald"
+                        :label="material.materialName"
+                        :value="material.materiald" />
+                    </el-select>
+            </el-form-item>
+            <!-- Imagem principal -->
+            <el-form-item label="Imagem principal">
+                <div>
+                    <el-upload
+                        :show-file-list="true"
+                        :auto-upload="false"
+                        limit="1"
+                        @change="handleImageChange">
+                        <el-button size="small" type="primary">Selecionar Imagem</el-button>
+                    </el-upload>
+                </div>
+            </el-form-item>
+            <!-- <el-form-item label="Imagens secundárias">
+
+            </el-form-item> -->
+            <hr>
+            <h2>Edição</h2>
+            <el-form-item label="Possibilitar edição">
+                <el-switch v-model="product.editable"></el-switch>
+            </el-form-item>
+
+            <div class="criar-content" v-if="product.editable">
+
+                <div class="elements">
+                    <div class="element-item" v-for="section in product.sections" v-bind:key="section">
+
+
+                        <div class="element-card">
+                            <el-icon v-on:click="removeItem(product.sections, section)" style="margin-right:-5px; float: right; margin-top: 10px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+
+                            <h2>{{ section.name.toUpperCase() }}</h2>
+
+                            <el-form-item label="Nome">
+                                <el-input v-model="section.name"></el-input>
+                            </el-form-item>
+
+
+                            <div class="option-item" v-for="option in section.options" v-bind:key="option">
+
+                                <el-row :gutter="20">
+                                    <el-col :span="12">
+                                        <el-form-item label="Opção">
+                                            <el-input v-model="option.name" size="small"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="Preço">
+                                            <el-input v-model="option.price" size="small"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="Imagem">
+                                            <el-input v-model="option.image" size="small"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+
+
+                            </div>
+
+                            <el-button type="primary" v-on:click="newOption(section)"><el-icon>
+                                    <Plus />
+                                </el-icon> Opção</el-button>
+
+                        </div>
+
+                    </div>
+                    <el-button type="primary" v-on:click="newSection()"><el-icon>
+                            <Plus />
+                        </el-icon> Elemento </el-button>
+                </div>
+
+            </div>
+            <el-form-item>
+                <el-button type="primary" @click="createProduct">Salvar</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
 </template>
 
 <script>
 import axios from 'axios';
-import { reactive, ref } from 'vue'
 import { ElMessage } from 'element-plus'
-
-//const ruleFormRef = ref<FormInstance>();
 
 export default {
     data() {
         return {
-            form: {
+            product: {
+                productId: null,
                 name: '',
-                price: 0,
-                stock: 0,
+                value: 0,
+                quantity: 1,
+                editable: false,
+                mainImgUrl: '',
                 description: '',
-                editable: true,
-                image: '',
-                secondaryImages: {
-                    imgId: 0,
-                    imgIndex: 0,
-                    imgUrl: ''
-                },
-                details: {
-                    detailId: 0,
-                    detailField: '',
-                    detailContent: ''
-                },
-                materials: {
-                    materialId: 0,
-                    materialName: '',
-                    price: 0,
-                    imgUrl: ''
-                },
-                sections: {
-                    sectionId: 0,
-                    name: '',
-                    imgUrl: '',
-
-                },
-                tags: {
-                    tagId: 0,
-                    tagName: ''
-                },
+                available: true,
+                sections: [],
+                details: [],
+                material: '',
+                tags: []
             },
+            fetchedCategories: [],
+            materials: [],
+            fetchedTags: [],
+            selectedTags: [],
+            fetchedMaterials: [],
+            selectedCategory: null,
+            selectedMaterial: null,
+            wasCurrentlyUnavailable: false,
             fileList: [
                 {
                     name: 'food.jpeg',
@@ -118,66 +230,53 @@ export default {
         }
     },
     created() {
-        // Id é adquirido do parâmetro da URL.
-        const productId = this.$route.params.id;
-        if (productId != null) {
-            // Faz requisição para adquirir produto "convencional" se o id não for nulo.
-            axios.get('http://localhost:8081/products/' + productId)
-                .then(response => {
-                    const product = response.data;
-                    // Preencha o formulário com os dados do produto
-                    this.form.name = product.name;
-                    this.form.price = product.value;
-                    this.form.stock = product.quantity;
-                    this.form.description = product.description;
-                    this.form.editable = product.editable;
-                    this.form.image = product.image;
-                    this.form.description = product.description;
-                    this.form.details = product.details;
-                    this.form.materials = product.materials;
-                    this.form.sections = product.sections;
-                })
-                .catch(error => {
-                    console.error('Erro ao obter dados da API:', error);
-                });
-            //Adquire todas as tags desse produto
-            axios.get('http://localhost:8081/products/' + productId + '/tags')
-                .then(response => {
-                    this.form.tags = response.data;
-                }).catch(error => {
-                    console.error('Erro ao obter tags do produto:', error);
-                });
-        }
+        // Adquire dados para permitir edição.
+        this.getProduct();
     },
     methods: {
-        editProduct() {
-            // Adquirindo id da URL.
+        getProduct() {
+            // Id é adquirido do parâmetro da URL.
             const productId = this.$route.params.id;
-            if(productId != null) {
-                // Se id do produto na URl não é nulo, manda requisição para editar produto.
-                axios.put('http://localhost:8081/category/save-full-product/?productId=' + productId, this.form)
-                .then(response => {
-                    ElMessage({
-                        message: 'Produto editado com sucesso!',
-                        type: 'success',
+            if (productId != null) {
+                // Faz requisição para adquirir produto "convencional" se o id não for nulo.
+                axios.get('http://localhost:8081/products/' + productId)
+                    .then(response => {
+                        this.product = response.data;
+                        this.currentlyUnavailable = !this.product.available; // Seta condição de disponibilidade para identificar se produto estava indisponível.
+                    })
+                    .catch(error => {
+                        console.error('Erro ao obter dados da API:', error);
                     });
-                    console.log(Object.values(response.data));
+            } else {
+                ElMessage.error('Id do produto é nulo. Não é possível fazer requsição para adquirir produto.');
+            }
+        },
+        editProduct() {
+            // Se id do produto na URl não é nulo, manda requisição para editar produto.
+            if(this.product.productId != null) {
+                axios.put('http://localhost:8081/category/save-full-product/', this.products, config)
+                .then(response => {
+                    ElMessage('Produto editado com sucesso!');
                 })
                 .catch(error => {
                     ElMessage.error('Erro ao editar produto! Entre em contato com os administradores do sistema.')
-                    console.error('Erro ao editar produto:', error);
-                    console.log(JSON.stringify(this.form));
                 });
 
-                // A fazer.. Se o produto estiver fora de estoque, fica indisponível. Se retornar ao estoque, os clientes que tem o produto na lista de espera devem receber uma notificação via email.
+                // Se o produto estava indisponível e passou a estar disponível, 
+                // iniciar fluxo de envio de emails aos clientes que estavam na lista de espera pelo produto.
+                // if (this.product.quantity > 0 && this.wasCurrentlyUnavailable) {
+                //     axios.post('http://localhost:8081/')
+                //         .then(reponse => {
+                            
+                //         })
+                //         .catch(error => [
+
+                //         ]);
+                // }
             }
         }
     }
 }
-</script>
-
-<script setup>
-
 </script>
 
 <style>

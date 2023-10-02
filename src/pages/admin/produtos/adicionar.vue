@@ -39,7 +39,7 @@
                 </el-input-number>
             </el-form-item>
             <!-- Descrição -->
-            <el-form-item label="Descrição">
+            <el-form-item required label="Descrição">
                 <el-input 
                     type="textarea" 
                     maxlength= "250"
@@ -47,9 +47,15 @@
                     show-word-limit
                     v-model="product.description"></el-input>
             </el-form-item>
+            <!-- Disponível -->
+            <el-form-item required label="Produto esta disponível">
+                <el-switch active-text="Sim" inactive-text="Não" v-model="product.available"></el-switch>
+            </el-form-item>
+            <!-- Detalhes do produto -->
             <h2>Detalhes do produto</h2>
             <div class="elements">
                 <div class="element-item" v-for="detail in product.details" v-bind:key="detail">
+                    <el-icon v-on:click="removeItem(product.details, detail)" style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                     <div class="element-card">
                         <h2>{{ detail.fieldContent.toUpperCase() }}</h2>
                         <el-row :gutter="20">
@@ -94,7 +100,7 @@
                 </el-select>
             </el-form-item>
             <!-- Material -->
-            <el-form-item label="Material">
+            <el-form-item required label="Material">
                 <el-select
                     filterable
                     clearable
@@ -134,6 +140,7 @@
 
 
                         <div class="element-card">
+                            <el-icon v-on:click="removeItem(product.sections, section)" style="margin-right:-5px; float: right; margin-top: 10px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
 
                             <h2>{{ section.name.toUpperCase() }}</h2>
 
@@ -178,7 +185,6 @@
                 </div>
 
             </div>
-            <h1>{{ product }}</h1>
             <el-form-item>
                 <el-button type="primary" @click="createProduct">Salvar</el-button>
             </el-form-item>
@@ -200,6 +206,7 @@ export default {
                 editable: false,
                 mainImgUrl: '',
                 description: '',
+                available: true,
                 sections: [],
                 details: [],
                 material: '',
@@ -223,7 +230,6 @@ export default {
     },
 
     methods: {
-
         /** Faz requisição para adquirir todas categorias. Produto só deve ter UMA CATEGORIA. */
         getCategories() {
             axios.get('http://localhost:8081/category')
@@ -233,16 +239,14 @@ export default {
                     console.error('Erro ao obter categorias: ', error);
                 });
         },
-
         getMaterials() {
             axios.get('http://localhost:8081/materials')
                 .then(response => {
                     this.fetchedMaterials = response.data;
                 }).catch(error => {
-                    console.error('Erro ao obter tags do produto:', error);
+                    console.error('Erro ao obter materiais do produto:', error);
                 });
         },
-
         /** Faz requisição para adquirir todas tags. */
         getTags() {
             axios.get('http://localhost:8081/tags')
@@ -252,34 +256,15 @@ export default {
                     console.error('Erro ao obter tags do produto:', error.response);
                 });
         },
-
-        /** Faz requisição para criar categoria e seta categoria criada como selecionada. */
-        createCategory() {
-            axios.post('http://localhost:8081/category')
-                .then(response => {
-                    this.selectedCategory = response.data[0].id // Setando id da categoria criada para selecionada.
-                }).catch(error => {
-                    console.error('Erro ao obter tags do produto:', error);
-                });
-        },
-
-        /** Faz requisição para criar tag e seta tag criada como selecionada. */
-        /*createTag() {
-            axios.get('http://localhost:8081/tags')
-                .then(response => {
-                    this.product.tags = response.data;
-                }).catch(error => {
-                    console.error('Erro ao obter tags: ', error);
-                });
-        },*/
-
         /** Faz requisição para criar produto. */
         createProduct() {
-            // Adquirindo id caso selecionado, caso contrário torna valor null.
-            let categoryId = this.selectedCategory != null ? this.selectedCategory : null;
-
+            // Produto deve ter ao menos 1 em qtde para ser disponível.
+            if(this.product.quantity < 1 && this.product.available) {
+                ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos 1 em estoque');
+                return;
+            }
             // Setando valores das tags como atributo no produto.
-            if(this.selectedTags != null && this.selectedTags.length > 0) {
+            if (this.selectedTags != null && this.selectedTags.length > 0) {
                 this.selectedTags.forEach(id => {
                     // Checa se valor é int (é id e já existe).
                     if (Number.isInteger(id)) {
@@ -292,25 +277,27 @@ export default {
                 });
             }
 
-            // Fazendo requisição para criação do produto e seus subitens.
-            axios.post('http://localhost:8081/products/save-full-product', this.product)
+            // Se nehuma imagem foi selecionada, coloca imagem default.
+            if (this.product.mainImgUrl == null) {
+                this.product.mainImgUrl = 'img_not_available.png';
+            }
+
+            // Se categoria foi atribuida, adquire id e seta na requisição como parâmetro opcional.
+            const config = { params: { categoryId: this.selectedCategory ? this.selectedCategory : null } }
+            // Fazendo requisição para criação do produto e seus subitens, redireciona para página de listagem.
+            axios.post('http://localhost:8081/products/save-full-product', this.product, config)
                 .then((response) => {
-                    console.log('Sucesso: ' + response.statusText);
-                    ElMessage({
-                      message: 'Produto criado com sucesso.',
-                      type: 'success',
-                    })
+                    ElMessage.success('Produto criado com sucesso.')
                     this.$router.push('/admin/produtos')
                 })
                 .catch((error) => {
-                    console.error('Erro ao criar recurso:', error);
-                    ElMessage({
-                      message: 'Erro ao criar produto.',
-                      type: 'error',
-                    })
-                })
+                    ElMessage.error('Erro ao criar produto.');
+                });
         },
-
+        handleImageChange(file, fileList) {
+            //Somente uma imagem principal permitida.
+            this.product.mainImgUrl = file.name;
+        },
         /**
          * Adiciona seção no produto
          * @param {Product} product Produto onde será adicionado a seção.
@@ -322,7 +309,6 @@ export default {
                 options: []
             })
         },
-
         /**
          * Adiciona a opção na seção.
          * @param {Section} section Seção onde será adicionada a opção.
@@ -334,19 +320,19 @@ export default {
                 price: 0
             });
         },
-
-        handleImageChange(file, fileList) {
-            //Somente uma imagem principal permitida.
-            this.product.mainImgUrl = file.name;
-        },
-
         /**Insere novo detalhe do produto */
         newDetail() {
             this.product.details.push({
                 fieldContent: 'Novo detalhe',
                 detailContent: ''
             })
-        }
+        },
+        /** Deleta o item selecionado de qualquer coleção com itens. */
+        removeItem(itemList, itemToBeRemoved) {
+            // Encontra índice do item a ser removido e faz splice removendo.
+            const index = itemList.indexOf(itemToBeRemoved);
+            itemList.splice(index, 1);
+        },
     }
 }
 </script>

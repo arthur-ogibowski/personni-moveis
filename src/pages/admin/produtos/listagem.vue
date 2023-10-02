@@ -13,10 +13,8 @@
       <el-table-column prop="editable" sortable label="Personalizável" />
       <el-table-column prop="acoes" label="Ações">
         <template #default="scope">
-          <el-button class="table-edit" color="#A8A8A8" plain>
-            <router-link :to="'/admin/produtos/' + scope.row.productId">Editar</router-link>
-          </el-button>
-          <el-button class="table-delete" color="#F56C6C" plain>...</el-button>
+          <el-button class="table-edit" color="#A8A8A8" plain @click="redirectToEditProduct(scope)">Editar</el-button>
+          <el-button class="table-delete" color="#F56C6C" plain @click="showDeleteMessage(scope)">Deletar</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -26,6 +24,7 @@
 
 <script>
 import axios from 'axios';
+import { ElMessage, ElMessageBox } from 'element-plus';
 
 export default {
   data() {
@@ -34,13 +33,54 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:8081/products')
-      .then(response => {
-        response.data.forEach(product => this.tableData.push(product));
+    // Adquire todos produtos.
+    this.getProducts();
+  },
+  methods: {
+    /** Faz redirecionamento para tela de edição do produto. */
+    redirectToEditProduct(scope) {
+      return this.$router.push(`/admin/produtos/${scope.row.productId}`);
+    },
+    /** Deleta produto e atualiza tabela. */
+    showDeleteMessage(scope) {
+      ElMessageBox.confirm('Tem certeza que deseja remover o produto?', 'Confirmação', {
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não', // Nesse caso não faz nada.
+        type: 'warning',
       })
-      .catch(error => {
-        console.error('Erro ao obter dados da API:', error);
+      .then(() => {
+        // Usuário marcou sim -> deletar produto e atualizar tabela.
+        this.deleteProduct(scope);
+        // Atualiza lista de produtos.
+        const excludedProductId = scope.row.productId;
+        this.tableData = this.tableData.filter(product => product.productId != excludedProductId);
+      })
+      .catch(() => {
+        // Nada é feito na seleção do 'não'.
       });
+    },
+    /** Envia requisição para remover produto. */
+    deleteProduct(scope) {
+      axios.delete(`http://localhost:8081/products/${scope.row.productId}`)
+        .then(response => {
+          ElMessage.success('O produto foi removido com sucesso!');
+        })
+        .catch(error => {
+          console.error('Não foi possível remover o produto.', error);
+        });
+    },
+    getProducts() {
+      axios.get('http://localhost:8081/products')
+        .then(response => {
+          this.tableData = response.data;
+        })
+        .catch(error => {
+          console.error('Erro ao obter dados da API:', error);
+        });
+    },
+    trueOrFalse(isEditable) {
+      return isEditable ? 'Sim' : 'Não';
+    }
   }
 }
 </script>

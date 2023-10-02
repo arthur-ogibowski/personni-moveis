@@ -130,7 +130,8 @@ export default {
                 estado: "",
                 pais: "",
             },
-            products: []
+            products: [],
+            productCmps: []
         };
     },
     methods: {
@@ -140,9 +141,26 @@ export default {
         previousStep() {
             this.currentStep--;
         },
-        /** Calcula o valor de todos os produtos selecionados pelo usuário. */
+        /** Popula lista em tela com os produtos do carrinho armazenados em local storage. */
+        getCartProductsFromLocalStorage() {
+            this.products = cartService.getCartItems();
+        },
+        /** Calcula o valor de todos os produtos e cmps selecionados pelo usuário. */
         totalPrice() {
-            let productsTotal = this.products.reduce((total, product) => {
+            let total = 0;
+            // Se houverem produtos no carrinho, soma ao valor do total.
+            if(this.products && this.products.length > 0) {
+                total += this.totalProducts();
+            }
+            // Se houverem cpms, soma ao valor do total.
+            if(this.productCmps && this.productCmps.length > 0) {
+                total += this.totalCmps();
+            }
+            return total;
+        },
+        // Calculo dos produtos e personalizações.
+        totalProducts() {
+            const productsTotal = this.products.reduce((total, product) => {
                 // Se o produto é personalizável, calcula o total das personalizações
                 let personalizationTotal = 0;
                 if (product.editable && product.sections && product.sections.length > 0) {
@@ -150,13 +168,17 @@ export default {
                 }
                 // Calcula o total do produto considerando o valor base e as personalizações
                 let productTotal = (product.value + personalizationTotal) * product.quantity;
-                    // Soma o total do produto ao total geral
+                // Soma o total do produto ao total geral.
                 return total + productTotal;
             }, 0);
             return productsTotal;
         },
         /** Calcula valor total das opções selecionadas em um produto. */
         totalOption(sections) {
+            // Se não há opções no produto (não foi personalizado), retorna 0.
+            if (!(sections.options && sections.options > 0)) {
+                return 0;
+            }
             return sections.reduce((sectionTotal, section) => {
                 // Soma o preço de todas as opções selecionadas na seção
                 let optionsTotal = section.options.reduce((optionTotal, option) => {
@@ -166,10 +188,14 @@ export default {
                 return sectionTotal + optionsTotal;
             }, 0);
         },
-        /** Popula lista em tela com os produtos do carrinho armazenados em local storage. */
-        getCartProductsFromLocalStorage() {
-            this.products = cartService.getCartItems();
-        }
+
+        // Calculo dos cmps e edições.
+        totalCmps() {
+            // const cmpsTotal = this.productsCmp.reduce((total, cmp) => {
+            //     let total = 0;
+            // }, 0);
+            return 0;
+        },
     },
     created() {
         this.getCartProductsFromLocalStorage();
