@@ -155,7 +155,12 @@ import { ElMessage } from 'element-plus';
           ElMessage.error('Erro ao deletar Elemento! Veja se não tem Opções relacionadas!');
           });          
         }else{
-          sectionCmp.elementCmps.splice(elementCmpIndex, 1)
+
+          const index = Seccao.elementCmps.indexOf(Elemento)
+          if (index != -1){
+            Seccao.elementCmps.splice(index, 1);
+          }
+         
         }
       });
     } else if (Elemento != null && Option != null) { // Se o ID do elemento e da opção forem fornecidos, exclua a opção específica
