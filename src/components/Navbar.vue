@@ -23,7 +23,7 @@ export default {
     return {
       cartProducts: [],
       cartCMP: [],
-      cartItemsCounter: JSON.parse(localStorage.getItem('carrinho')).length || ''
+      cartItemsCounter: ''
     };
   },
   computed: {
@@ -33,6 +33,7 @@ export default {
   },
   created() {
     this.getAmountOfProductsInCart();
+    this.setCartItemsCounter();
   },
   methods: {
     /** Cria o eventListner e atualiza a quantidade de itens no icone do carrinho. */
@@ -42,6 +43,13 @@ export default {
         // Se carrinho foi criado com sucesso e tem ao menos um produto, coloca qtde de produtos, senão uma string vazia.
         this.cartItemsCounter = (localStorageCart && localStorageCart.length > 0) ? localStorageCart.length : '';
       });
+    },
+    setCartItemsCounter() {
+      if(localStorage.getItem('carrinho')) {
+        this.cartItemsCounter = JSON.parse(localStorage.getItem('carrinho')).length || '';
+      } else {
+        this.cartItemsCounter = '';
+      }
     }
   },
 }
