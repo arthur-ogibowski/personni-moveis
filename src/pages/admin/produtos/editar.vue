@@ -264,7 +264,7 @@ export default {
 
                 // Se o produto estava indisponível e passou a estar disponível, 
                 // iniciar fluxo de envio de emails aos clientes que estavam na lista de espera pelo produto.
-                // if (this.product.quantity > 0 && this.wasCurrentlyUnavailable) {
+                // if (this.product.quantity > 0 && this.wasCurrentlyUnavailable && this.product.available) {
                 //     axios.post('http://localhost:8081/')
                 //         .then(reponse => {
                             
