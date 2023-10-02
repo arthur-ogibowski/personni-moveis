@@ -55,8 +55,8 @@
 </template>
 <script>
 import axios from 'axios';
-import { ElLoading, ElMessage } from 'element-plus'
-
+import { ElLoading, ElMessage } from 'element-plus';
+import '@/store/cartService';
 
 export default {
   data() {
@@ -108,6 +108,7 @@ export default {
     isLastSection() {
       // Verifique se a seção atual é a última seção
       return this.currentSection > this.categoria.sectionCmps.length;
+
     },
   },
   methods: {

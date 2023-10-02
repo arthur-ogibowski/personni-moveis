@@ -204,7 +204,7 @@ export default {
                 value: 0,
                 quantity: 1,
                 editable: false,
-                mainImgUrl: '',
+                mainImgUrl: null,
                 description: '',
                 available: true,
                 sections: [],
