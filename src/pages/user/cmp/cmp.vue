@@ -51,7 +51,6 @@
         </div>
       </div>
     </div>
-    <h1>{{ this.products_cmp }}</h1>
   </div>
 </template>
 <script>
