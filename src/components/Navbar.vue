@@ -21,9 +21,7 @@
 export default {
   data() {
     return {
-      cartProducts: [],
-      cartCMP: [],
-      cartItemsCounter: ''
+      cartItemsCounter: '',
     };
   },
   computed: {
@@ -33,24 +31,25 @@ export default {
   },
   created() {
     this.getAmountOfProductsInCart();
-    this.setCartItemsCounter();
   },
   methods: {
     /** Cria o eventListner e atualiza a quantidade de itens no icone do carrinho. */
     getAmountOfProductsInCart() {
       window.addEventListener('cartUpdated', () => {
-        const localStorageCart = JSON.parse(localStorage.getItem('carrinho'));
+        const localStorageProducts = JSON.parse(localStorage.getItem('carrinho'));
+        const localStorageCmps = JSON.parse(localStorage.getItem('carrinhoCMP'));
         // Se carrinho foi criado com sucesso e tem ao menos um produto, coloca qtde de produtos, senão uma string vazia.
-        this.cartItemsCounter = (localStorageCart && localStorageCart.length > 0) ? localStorageCart.length : '';
+        let totalItems = 0
+        if (localStorageProducts && localStorageProducts.length > 0) {
+          totalItems += localStorageProducts.length || 0;
+        }
+        if(localStorageCmps && localStorageCmps.length > 0) {
+          totalItems += localStorageCmps.length || 0;
+        }
+        // Atribui total de itens se for diferente de 0 ou string vazia.
+        this.cartItemsCounter = totalItems != 0 ? totalItems : '';
       });
     },
-    setCartItemsCounter() {
-      if(localStorage.getItem('carrinho')) {
-        this.cartItemsCounter = JSON.parse(localStorage.getItem('carrinho')).length || '';
-      } else {
-        this.cartItemsCounter = '';
-      }
-    }
   },
 }
 </script>

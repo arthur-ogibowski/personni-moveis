@@ -32,7 +32,7 @@
           </div>
           <el-button class="cta" color="$cta-color" type="primary" @click="previousSection"
             v-if="isLastSection">Voltar</el-button>
-          <el-button class="cta" color="$cta-color" type="primary" @click="criarCMP"
+          <el-button class="cta" color="$cta-color" type="primary" @click="criarCMP(this.products_cmp)"
             v-if="isLastSection">Salvar</el-button>
         </el-form>
       </div>
@@ -51,12 +51,13 @@
         </div>
       </div>
     </div>
+    <h1>{{ this.products_cmp }}</h1>
   </div>
 </template>
 <script>
 import axios from 'axios';
 import { ElLoading, ElMessage } from 'element-plus';
-import '@/store/cartService';
+import cartService from '@/store/cartService';
 
 export default {
   data() {
@@ -67,9 +68,9 @@ export default {
       products_cmp: {
         id: 0,
         value: 0,
-        quantity: 1,
-        imgUrl: "string",
-        description: "string",
+        amount: 1,
+        imgUrl: '',
+        description: '',
         sectionProductCmpDtos: [],
       },
       categoria: {
@@ -86,7 +87,7 @@ export default {
       background: 'rgba(0, 0, 0, 0.7)'
     });
     const id = this.$route.params.id;
-    axios.get(`http://localhost:8081/category/` + id)
+    axios.get(`http://localhost:8081/category/${id}`)
       .then((response) => {
         if (response.status === 200) {
           this.categoria = response.data;
@@ -100,15 +101,11 @@ export default {
       .catch((error) => {
         console.error('Erro ao buscar dados da API:', error);
       });
-
-
-
   },
   computed: {
     isLastSection() {
       // Verifique se a seção atual é a última seção
       return this.currentSection > this.categoria.sectionCmps.length;
-
     },
   },
   methods: {
@@ -216,15 +213,16 @@ export default {
         this.selectedOptionsInfo = selectedOptionsInfo;
       }
     },
-    criarCMP() {
-      axios.post('http://localhost:8081/products_cmp', this.products_cmp).then((response) => {
-        if (response.status === 201) {
-          // A resposta da API indica que o recurso foi criado com sucesso.             
-          // Você pode realizar ações adicionais aqui, se necessário.             
-          ElMessage.success('CMP criado com Sucesso!');
-        }
-      }).catch((error) => { ElMessage.error('Erro ao criar CMP!'); })
-    }
+    criarCMP(productsCmp) {
+      // axios.post('http://localhost:8081/products_cmp', this.products_cmp).then((response) => {
+      //   if (response.status === 201) {
+      //     // A resposta da API indica que o recurso foi criado com sucesso.             
+      //     // Você pode realizar ações adicionais aqui, se necessário.             
+      //     ElMessage.success('CMP criado com Sucesso!');
+      //   }
+      // }).catch((error) => { ElMessage.error('Erro ao criar CMP!'); })
+      cartService.addCmpToCart(productsCmp);
+    },
   }
 };
 </script>
