@@ -26,31 +26,68 @@
                 </div>
               </div>
               <div class="actions">
-                <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="currentSection !== 1">Voltar</el-button>
+                <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="currentSection !== 1"><el-icon><CaretLeft /></el-icon> Voltar</el-button>
                 <el-button class="cta" color="$cta-color" style="visibility: hidden;" type="primary" @click="previousSection" v-else></el-button>
-                <el-button class="cta" color="$cta-color" type="primary" @click="nextSection">Próximo passo</el-button>
+                <el-button class="cta" color="$cta-color" type="primary" @click="nextSection">Próximo passo <el-icon><CaretRight /></el-icon></el-button>
               </div>
             </div>
           </div>
-            <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="isLastSection">Voltar</el-button>    
-            <el-button class="cta" color="$cta-color" type="primary" @click="criarCMP" v-if="isLastSection">Salvar</el-button>
         </el-form>
       </div>
 
-      <div class="resumo">
+      <div class="resumo" v-if="!isLastSection">
         <h1>Resumo</h1>
-        <div class="nome">
-          <h2>Opções Escolhidas</h2>
-          <ul>
-            <li v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">{{ optionInfo }}</li>
-          </ul>
+        <div class="resumo-section" >
+            <div v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">
+              <el-divider></el-divider>
+                <h2>{{ optionInfo.section }}</h2>
+              <div class="resumo-section-list">
+                <div v-for="element in optionInfo.elements" :key="element" class="resumo-section-item">
+                  <h4>{{ element.element }}</h4>
+                  <div class="resumo-section-item-option">
+                    <el-text type="success">{{ element.option }}</el-text>
+                    <el-text type="info">R$ {{ element.price }}</el-text>
+                  </div>
+                </div>
+              </div>
+          </div>
         </div>
         <div class="preco">
+          <el-divider></el-divider>
           <h2>Total</h2>
           <h3>R$ {{ products_cmp.value }}</h3>
         </div>
       </div>
+
     </div>
+
+    <div class="last-section" v-if="isLastSection">
+
+      <h1>Revisar criação</h1>
+
+      <div class="revisar-section">
+            <div v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">
+              <el-divider></el-divider>
+                <h2>{{ optionInfo.section }}</h2>
+              <div class="revisar-section-list">
+                <div v-for="element in optionInfo.elements" :key="element" class="revisar-section-item">
+                  <el-image></el-image>
+                  <h4>{{ element.element }}</h4>
+                  <div class="revisar-section-item-option">
+                    <el-text type="success">{{ element.option }}</el-text>
+                    <el-text type="info">R$ {{ element.price }}</el-text>
+                  </div>
+                </div>
+              </div>
+          </div>
+        </div>
+        <div class="revisar-actions">
+          <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="isLastSection"><el-icon><CaretLeft /></el-icon> Voltar</el-button>    
+          <el-button class="cta" color="$cta-color" size="large" type="primary" @click="criarCMP" v-if="isLastSection">Adicionar ao carrinho</el-button>
+        </div>
+      </div>
+    
+    
   </div>
 
 </template>
@@ -101,7 +138,14 @@ export default {
       .catch((error) => {
         console.error('Erro ao buscar dados da API:', error);
       });
-      
+
+      this.categoria.sectionCmps.forEach((section) => {
+      this.selectedOptionsInfo.push({
+        section: section.name,
+        elements: [{ element: "--", option: "--", price: "--" }],
+      });
+    });
+
 
       
   },
@@ -134,93 +178,117 @@ export default {
     },
 
     resumoCmp() {
-  // Encontre os IDs da seção e do elemento com base na opção selecionada
-  const correspondencias = this.encontrarElementoESeçãoPorOpção(this.selected);
+      // Encontre os IDs da seção e do elemento com base na opção selecionada
+      const correspondencias = this.encontrarElementoESeçãoPorOpção(this.selected);
 
-  if (correspondencias.length > 0) {
-    const selectedOptionsInfo = []; // Array para armazenar as informações de cada opção escolhida
+      if (correspondencias.length > 0) {
+        const selectedOptionsInfo = []; // Array para armazenar as informações de cada opção escolhida
+        
 
-  correspondencias.forEach(({ section, element, option }) => {
-    // Verifique se a seção já existe na lista de seções
-    const existingSection = this.products_cmp.sectionProductCmpDtos.find(sec => sec.sectionId === section.id);
 
-    if (existingSection) {
-      const existingElement = existingSection.elementProductCmpDtos.find(ele => ele.id === element.id);
+      correspondencias.forEach(({ section, element, option }) => {
+        // Verifique se a seção já existe na lista de seções
+        const existingSection = this.products_cmp.sectionProductCmpDtos.find(sec => sec.sectionId === section.id);
 
-      if (existingElement) {
-        // Se o elemento já existe, substitua a opção existente
-        existingElement.optionProductCmpDto = {
-          "id": option.id,
-          "name": option.name,
-          "price": option.price,
-          "imgUrl": "string",
-          "elementCmpId": 0
-        };
-      } else {
-        // Caso contrário, crie um novo objeto para o elemento e a opção
-        const elementObj = {
-          "id": element.id,
-          "name": element.name,
-          "imgUrl": "string",
-          "type": "string",
-          "sectionCmpId": 0,
-          "optionProductCmpDto": {
-            "id": option.id,
-            "name": option.name,
-            "price": option.price,
-            "imgUrl": "string",
-            "elementCmpId": 0
+        if (existingSection) {
+          const existingElement = existingSection.elementProductCmpDtos.find(ele => ele.id === element.id);
+
+          if (existingElement) {
+            // Se o elemento já existe, substitua a opção existente
+            existingElement.optionProductCmpDto = {
+              "id": option.id,
+              "name": option.name,
+              "price": option.price,
+              "imgUrl": "string",
+              "elementCmpId": 0
+            };
+          } else {
+            // Caso contrário, crie um novo objeto para o elemento e a opção
+            const elementObj = {
+              "id": element.id,
+              "name": element.name,
+              "imgUrl": "string",
+              "type": "string",
+              "sectionCmpId": 0,
+              "optionProductCmpDto": {
+                "id": option.id,
+                "name": option.name,
+                "price": option.price,
+                "imgUrl": "string",
+                "elementCmpId": 0
+              }
+            };
+
+            existingSection.elementProductCmpDtos.push(elementObj);
           }
+        } else {
+          // Se a seção não existir, crie uma nova seção com o elemento e a opção
+          const sectionObj = {
+            "sectionId": section.id,
+            "name": section.name,
+            "imgUrl": "string",
+            "categoryId": 0,
+            "elementProductCmpDtos": [{
+              "id": element.id,
+              "name": element.name,
+              "imgUrl": "string",
+              "type": "string",
+              "sectionCmpId": 0,
+              "optionProductCmpDto": {
+                "id": option.id,
+                "name": option.name,
+                "price": option.price,
+                "imgUrl": "string",
+                "elementCmpId": 0
+              }
+            }]
+          };
+
+          this.products_cmp.sectionProductCmpDtos.push(sectionObj);
+        }
+          
+        
+
+
+        if (!selectedOptionsInfo.find((sec) => sec.section === section.name)) {
+          selectedOptionsInfo.push({ 
+            section: section.name,
+            elements: [],
+          });
+        }
+
+        console.log(selectedOptionsInfo)
+
+        // push element to elements array
+        const elementInfo = {
+          element: element.name,
+          option: option.name,
+          price: option.price,
         };
 
-        existingSection.elementProductCmpDtos.push(elementObj);
+        selectedOptionsInfo[selectedOptionsInfo.length - 1].elements.push(elementInfo);
+          
+          
+
+
+
+
+          //selectedOptionsInfo.push(optionInfo);
+
+          //selectedOptionsInfo.push(optionInfo);
+      });
+
+      // Atualize o valor total
+      this.products_cmp.value = this.products_cmp.sectionProductCmpDtos.reduce((total, section) => {
+        return total + section.elementProductCmpDtos.reduce((eleTotal, element) => {
+          return eleTotal + element.optionProductCmpDto.price;
+        }, 0);
+      }, 0);
+
+      this.selectedOptionsInfo = selectedOptionsInfo;
       }
-    } else {
-      // Se a seção não existir, crie uma nova seção com o elemento e a opção
-      const sectionObj = {
-        "sectionId": section.id,
-        "name": section.name,
-        "imgUrl": "string",
-        "categoryId": 0,
-        "elementProductCmpDtos": [{
-          "id": element.id,
-          "name": element.name,
-          "imgUrl": "string",
-          "type": "string",
-          "sectionCmpId": 0,
-          "optionProductCmpDto": {
-            "id": option.id,
-            "name": option.name,
-            "price": option.price,
-            "imgUrl": "string",
-            "elementCmpId": 0
-          }
-        }]
-      };
-
-      this.products_cmp.sectionProductCmpDtos.push(sectionObj);
     }
-         // Construa uma string com as informações da opção escolhida
-      const optionInfo = `${section.name} - ${element.name} - ${option.name} (R$${option.price})`;
 
-      selectedOptionsInfo.push(optionInfo);
-  });
-
-  // Atualize o valor total
-  this.products_cmp.value = this.products_cmp.sectionProductCmpDtos.reduce((total, section) => {
-    return total + section.elementProductCmpDtos.reduce((eleTotal, element) => {
-      return eleTotal + element.optionProductCmpDto.price;
-    }, 0);
-  }, 0);
-
-  this.selectedOptionsInfo = selectedOptionsInfo;
-}
-
-
-
-
-
-}
 
   },
 };
@@ -274,10 +342,92 @@ export default {
   .resumo{
     width: 30%;
     height: 100%;
-    background-color: #f5f5f5;
     border-radius: 10px;
     margin-left: 20px;
     padding: 20px;
+    background-color: #f5f5f5;
+
+    h2{
+      font-size: 20px;
+      color: $cta-color;
+    }
+
+
+    .resumo-section-list {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+
+      .resumo-section-item{
+        margin: 0 10px 10px 0;
+        padding: 10px;
+        min-width: 150px;
+        background-color: #EBEBEB;
+
+        h4{
+          margin-top: 0;
+          margin-bottom: 10px;
+          font-size:  14px;
+        }
+        p{
+          font-size: 12px;
+        }
+
+
+        .resumo-section-item-option{
+          display: flex;
+          justify-content: space-between;
+        }
+      }
+    }
   }
+}
+.revisar-actions{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+  }
+.revisar-section{
+
+
+h2{
+  font-size: 20px;
+}
+.revisar-section-list {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .revisar-section-item{
+    margin: 0 10px 10px 0;
+    padding: 10px;
+    min-width: 150px;
+    background-color: #EBEBEB;
+
+    .el-image{
+      min-width: 150px;
+      margin: -10px -10px 10px -10px;
+
+      :deep(.el-image__error){
+        min-height: 150px;
+      }
+    }
+
+    h4{
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size:  14px;
+    }
+    p{
+      font-size: 12px;
+    }
+
+
+    .revisar-section-item-option{
+      display: flex;
+      justify-content: space-between;
+    }
+  }
+}
 }
 </style>
