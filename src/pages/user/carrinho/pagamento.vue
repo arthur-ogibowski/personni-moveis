@@ -47,8 +47,11 @@
                     <el-form-item label="Número do cartão">
                         <el-input v-model="cartao.NumeroCartao"></el-input>
                     </el-form-item>
-                    <el-form-item label="Validade">
-                        <el-input v-model="cartao.ValidadeCartao"></el-input>
+                    <el-form-item label="Mês">
+                        <el-input v-model="cartao.mes"></el-input>
+                    </el-form-item>
+                    <el-form-item label="Ano">
+                        <el-input v-model="cartao.ano"></el-input>
                     </el-form-item>
                     <el-form-item label="CVV">
                         <el-input v-model="cartao.CvvCartao"></el-input>
@@ -79,6 +82,7 @@
                     <div class="preco-final">
                         <h3>Preço final: {{ totalPrice() != 0 ? "R$" + totalPrice() : "--" }}</h3>
                     </div>
+
                 </el-card>
 
                 <div class="actions">
@@ -87,6 +91,8 @@
                         </el-icon> Voltar</el-button>
                     <el-button type="primary" @click="nextStep">Próximo passo <el-icon>
                             <ArrowRightBold />
+                        </el-icon></el-button>
+                    <el-button type="primary" @click="Pagar">Pagar <el-icon>
                         </el-icon></el-button>
                 </div>
             </div>
@@ -103,7 +109,9 @@ import VueTheMask from 'vue-the-mask';
 import { ElMessage } from 'element-plus';
 export default {
     directives: { mask: VueTheMask.mask },
+    
     data() {
+
         return {
             currentStep: 0,
             selected: [],
@@ -138,7 +146,8 @@ export default {
             cartao: {
                 nomeCartao: "",
                 NumeroCartao: 0,
-                ValidadeCartao: "",
+                mes: 0,
+                ano: 0,
                 CvvCartao: 0
             },
             products: [],
@@ -146,6 +155,75 @@ export default {
         };
     },
     methods: {
+
+        Pagar() {
+            const currentDate = new Date();
+            // Dados do pedido adaptados ao formato JavaScript
+            const pedidoPagSeguro = {
+                reference_id: "ex-00001",
+                customer: {
+                    name: "Jose da Silva",
+                    email: "email@test.com",
+                    tax_id: "12345678909",
+                    phones: [
+                        {
+                            country: "55",
+                            area: "11",
+                            number: "999999999",
+                            type: "MOBILE"
+                        }
+                    ]
+                },
+                items: [
+                    {
+                        reference_id: "referencia do item",
+                        name: "nome do item",
+                        quantity: 1,
+                        unit_amount: 500
+                    }
+                ],
+                qr_codes: [
+                    {
+                        amount: {
+                            "value": this.productsCmp.value
+                        },
+                        expiration_date: new Date(currentDate.getTime() + 24 * 60 * 60 * 1000).toISOString(), 
+                    }
+                ],
+                shipping: {
+                    address: {
+                        street: this.endereco.rua,
+                        number: this.endereco.numero,
+                        complement: this.endereco.complemento,
+                        locality: this.endereco.bairro,
+                        city: this.endereco.cidade,
+                        region_code: this.endereco.estado,
+                        country: "BRA",
+                        postal_code: this.endereco.cep
+                    }
+                },
+                notification_urls: [
+                    "https://meusite.com/notificacoes"
+                ],
+            };
+
+            // Envia a solicitação POST para a API do PagSeguro
+            axios
+                .post('http://localhost:8081/payments', pedidoPagSeguro, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then((response) => {
+                    // Lida com a resposta da API do PagSeguro aqui
+                    console.log(response.data);
+                })
+                .catch((error) => {
+                    // Lida com erros aqui
+                    console.error(error);
+                });
+        },
+
 
         consultarCEP() {
             const cep = this.endereco.cep;
@@ -200,6 +278,8 @@ export default {
             if (this.productCmps && this.productCmps.length > 0) {
                 total += this.totalCmps();
             }
+
+            this.productsCmp.value = total;
             return total;
         },
         // Calculo dos produtos e personalizações.
