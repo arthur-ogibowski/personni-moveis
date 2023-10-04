@@ -17,7 +17,7 @@
                 <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
-                        
+
                         <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;"
                             :size="20" color="#FF0000">
                             <CloseBold />
@@ -126,7 +126,7 @@ export default {
             // Se o ID da seção for fornecido, exclua tudo dentro dessa seção
             if (Seccao != null && Elemento == null && Option == null) {
                 const sectionCmpIndex = categoria.sectionCmps.indexOf(Seccao)
-                if(sectionCmpIndex != null){
+                if (sectionCmpIndex != null) {
                     categoria.sectionCmps.splice(sectionCmpIndex, 1);
                 }
             } else if (Elemento != null && Option == null) { // Se o ID do elemento for fornecido, exclua todas as opções desse elemento
@@ -168,7 +168,10 @@ export default {
                     }
                 })
                 .catch((error) => {
-                    console.error('Erro ao criar recurso:', error);
+                    ElMessage({
+                        message: 'Erro ao criar a categoria.',
+                        type: 'error',
+                    })
                 })
         },
         newSection() {
