@@ -105,11 +105,9 @@
 <script>
 import cartService from '@/store/cartService.js';
 import axios from 'axios';
-import VueTheMask from 'vue-the-mask';
 import { ElMessage } from 'element-plus';
 export default {
-    directives: { mask: VueTheMask.mask },
-    
+  
     data() {
 
         return {
