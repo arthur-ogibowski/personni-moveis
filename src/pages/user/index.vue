@@ -26,7 +26,7 @@
                   <router-link :to="`/produtos/${product.productId}`"><el-button class="cta" color="$cta-color">Detalhes</el-button></router-link>
                 </div>
                 <div class="carousel-image">
-                  <img :src=getImgPath(product.mainImgUrl)>
+                  <img :src=product.mainImg>
                 </div>
               </div>
             </el-carousel-item>

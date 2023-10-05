@@ -195,6 +195,7 @@
 <script>
 import axios from 'axios';
 import { ElMessage } from 'element-plus'
+import imgConverter from '@/store/imgConverter.js';
 
 export default {
     data() {
@@ -204,7 +205,7 @@ export default {
                 value: 0,
                 quantity: 1,
                 editable: false,
-                mainImgUrl: null,
+                mainImg: null,
                 description: '',
                 available: true,
                 sections: [],
@@ -277,10 +278,8 @@ export default {
                 });
             }
 
-            // Se nehuma imagem foi selecionada, coloca imagem default.
-            if (this.product.mainImgUrl == null) {
-                this.product.mainImgUrl = 'img_not_available.png';
-            }
+            // Se nehuma imagem foi selecionada, coloca imagem default - a fazer....
+            //imgConverter.isSettingDefaultImage();
 
             // Se categoria foi atribuida, adquire id e seta na requisição como parâmetro opcional.
             const config = { params: { categoryId: this.selectedCategory ? this.selectedCategory : null } }
@@ -294,9 +293,13 @@ export default {
                     ElMessage.error('Erro ao criar produto.');
                 });
         },
-        handleImageChange(file, fileList) {
-            //Somente uma imagem principal permitida.
-            this.product.mainImgUrl = file.name;
+        async handleImageChange(file, fileList) {
+            try {
+                // Adquire imagem como string base64.
+                this.product.mainImg = await imgConverter.fileToBase64String(file.raw);
+            } catch(error) {
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+            }
         },
         /**
          * Adiciona seção no produto
@@ -305,7 +308,7 @@ export default {
         newSection() {
             this.product.sections.push({
                 name: "Nova seção",
-                mainImgUrl: "",
+                mainImg: "",
                 options: []
             })
         },
@@ -316,7 +319,7 @@ export default {
         newOption(section) {
             section.options.push({
                 name: '',
-                mainImgUrl: '',
+                mainImg: '',
                 price: 0
             });
         },
