@@ -7,7 +7,7 @@
 
         <div class="categorias-grid">
           <router-link :to="'/criar/' + i.id" v-for="i in categorias" :key="i">
-          <div class="categoria-item">
+          <div class="categoria-item" v-if="i.allow_creation">
             <h3> {{  i.name }} </h3>
           </div>
         </router-link>

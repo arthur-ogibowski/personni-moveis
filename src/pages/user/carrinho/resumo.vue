@@ -73,6 +73,7 @@
 import axios from 'axios';
 import cartService from '@/store/cartService.js';
 import { ElMessageBox } from 'element-plus';
+import { ElLoading } from 'element-plus'
 
 export default {
     data() {
@@ -90,9 +91,18 @@ export default {
         }
     },
     created() {
+        const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+      });
         // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
         this.getCartProductsFromLocalStorage();
         this.getCartCmpProductsFromLocalStorage();
+
+        setTimeout(() => {
+            loading.close()
+          }, 250)
     },
     methods: {
         // Produto

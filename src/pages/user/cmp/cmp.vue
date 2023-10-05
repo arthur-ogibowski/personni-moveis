@@ -8,7 +8,7 @@
       <div class="cmp-sections">
         <el-form :model="selected">
           <div class="section" v-for="section in categoria.sectionCmps" :key="section.id">
-            <div class="inner-section" v-if="currentSection == categoria.sectionCmps.indexOf(section) + 1">
+            <div class="inner-section" v-if="currentSection == categoria.sectionCmps.indexOf(section) + 1 && section.name !== 'Revisar'">
               <h1>{{ section.name }}</h1>
               <div class="section-elements">
                 <div v-for="element in section.elementCmps" :key="element.id" class="ml-4 element-item">
@@ -94,6 +94,7 @@
 <script>
 import axios from 'axios';
 import { ElLoading } from 'element-plus'
+import { ElMessage } from 'element-plus'
 import cartService from '@/store/cartService';
 
 export default {
@@ -128,6 +129,10 @@ export default {
       .then((response) => {
         if (response.status === 200) {
           this.categoria = response.data;
+          this.categoria.sectionCmps.push({
+            name: "Revisar",
+            elementCmps: [],
+          });
           setTimeout(() => {
             loading.close()
           }, 250)
@@ -139,26 +144,27 @@ export default {
         console.error('Erro ao buscar dados da API:', error);
       });
 
-      this.categoria.sectionCmps.forEach((section) => {
-      this.selectedOptionsInfo.push({
-        section: section.name,
-        elements: [{ element: "--", option: "--", price: "--" }],
-      });
-    });
-
 
       
   },
   computed: {
     isLastSection() {
-      // Verifique se a seção atual é a última seção
-      return this.currentSection > this.categoria.sectionCmps.length;
+      return this.currentSection === this.categoria.sectionCmps.length;
     },
   },
   methods: {
     criarCMP() {
       // Adiciona CMP criado ao local storage.
       cartService.addCmpToCart(this.products_cmp);
+      ElMessage({
+        showClose: true,
+        message: 'Produto adicionado ao carrinho!',
+        type: 'success',
+        duration: 3000
+      })
+      setTimeout (() => {
+        this.$router.push('/carrinho');
+      }, 250);
     },
     nextSection() {
       this.currentSection += 1;
