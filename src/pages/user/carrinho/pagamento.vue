@@ -1,41 +1,60 @@
+<script setup>
+import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/icons-vue'
+</script>
+
 <template>
-    <div class="container" v-loading="loading" element-loading-text="Carregando..." :element-loading-spinner="svg"
-        element-loading-background="rgba(122, 122, 122, 0.9)">
-        <el-steps align-center :active="currentStep" finish-status="success">
-            <el-step title="Endereço de entrega" />
-            <el-step title="Forma de pagamento" />
-            <el-step title="Revisão" />
-            <el-step title="Finalizar compra" />
+    <el-menu
+      mode="horizontal"
+      :ellipsis="false"
+      background-color="#FEFEFE"
+      text-color="#112620"
+      active-text-color="$tertiary-color"
+      @select="handleSelect"
+    >
+    <el-menu-item><router-link to="/"><img style="width: 200px;" src="../../../assets/img/personniLogo-Green.png"/></router-link></el-menu-item>
+
+      <el-steps align-center :active="currentStep" finish-status="success" simple class="checkout-steps">
+            <el-step title="Endereço de entrega" :icon="LocationFilled"/>
+            <el-step title="Forma de pagamento" :icon="WalletFilled" />
+            <el-step title="Finalizar compra" :icon="StarFilled"/>
+            <el-step title="Pedido concluído" :icon="Select"/>
         </el-steps>
+    </el-menu>
+
+    <div class="container">
 
         <div class="carrinho-content">
 
             <div class="endereco" v-if="currentStep == 0">
                 <h1>Endereço de entrega</h1>
-                <el-form :model="endereco">
-                    <el-form-item label="CEP">
-                        <el-input v-model="endereco.cep" @blur="consultarCEP" v-mask="'#####-###'" maxlength="9"></el-input>
-                    </el-form-item>
+                <el-form :model="endereco" label-position="top">
+                    <el-col :span="10">
+                        <el-form-item label="CEP">
+                            <el-input v-model="endereco.cep" required @blur="consultarCEP" v-mask="'#####-###'" maxlength="9"></el-input>
+                        </el-form-item>
+                    </el-col>
                     <el-form-item label="Rua">
-                        <el-input v-model="endereco.rua" :disabled="true"></el-input>
+                        <el-input v-model="endereco.rua"  :disabled="!cepExists" required></el-input>
                     </el-form-item>
-                    <el-form-item label="Número">
-                        <el-input v-model="endereco.numero"></el-input>
-                    </el-form-item>
-                    <el-form-item label="Complemento">
-                        <el-input v-model="endereco.complemento"></el-input>
-                    </el-form-item>
-                    <el-form-item label="Bairro">
-                        <el-input v-model="endereco.bairro" :disabled="true"></el-input>
-                    </el-form-item>
-                    <el-form-item label="Cidade">
-                        <el-input v-model="endereco.cidade" :disabled="true"></el-input>
-                    </el-form-item>
-                    <el-form-item label="Estado">
-                        <el-input v-model="endereco.estado" :disabled="true"></el-input>
-                    </el-form-item>
+                    <div class="small-inputs">
+                        <el-form-item label="Número">
+                            <el-input v-model="endereco.numero"  :disabled="!cepExists" required></el-input>
+                        </el-form-item>
+                        <el-form-item label="Complemento">
+                            <el-input v-model="endereco.complemento" :disabled="!cepExists" ></el-input>
+                        </el-form-item>
+                        <el-form-item label="Cidade">
+                            <el-input v-model="endereco.cidade"  :disabled="!cepExists" required></el-input>
+                        </el-form-item>
+                        <el-form-item label="Estado">
+                            <el-input v-model="endereco.estado"  :disabled="!cepExists" required></el-input>
+                        </el-form-item>
+                    </div>
                 </el-form>
 
+                <div class="actions">
+                    <el-button type="primary" @click="nextStep">Próximo passo <el-icon><ArrowRightBold /></el-icon></el-button>
+                </div>
             </div>
 
             <div class="forma-pagamento" v-if="currentStep == 1">
@@ -57,42 +76,45 @@
                         <el-input v-model="cartao.CvvCartao"></el-input>
                     </el-form-item>
                 </el-form>
-            </div>
 
-            <div class="revisao" v-if="currentStep == 2">
-                <el-table border :data="products" style="width: 50%">
-                    <el-table-column prop="name" label="Produto" width="*"></el-table-column>
-                    <el-table-column prop="price" label="Preço" width="auto"></el-table-column>
-                </el-table>
+                <div class="actions">
+                    <el-button type="primary" plain @click="previousStep"><el-icon><ArrowLeftBold /></el-icon> Voltar</el-button>
+                    <el-button type="primary" @click="nextStep">Próximo passo <el-icon><ArrowRightBold /></el-icon></el-button>
+                </div>
+
             </div>
 
             <div class="side-info">
 
                 <el-card class="box-card" shadow="never">
                     <div class="card-header card-item">
-                        <h2>Resumo da compra</h2>
+                        <h2><el-icon><GoodsFilled /></el-icon> Resumo da compra</h2>
                     </div>
-                    <div class="card-item">
-                        <h3>Subtotal ({{ products.length }} itens): {{ totalPrice() != 0 ? "R$" + totalPrice() : "--" }}
+                    <div class="card-item" v-for="product in products" :key="product">
+                        <div class="card-item-inner">
+                            <div class="card-item-about">
+                                <h3>{{ product.quantity }} x {{ product.name }}</h3>
+                                <el-text type="info" size="small">{{ product.description }}</el-text>
+                            </div>
+                            <div class="card-item-price">
+                                <h4>R$ {{ formatPrice(product.value) }}</h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-item frete">
+                        <el-text type="info" size="small">Frete: </el-text><h4> {{ calcularFrete() != 0 ? "R$" + formatPrice(calcularFrete()) : "--" }}
+                        </h4>
+                    </div>
+                    <div class="card-item subtotal">
+                        <el-text type="info" size="medium">Total ({{ products.length }} itens): </el-text><h3> {{ totalPrice() != 0 ? "R$" + formatPrice(totalPrice()) : "--" }}
                         </h3>
                     </div>
-                    <div class="card-item">
-                        <h3>Frete: {{ totalPrice() != 0 ? "R$" + totalPrice() : "--" }}</h3>
-                    </div>
-                    <div class="preco-final">
-                        <h3>Preço final: {{ totalPrice() != 0 ? "R$" + totalPrice() : "--" }}</h3>
-                    </div>
+                   
 
                 </el-card>
 
                 <div class="actions">
-                    <el-button v-if="currentStep != 0" type="primary" plain @click="previousStep"><el-icon>
-                            <ArrowLeftBold />
-                        </el-icon> Voltar</el-button>
-                    <el-button type="primary" @click="nextStep">Próximo passo <el-icon>
-                            <ArrowRightBold />
-                        </el-icon></el-button>
-                    <el-button type="primary" @click="Pagar">Pagar <el-icon>
+                    <el-button type="primary" @click="Pagar" disabled>Pagar <el-icon>
                         </el-icon></el-button>
                 </div>
             </div>
@@ -106,10 +128,10 @@
 import cartService from '@/store/cartService.js';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-export default {
-  
-    data() {
+import { ElLoading } from 'element-plus'
 
+export default {
+    data() {
         return {
             currentStep: 0,
             selected: [],
@@ -149,7 +171,9 @@ export default {
                 CvvCartao: 0
             },
             products: [],
-            productCmps: []
+            regularProducts: [],
+            productCmps: [],
+            cepExists: false,
         };
     },
     methods: {
@@ -239,6 +263,7 @@ export default {
                             this.endereco.bairro = data.bairro;
                             this.endereco.cidade = data.localidade;
                             this.endereco.estado = data.uf;
+                            this.cepExists = true;
                             // Preencha outros campos, se necessário
                         } else {
                             // Trate o caso em que o CEP não foi encontrado
@@ -255,6 +280,18 @@ export default {
             }
         },
 
+        calcularFrete() {
+            let frete = 0;
+            /*if (this.products && this.products.length > 0) {
+                frete += this.products.length * 10;
+            }*/
+            return frete;
+        },
+
+        formatPrice(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        },
+
         nextStep() {
             this.currentStep++;
         },
@@ -262,9 +299,7 @@ export default {
             this.currentStep--;
         },
         /** Popula lista em tela com os produtos do carrinho armazenados em local storage. */
-        getCartProductsFromLocalStorage() {
-            this.products = cartService.getCartItems();
-        },
+
         /** Calcula o valor de todos os produtos e cmps selecionados pelo usuário. */
         totalPrice() {
             let total = 0;
@@ -320,30 +355,106 @@ export default {
         },
     },
     created() {
-        this.getCartProductsFromLocalStorage();
-    }
+        const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+      });
+        // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
+
+        this.regularProducts = cartService.getCartItems();
+        this.cmpProducts = cartService.getCmpItems();
+
+        this.products = this.regularProducts.concat(this.cmpProducts);
+        
+
+        setTimeout(() => {
+            loading.close()
+          }, 250)
+    },
 }
 </script>
 
 <style scoped lang="scss">
 @import "@/assets/styles/scss/basics.scss";
 
+.el-menu{
+    display: flex;
+    justify-content: space-between;
+}
+
+.checkout-steps {
+  padding: 0 5% 0 20vw;
+  width: 100%;
+}
+.el-steps--simple {
+  background: transparent;
+}
+
+:deep(.el-step.is-simple .el-step__title) {
+  font-size: 14px;
+  line-height: 16px;
+  word-break: normal !important;
+}
+
+:deep(.el-step__head.is-finish) {
+  color: $tertiary-color;
+  border-color: $tertiary-color;
+}
+
+:deep(.el-step__title.is-finish) {
+  color: $tertiary-color;
+}
+.el-step.is-simple .el-step__title {
+  font-size: 14px;
+  line-height: 20px;
+}
+:deep(.el-step.is-simple .el-step__arrow::after), :deep(.el-step.is-simple .el-step__arrow::before) {
+  width: 2px;
+}
+.container{
+    padding-top: 1%;
+}
+
 
 .carrinho-content {
     margin-top: 50px;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
+    justify-content: space-evenly;
+
+    h1 {
+        font-size: 32px;
+        margin-bottom: 20px;
+        font-family: 'Montserrat', sans-serif;
+        font-weight: 400;
+        color: $text-color;
+    }
 
     .endereco,
     .forma-pagamento,
     .revisao {
-        flex-basis: 70%;
+        flex-basis: 45%;
         margin: 0 10px;
+    }
+    .endereco{
+        .actions {
+          display: flex;
+          justify-content: end;
+          margin-top: 3rem;
+        }
+    }
+
+    .forma-pagamento{
+        .actions {
+          display: flex;
+          justify-content: space-between;
+          margin-top: 3rem;
+        }
     }
 
     .side-info {
-        flex-basis: 25%;
+        flex-basis: 30%;
         margin: 0 10px;
         display: flex;
         flex-direction: column;
@@ -356,14 +467,91 @@ export default {
         }
 
         .el-card {
-            background-color: transparent;
-            border: 1px solid $user-grey;
+            background-color: $primary-color;
+            border: 2px solid var(--el-card-border-color);
 
-            .card-item {
-                border-bottom: 1px solid $user-grey;
+            h2 {
+              display: flex;
+              align-items: center;
+              font-size: 20px;
+              margin-bottom: 4rem;
+
+              i {
+                margin-right: 10px;
+              }
+            }
+
+            h3{
+                font-weight: 400;
+                font-size: 18px;
+                margin-bottom: 5px;
+                margin-top: 0px;
+            }
+
+            h4 {
+              font-size: 14px;
+              font-weight: 400;
+              margin-top: 0px;
+            }
+
+            div.card-header.card-item {
+              padding: 0.5rem 0 0 2rem;
+            }
+
+            .card-item{
                 padding: 16px;
+                padding-top: 0px;
+            }
+
+            .card-item-inner {
                 font-size: 12px;
-                text-align: center;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                padding-bottom: 2rem;
+                border-bottom: 1px solid var(--el-card-border-color);
+
+                    .card-item-about {
+                      width: 70%;
+                      padding-right: 4rem;
+
+                      .el-text--small {
+                          overflow: hidden;
+                          text-overflow: ellipsis;
+                          word-break: normal;
+                        }
+                    }
+
+                    .card-item-price {
+                      width: 30%;
+                      text-align: end;
+                      //margin-left: 30%;
+                    }
+
+            }
+
+            .card-item.subtotal {
+              display: flex;
+              justify-content: end;
+              align-items: baseline;
+
+              h4 {
+                margin-bottom: 0px;
+              }
+              h3{
+                margin-left: 1rem;
+              }
+            }
+
+            .card-item.frete {
+              display: flex;
+              justify-content: end;
+              align-items: baseline;
+
+              h4 {
+                margin: 0;
+                margin-left: 1rem;
+              }
             }
 
             :deep(.el-card__body) {
@@ -395,5 +583,14 @@ export default {
         }
     }
 
+}
+.small-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  & > .el-form-item {
+  width: 25rem;
+}
 }
 </style>

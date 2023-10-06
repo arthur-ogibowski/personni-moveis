@@ -1,72 +1,73 @@
 <template>
-  <div class="container">
-    <h1 class="page-title">Carrinho</h1>
+  <div class="container" id="carrinho-container">
 
-    <div class="criar-content" v-if="!cartIsEmpty() || !cmpIsEmpty()">
-        <el-button class="cta" color="$cta-color" @click="removeAll()">Esvaziar carrinho</el-button>
-    </div>
-
-    <h1 class="page-title" v-if="cartIsEmpty()">Não há produtos no seu carrinho no momento.</h1>
-    
-    <!-- Produtos -->
     <div class="carrinho-content">
-        <div class="listagem-produtos">
-            <div class="produto-card" v-for="product in cartProducts" :key="product">
-                <el-card class="carrinho-item">
-                    <img
-                    :src="getImgPath(product.mainImgUrl)"
-                    class="image"
-                    />
-                    <h2> {{ product.name }} </h2>
-                    <div class="quantidade">
-                        <p>Quantidade</p>
-                        <el-input-number v-model="product.amount" size="small" :min="0" :max="100" label="Quantidade" @input="updateCurrentProduct(product)"></el-input-number>
-                    </div>
-                    <div class="preco">
-                        <p>Preço</p>
-                        <h2> {{ product.value }} </h2>
-                    </div>
-                    <div class="deletar">
-                        <el-icon @click="removeOneProduct(product)"><Delete /></el-icon>
-                    </div>
-                </el-card>
+        <h1 class="page-title">Carrinho</h1>
+
+        <div class="criar-content" v-if="!cartIsEmpty() || !cmpIsEmpty()">
+            <el-button class="cta" color="$cta-color" @click="removeAll()">Esvaziar carrinho</el-button>
+        </div>
+
+        <h1 class="page-title" v-if="cartIsEmpty() & cmpIsEmpty() ">Não há produtos no seu carrinho no momento.</h1>
+
+        <!-- Produtos -->
+
+            <div class="listagem-produtos">
+                <div class="produto-card" v-for="product in cartProducts" :key="product">
+                    <el-card class="carrinho-item" shadow="never">
+                        <img
+                        :src="getImgPath(product.mainImgUrl)"
+                        class="image"
+                        />
+                        <h2> {{ product.name }} </h2>
+                        <div class="quantidade">
+                            <p>Quantidade</p>
+                            <el-input-number v-model="product.amount" size="small" :min="0" :max="100" label="Quantidade" @input="updateCurrentProduct(product)"></el-input-number>
+                        </div>
+                        <div class="preco">
+                            <p>Preço</p>
+                            <h2> R${{ product.value }} </h2>
+                        </div>
+                        <div class="deletar">
+                            <el-icon @click="removeOneProduct(product)"><Delete /></el-icon>
+                        </div>
+                    </el-card>
+                </div>
+            </div>
+
+        <!-- CMP -->
+        <h1 class="page-title" v-if="!cmpIsEmpty()">Móveis criados por você:</h1>
+            <div class="listagem-produtos">
+                <div class="produto-card" v-for="cmp in cmpProducts" :key="cmp">
+                    <el-card class="carrinho-item" shadow="never">
+                        <img
+                        :src="getImgPath(cmp.imgUrl)"
+                        class="image"
+                        />
+                        <h2> CMP </h2>
+                        <div class="quantidade">
+                            <p>Quantidade</p>
+                            <el-input-number v-model="cmp.amount" size="small" :min="0" :max="100" label="Quantidade" @input="updateCurrentProductCmp(cmp)"></el-input-number>
+                        </div>
+                        <div class="preco">
+                            <p>Preço</p>
+                            <h2> R${{ cmp.value }} </h2>
+                        </div>
+                        <div class="deletar">
+                            <el-icon @click="removeOneCmp(cmp)"><Delete /></el-icon>
+                        </div>
+                    </el-card>
+                </div>
             </div>
         </div>
-    </div>
 
-    <!-- CMP -->
-    <h1 class="page-title" v-if="!cmpIsEmpty()">Móveis criados por você:</h1>
-    <div class="carrinho-content">
-        <div class="listagem-produtos">
-            <div class="produto-card" v-for="cmp in cmpProducts" :key="cmp">
-                <el-card class="carrinho-item">
-                    <img
-                    :src="getImgPath(cmp.imgUrl)"
-                    class="image"
-                    />
-                    <h2> CMP </h2>
-                    <div class="quantidade">
-                        <p>Quantidade</p>
-                        <el-input-number v-model="cmp.amount" size="small" :min="0" :max="100" label="Quantidade" @input="updateCurrentProductCmp(cmp)"></el-input-number>
-                    </div>
-                    <div class="preco">
-                        <p>Preço</p>
-                        <h2> {{ cmp.value }} </h2>
-                    </div>
-                    <div class="deletar">
-                        <el-icon @click="removeOneCmp(cmp)"><Delete /></el-icon>
-                    </div>
-                </el-card>
-            </div>
+        <!-- Total da compra no carrinho -->
+        <div class="preco-final" v-if="!cartIsEmpty() || !cmpIsEmpty()">
+            <h2>Subotal: R${{ calcularTotal() }}</h2>
+            <el-text size="small">+ (Frete)</el-text>
+            <router-link to="/checkout"><el-button class="cta" color="$cta-color" @click="updateProducts()">Ir para o pagamento</el-button></router-link>
         </div>
     </div>
-
-    <!-- Total da compra no carrinho -->
-    <div class="preco-final" v-if="!cartIsEmpty() || !cmpIsEmpty()">
-        <h2>Total: {{ calcularTotal() }}</h2>
-        <router-link to="/checkout"><el-button class="cta" color="$cta-color" @click="updateProducts()">Ir para o pagamento</el-button></router-link>
-    </div>
-  </div>
 </template>
 
 <script>
@@ -193,14 +194,19 @@ export default {
 
 @import "@/assets/styles/scss/basics.scss";
 
-div.carrinho-content{
+#carrinho-container{
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+div.carrinho-content{
+    margin-right: 50px;
 
     .carrinho-item{
-        width: 70vw;
+        width: 60vw;
         margin: 10px 0;
+        border: none !important;
 
         :deep(.el-card__body){
             display: flex;
@@ -209,9 +215,10 @@ div.carrinho-content{
             justify-content: space-between;
         }
 
+
         .image{
-            width: 200px;
-            height: 200px;
+            width: 150px;
+            height: 150px;
         }
         
         h2{
@@ -230,5 +237,6 @@ div.carrinho-content{
         }
     }
 }
+
 
 </style>

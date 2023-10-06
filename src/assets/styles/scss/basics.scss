@@ -90,6 +90,9 @@ body {
 body.admin-body{
     background-color: #EFEFEF;
 }
+body.checkout-body{
+    background-color: $primary-color;
+}
 
 h1{
     color: $user-grey;

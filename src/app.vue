@@ -1,5 +1,5 @@
 <template>
-  <div v-if="currentUrl.includes('/login')">
+  <div v-if="currentUrl.includes('/login') || currentUrl.includes('/checkout')">
     <router-view />
   </div>
   <div v-else-if="!currentUrl.includes('/admin')">
@@ -38,6 +38,14 @@ export default {
         document.body.classList.add('admin-body');
       } else {
         document.body.classList.remove('admin-body');
+      }
+
+      const isCheckoutPage = to.path.includes('/checkout');
+
+      if (isCheckoutPage) {
+        document.body.classList.add('checkout-body');
+      } else {
+        document.body.classList.remove('checkout-body');
       }
     }
   }

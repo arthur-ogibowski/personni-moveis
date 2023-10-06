@@ -7,7 +7,7 @@
     active-text-color="$tertiary-color"
     @select="handleSelect"
   >
-    <el-menu-item><router-link to="/">Personni Móveis</router-link></el-menu-item>
+    <el-menu-item><router-link to="/"><img style="width: 200px;" src="../assets/img/personniLogo-Gold.png"/></router-link></el-menu-item>
     <div class="flex-grow" />
     <el-menu-item><router-link to="/admin">Admin</router-link></el-menu-item>
     <el-menu-item><router-link to="/produtos">Catálogo</router-link></el-menu-item>
