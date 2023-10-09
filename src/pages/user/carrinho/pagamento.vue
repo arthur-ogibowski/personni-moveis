@@ -16,8 +16,7 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
       <el-steps align-center :active="currentStep" finish-status="success" simple class="checkout-steps">
             <el-step title="Endereço de entrega" :icon="LocationFilled"/>
             <el-step title="Forma de pagamento" :icon="WalletFilled" />
-            <el-step title="Finalizar compra" :icon="StarFilled"/>
-            <el-step title="Pedido concluído" :icon="Select"/>
+            <el-step title="Finalizar pedido" :icon="Select"/>
         </el-steps>
     </el-menu>
 
@@ -30,25 +29,31 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
                 <el-form :model="endereco" label-position="top">
                     <el-col :span="10">
                         <el-form-item label="CEP">
-                            <el-input v-model="endereco.cep" required @blur="consultarCEP" v-mask="'#####-###'" maxlength="9"></el-input>
+                            <el-input placeholder="#####-###" v-model="endereco.cep" required @blur="consultarCEP" v-mask="'#####-###'" maxlength="9"></el-input>
                         </el-form-item>
                     </el-col>
-                    <el-form-item label="Rua">
-                        <el-input v-model="endereco.rua"  :disabled="!cepExists" required></el-input>
-                    </el-form-item>
-                    <div class="small-inputs">
-                        <el-form-item label="Número">
-                            <el-input v-model="endereco.numero"  :disabled="!cepExists" required></el-input>
+                    <el-alert type="info" v-if="!cepExists" show-icon :closable="false">
+                          <p>O endereço será automaticamente preenchido assim que o CEP for validado.</p>
+                    </el-alert>
+
+                    <div class="after-cep" v-loading="cepLoading">
+                        <el-form-item label="Rua">
+                            <el-input v-model="endereco.rua"  :disabled="!cepExists" required></el-input>
                         </el-form-item>
-                        <el-form-item label="Complemento">
-                            <el-input v-model="endereco.complemento" :disabled="!cepExists" ></el-input>
-                        </el-form-item>
-                        <el-form-item label="Cidade">
-                            <el-input v-model="endereco.cidade"  :disabled="!cepExists" required></el-input>
-                        </el-form-item>
-                        <el-form-item label="Estado">
-                            <el-input v-model="endereco.estado"  :disabled="!cepExists" required></el-input>
-                        </el-form-item>
+                        <div class="small-inputs">
+                            <el-form-item label="Número">
+                                <el-input v-model="endereco.numero"  :disabled="!cepExists" required></el-input>
+                            </el-form-item>
+                            <el-form-item label="Complemento (Opcional)">
+                                <el-input v-model="endereco.complemento" :disabled="!cepExists" ></el-input>
+                            </el-form-item>
+                            <el-form-item label="Cidade">
+                                <el-input v-model="endereco.cidade"  :disabled="!cepExists" required></el-input>
+                            </el-form-item>
+                            <el-form-item label="Estado">
+                                <el-input v-model="endereco.estado"  :disabled="!cepExists" required></el-input>
+                            </el-form-item>
+                        </div>
                     </div>
                 </el-form>
 
@@ -59,36 +64,46 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
 
             <div class="forma-pagamento" v-if="currentStep == 1">
                 <h1>Forma de pagamento</h1>
-                <el-form :model="endereco">
+
+                <el-radio-group v-model="metodoPagamento">
+                    <el-radio label="2" size="large" border>PIX</el-radio>
+                    <el-radio label="1" size="large" border :default="true">Cartão de crédito</el-radio>
+                </el-radio-group>
+
+                <el-form :model="endereco" v-if="metodoPagamento == 1">
                     <el-form-item label="Nome no cartão">
                         <el-input v-model="cartao.nomeCartao"></el-input>
                     </el-form-item>
                     <el-form-item label="Número do cartão">
-                        <el-input v-model="cartao.NumeroCartao"></el-input>
+                        <el-input placeholder="#### #### #### ####" maxlength="15" v-model="cartao.NumeroCartao"></el-input>
                     </el-form-item>
+                    <div class="smaller-inputs">
                     <el-form-item label="Mês">
-                        <el-input v-model="cartao.mes"></el-input>
+                        <el-input placeholder="##" maxlength="2" v-model="cartao.mes"></el-input>
                     </el-form-item>
                     <el-form-item label="Ano">
-                        <el-input v-model="cartao.ano"></el-input>
+                        <el-input placeholder="##" maxlength="2" v-model="cartao.ano"></el-input>
                     </el-form-item>
                     <el-form-item label="CVV">
-                        <el-input v-model="cartao.CvvCartao"></el-input>
+                        <el-input placeholder="###" maxlength="3" v-model="cartao.CvvCartao"></el-input>
                     </el-form-item>
+                </div>
                 </el-form>
 
                 <div class="actions">
-                    <el-button type="primary" plain @click="previousStep"><el-icon><ArrowLeftBold /></el-icon> Voltar</el-button>
+                    <el-button type="info" plain @click="previousStep"><el-icon><ArrowLeftBold /></el-icon> Voltar</el-button>
                     <el-button type="primary" @click="nextStep">Próximo passo <el-icon><ArrowRightBold /></el-icon></el-button>
                 </div>
 
             </div>
 
-            <div class="side-info">
+            <div class="side-info" v-if="currentStep !== 3">
+
+                <h1 v-if="currentStep == 2">Finalizar pedido</h1>
 
                 <el-card class="box-card" shadow="never">
                     <div class="card-header card-item">
-                        <h2><el-icon><GoodsFilled /></el-icon> Resumo da compra</h2>
+                        <h2><el-icon><GoodsFilled /></el-icon> Resumo do pedido</h2>
                     </div>
                     <div class="card-item" v-for="product in products" :key="product">
                         <div class="card-item-inner">
@@ -113,10 +128,21 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
 
                 </el-card>
 
-                <div class="actions">
-                    <el-button type="primary" @click="Pagar" disabled>Pagar <el-icon>
-                        </el-icon></el-button>
+                <div class="actions" v-if="currentStep == 2">
+                    <el-button type="info" plain @click="previousStep"><el-icon><ArrowLeftBold /></el-icon> Voltar</el-button>
+                    <el-button type="success" @click="Pagar" size="large">Confirmar</el-button>
                 </div>
+            </div>
+
+            <div class="final-step" v-if="currentStep == 3">
+                <h1>Pedido concluído</h1>
+                <div class="mega-icon">
+                    <el-icon color="#67c23a"><SuccessFilled /></el-icon>
+                </div>
+
+                <router-link to="/"><el-text tag="ins" type="info">Voltar para a página inicial</el-text></router-link>
+                
+
             </div>
 
         </div>
@@ -134,8 +160,10 @@ export default {
     data() {
         return {
             currentStep: 0,
+            metodoPagamento: 1,
             selected: [],
             loading: false,
+            cepLoading: false,
             productsCmp: {
                 id: 0,
                 value: 0,
@@ -165,10 +193,10 @@ export default {
             },
             cartao: {
                 nomeCartao: "",
-                NumeroCartao: 0,
-                mes: 0,
-                ano: 0,
-                CvvCartao: 0
+                NumeroCartao: "",
+                mes: "",
+                ano: "",
+                CvvCartao: ""
             },
             products: [],
             regularProducts: [],
@@ -252,6 +280,7 @@ export default {
 
             // Verifique se o CEP foi fornecido antes de fazer a solicitação
             if (cep) {
+                this.cepLoading = true;
                 axios
                     .get(`https://viacep.com.br/ws/${cep}/json/`)
                     .then((response) => {
@@ -264,6 +293,10 @@ export default {
                             this.endereco.cidade = data.localidade;
                             this.endereco.estado = data.uf;
                             this.cepExists = true;
+                            setTimeout(() => {
+                                this.cepLoading = false;
+                            }, 400)
+                            
                             // Preencha outros campos, se necessário
                         } else {
                             // Trate o caso em que o CEP não foi encontrado
@@ -416,6 +449,54 @@ export default {
     padding-top: 1%;
 }
 
+.el-radio-group{
+    margin-bottom: 20px;
+}
+
+.el-radio.is-bordered.el-radio--large {
+  width: 100%;
+  margin: 0;
+  margin-bottom: 10px;
+}
+
+:deep(.el-loading-mask) {
+  background-color: transparent;
+}
+.small-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+    & > .el-form-item {
+        width: 25rem;
+    }
+}
+.smaller-inputs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+    & > .el-form-item {
+        width: 15rem;
+    }
+}
+
+.final-step{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+.mega-icon{
+    margin-top: 50px;
+    .el-icon { 
+        width: 100%;
+        & > svg {
+            height: 10em !important;
+            width: 10em !important;
+            }
+        }  
+    }  
+}
 
 .carrinho-content {
     margin-top: 50px;
@@ -583,14 +664,5 @@ export default {
         }
     }
 
-}
-.small-inputs {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-
-  & > .el-form-item {
-  width: 25rem;
-}
 }
 </style>
