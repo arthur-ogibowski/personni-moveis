@@ -73,6 +73,7 @@
 import axios from 'axios';
 import cartService from '@/store/cartService.js';
 import { ElMessageBox } from 'element-plus';
+import AuthService from '@/store/authService';
 
 export default {
     data() {
@@ -90,6 +91,8 @@ export default {
         }
     },
     created() {
+        // Redireciona caso não tenha feito login.
+        AuthService.validateUserLogin(this.$router);
         // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
         this.getCartProductsFromLocalStorage();
         this.getCartCmpProductsFromLocalStorage();

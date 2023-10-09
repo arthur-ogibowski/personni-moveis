@@ -1,129 +1,97 @@
 <template>
-<div class="esqueci-minha-senha">
-  <div class="group-30">
-    <div class="rectangle-9"></div>
-
-    <div class="rectangle-92"></div>
-
-    <svg
-      class="rectangle-33"
-      width="335"
-      height="71"
-      viewBox="0 0 335 71"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path d="M0 0H334.542V70.1008H0V0Z" fill="#343434" />
-    </svg>
-
-    <div class="insira-seu-e-mail-ou-cpf-cnpj">
-      Insira seu e-mail ou CPF/CNPJ
-    </div>
-
-    <input type="email" class="rectangle-34">
-
-    <!-- <div class="lorem">Lorem</div> -->
-
-    <a href="/login" class="enviar">Enviar</a>
-
-    <div class="esqueceu-sua-senha">Esqueceu sua senha?</div>
+  <div class="container login">
+    <div class="side-image"></div>
+    <!-- <div class="blue-rectangle"> -->
+        <div class="login-dialog">
+            <h1>Recuperar Senha</h1>
+            <h3>informe o e-mail de sua conta para receber uma requisição de troca de senha.</h3>
+                <el-input
+                  v-model="email"
+                  size="large"
+                  placeholder="Email"
+                />
+                <router-link to="/login"><el-button color="#343434" size="large">Enviar</el-button></router-link>
+        </div>
   </div>
-</div>
+
 </template>
 
-<style scoped>
-.esqueci-minha-senha,
-.esqueci-minha-senha * {
-  box-sizing: border-box;
+<script>
+export default {
+  data() {
+      return {
+        login:{
+            email: "",
+        },
+      }
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+
+div.login{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: #112620;
 }
-.esqueci-minha-senha {
-  background: #cacaca;
-  width: 1920px;
-  height: 1080px;
-  position: relative;
-  overflow: hidden;
+// div.blue-rectangle{
+//     width: 800px;
+//     height: 800px;
+//     flex-shrink: 0;
+//     background: #2A58E1;
+
+//     :deep(.el-input), :deep(.el-button){
+//         width: 330px;
+//         height: 56px;
+//         margin: 25px;
+//         color: #FCFAF1;
+// text-align: center;
+// font-size: 26px;
+// font-style: normal;
+// line-height: normal;
+// letter-spacing: -0.333px;
+//     }
+// }
+
+
+div.login-dialog{
+    background: #FCFAF1;
+    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.50);
+    margin: 80px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 480px;
+    height: 480px;
+    :deep(.el-input), :deep(.el-button){
+         width: 330px;
+         height: 56px;
+         margin: 25px;
+         color: #FCFAF1;
+    }
 }
-.group-30 {
-  position: absolute;
-  inset: 0;
+
+h1{
+    color: #1a2930;
+    text-align: center;
+    font-family: Inter;
+    font-size: 41px;
+    font-style: normal;
+    font-weight: 700;   
+    line-height: normal;
 }
-.rectangle-9 {
-  background: #2a58e1;
-  width: 812px;
-  height: 927px;
-  position: absolute;
-  left: 554px;
-  top: 76px;
-}
-.rectangle-92 {
-  background: #fcfaf1;
-  width: 487px;
-  height: 444px;
-  position: absolute;
-  left: calc(50% - 244px);
-  top: calc(50% - 222px);
-  box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.5);
-}
-.rectangle-33 {
-  position: absolute;
-  left: 793px;
-  top: 613px;
-  overflow: visible;
-}
-.insira-seu-e-mail-ou-cpf-cnpj {
-  color: #000000;
-  text-align: center;
-  font: 700 24px "Roboto Flex", sans-serif;
-  position: absolute;
-  left: calc(50% - 179px);
-  top: 478px;
-  width: 357px;
-  height: 21px;
-}
-.rectangle-34 {
-  background: #e3e3e2;
-  border-style: solid;
-  border-color: #000000;
-  border-width: 0.3px;
-  width: 334.54px;
-  height: 56.08px;
-  position: absolute;
-  left: 792px;
-  top: 518.5px;
-}
-.lorem {
-  color: #000000;
-  text-align: left;
-  font: 400 26px "Roboto Flex", sans-serif;
-  position: absolute;
-  left: 800.91px;
-  top: 532.52px;
-  width: 316.73px;
-  height: 28.04px;
-}
-.enviar {
-  color: #fcfaf1;
-  text-align: center;
-  font: 700 26px "Roboto Flex", sans-serif;
-  position: absolute;
-  left: 801.79px;
-  top: 634.5px;
-  width: 316.73px;
-  height: 28.04px;
-  text-decoration: none;
-}
-.esqueceu-sua-senha {
-  color: #2a58e1;
-  text-align: center;
-  font: 700 41px "Inter", sans-serif;
-  position: absolute;
-  left: calc(50% - 134.32px);
-  top: 365.83px;
-  width: 267px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
+h3 {
+  width: 330px;
+  text-align: justify;
+  font-size: 16px;
+  letter-spacing: 0.9px;
 }
 
 </style>

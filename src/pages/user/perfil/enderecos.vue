@@ -8,7 +8,7 @@
         <div class="enderecos-left">
             <h1 class="page-title">Meus endereços</h1>
             <p>Adicione, remova e edite seus endereços de entrega e de cobrança.</p>
-            <el-button plain>Novo endereço</el-button>
+            <el-button @click="createNewAddress()" plain>Novo endereço</el-button>
 
         </div>
 
@@ -22,18 +22,125 @@
           </el-table>
         </div>
       </div>
+
+      <div class="endereco" >
+        <h1>Endereço de entrega</h1>
+        <el-form :model="endereco">
+          <el-form-item label="Apelido">
+                <el-input v-model="endereco.addressNickname" v-mask="'#####-###'" maxlength="100"></el-input>
+            </el-form-item>
+            <el-form-item label="CEP">
+                <el-input v-model="endereco.cep" @blur="consultarCEP" v-mask="'#####-###'" maxlength="9"></el-input>
+            </el-form-item>
+            <el-form-item label="Rua">
+                <el-input v-model="endereco.street" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="Número">
+                <el-input v-model="endereco.number"></el-input>
+            </el-form-item>
+            <el-form-item label="Complemento">
+                <el-input v-model="endereco.details"></el-input>
+            </el-form-item>
+            <el-form-item label="Bairro">
+                <el-input v-model="endereco.district" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="Cidade">
+                <el-input v-model="endereco.city" :disabled="true"></el-input>
+            </el-form-item>
+            <el-form-item label="Estado">
+                <el-input v-model="endereco.state" :disabled="true"></el-input>
+            </el-form-item>
+        </el-form>
+      </div>
     </div>
   </template>
+
   
   <script lang="ts">
+  import axios from 'axios';
   import userNavbar from '@/components/user/userNavbar.vue'
-  export default {
-      components: {
-          userNavbar,
-      }
-  }
-  </script>
+  import { ElMessage } from 'element-plus';
+  import AuthService from '@/store/authService.js';
+  import { GET_CLIENT_ADDRESSES, CREATE_ADRESS } from '@/store/constants.js';
 
+  export default {
+    components: {
+      userNavbar,
+    },
+    data() {
+      return {
+        renderNewAddressTable: false,
+        endereco: {
+          addressNickname: '',
+          cep: '',
+          street: '',
+          number: '',
+          details: '',
+          district: '',
+          city: '',
+          state: ''
+        },
+        tableData: [
+          {
+            //Rua Emanoel Ernesto Bertoldi Campo de Santana 2202 sobrado cinza Curitiba, PR, BR - 81490-532 Tel: (41) 3333-333
+            endereco: '',
+            tipo: 'Entrega',
+          }
+        ],
+        token: {
+          userId: ''
+        }
+      }
+    },
+    methods: {
+      /** Faz requisição para API viacep adquirindo dados do endereço via CEP. */
+      consultarCEP() {
+        // Verifique se o CEP foi fornecido antes de fazer a solicitação
+        if (this.endereco.cep) {
+          axios.get(`https://viacep.com.br/ws/${this.endereco.cep}/json/`)
+            .then((response) => {
+              const data = response.data;
+
+              // Preencha os campos com os dados retornados pela API
+              this.endereco.street = data.logradouro;
+              this.endereco.district = data.bairro;
+              this.endereco.city = data.localidade;
+              this.endereco.state = data.uf;                        
+            })
+            .catch((error) => {
+              ElMessage.error('CEP não encontrado.');
+            });
+        }
+      },
+      /** Cria endereço com os dados inseridos na modal. */
+      createNewAddress() {
+        // Adquire o token do usuário logado e prepara config da requisição.
+        const config = { headers: { Authorization: AuthService.getToken() } }
+        
+        axios.post(CREATE_ADRESS, this.endereco, config)
+          .then(response => {
+            ElMessage.success("Endereço cadastrado com sucesso!");
+            console.log(response.data)
+          })
+          .catch(error => {
+            ElMessage.error("Erro ao cadastrar endereço.");
+            console.log('erro: ', error);
+          })
+      },
+      /** Adquire todos endereços cadastrados do usuário. */
+      getUserAddresses() {
+        axios.get(GET_CLIENT_ADDRESSES)
+          .then(response => {
+            this.tableData = response.data;
+          })
+          .catch(error => {
+            ElMessage.error('Erro ao adquirir endereços cadastrados.');
+            console.log('Erro ao adquirir endereços: ', error);
+          });
+      }
+    }
+  }
+</script>
    
 <style scoped lang="scss">
 div.perfil-content{
@@ -45,20 +152,4 @@ div.perfil-content{
         width: 50vw;
     }
 }
-  
 </style>
-  <script lang="ts" setup>
-  const tableData = [
-    {
-      id: 1,
-      endereco: 'Rua Emanoel Ernesto Bertoldi Campo de Santana 2202 sobrado cinza Curitiba, PR, BR - 81490-532 Tel: (41) 3333-333',
-      tipo: 'Entrega',
-    },
-    {
-      id: 2,
-      endereco: 'Rua Emanoel Ernesto Bertoldi Campo de Santana 2202 sobrado cinza Curitiba, PR, BR - 81490-532 Tel: (41) 3333-333',
-      tipo: 'Entrega',
-    },
-    
-  ]
-  </script>

@@ -15,6 +15,7 @@
     "@popperjs/core": "^2.11.7",
     "axios": "^1.4.0",
     "element-plus": "^2.3.7",
+    "jwt-decode": "^3.1.2",
     "nodejs-pagseguro": "^1.0.9",
     "pagseguro": "^0.1.0",
     "vue": "^3.2.47",

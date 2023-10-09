@@ -94,9 +94,6 @@ export default {
         .catch(error => {
           console.error('Erro ao obter dados da API:', error);
         });
-    },
-    getImgPath(img) {
-      return new URL(`/src/assets/img/${img}`, import.meta.url).href;
     }
   }
 }
