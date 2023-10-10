@@ -15,7 +15,7 @@
     <router-link to="/perfil/enderecos"><el-menu-item index="4">Endereços</el-menu-item></router-link>
     <router-link to="/perfil/configuracoes"><el-menu-item index="5">Configurações</el-menu-item></router-link>
   <!-- </div> -->
-    <router-link to="/perfil"><el-menu-item class="sair-btn" @click="handleLogout">Sair</el-menu-item></router-link>
+    <router-link to="/perfil"><el-menu-item class="sair-btn" @click="handleLogout()">Sair</el-menu-item></router-link>
   </el-menu>
 
   </div>

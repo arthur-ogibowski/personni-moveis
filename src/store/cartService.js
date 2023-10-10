@@ -17,8 +17,23 @@ export default {
         return cartItens.some(product => product.productId === productId)
     },
     /** Retorna a qtde de produtos armazenados em localstorage. */
-    amountOfProductsInCart(){ 
-        return JSON.parse(localStorage.getItem('carrinho')).length || 0;
+    amountOfProductsInCart() {
+        // Adquire produtos.
+        const localStorageProducts = this.getCartItems();
+        const localStorageCmps = this.getCmpItems();
+        // Adquire info do usuário adquirindo token.
+        //const userEmail = JSON.parse(jwtDecode(AuthService.getToken()));
+
+        // Se carrinho foi criado com sucesso e tem ao menos um produto, coloca qtde de produtos, senão uma string vazia.
+        let totalItems = 0
+        if (localStorageProducts && localStorageProducts.length > 0) {
+          totalItems += localStorageProducts.length;
+        }
+        if(localStorageCmps && localStorageCmps.length > 0) {
+          totalItems += localStorageCmps.length;
+        }
+        // Atribui total de itens se for diferente de 0 ou string vazia.
+        return totalItems != 0 ? totalItems : '';
     },
     /** Adiciona um produto no carrinho. Se o produto ja existe atualiza sua quantidade. */
     addToCart(product) {

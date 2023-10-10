@@ -13,13 +13,19 @@ const AuthService = {
     localStorage.removeItem('token'); // Remove o token do localStorage
   },
   /** Retorna true se usuário esta logado (tem token), senão falso. */
-  isUserLoggedIn() {
-    return (!this.getToken());
+  hasUserLoggedIn() {
+    return this.getToken();
+  },
+  /** Adquire valor do token (claim) via chave informada. Se valor não existe retorna null. */
+  getTokenClaim(key) {
+    if(key) {
+      //return this.getToken().
+    }
   },
   /** Checa se usuário está logado (deve ter feito login para poder acessar a página.) */
-  redirectToLogin(router) {
+  shouldRedirectToLogin(router) {
     // Se ainda não tem token (user não logado) redireciona para fazer login.
-    if (this.isUserLoggedIn()) {
+    if (!this.hasUserLoggedIn()) {
       router.replace('/login');
     }
   },
@@ -30,7 +36,7 @@ const AuthService = {
   /** Se usuário tem permissão de colab, retorna true */
   isUserColaborator() {
     if(this.getToken()) {
-      const usuario = jwtDecode(this.getToken);
+      const usuario = jwtDecode(this.getToken());
       console.log('Informações do usuário:', usuario);
     }
     return false;

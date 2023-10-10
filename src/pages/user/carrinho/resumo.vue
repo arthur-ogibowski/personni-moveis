@@ -64,7 +64,7 @@
     <!-- Total da compra no carrinho -->
     <div class="preco-final" v-if="!cartIsEmpty() || !cmpIsEmpty()">
         <h2>Total: {{ calcularTotal() }}</h2>
-        <router-link to="/checkout"><el-button class="cta" color="$cta-color" @click="updateProducts()">Ir para o pagamento</el-button></router-link>
+        <router-link to="/checkout"><el-button class="cta" color="$cta-color">Ir para o pagamento</el-button></router-link>
     </div>
   </div>
 </template>
@@ -91,8 +91,6 @@ export default {
         }
     },
     created() {
-        // Redireciona caso não tenha feito login.
-        AuthService.validateUserLogin(this.$router);
         // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
         this.getCartProductsFromLocalStorage();
         this.getCartCmpProductsFromLocalStorage();
@@ -141,9 +139,13 @@ export default {
             // permitindo alterar imagens estáticas dinamicamente.
             return new URL(`/src/assets/img/${img}`, import.meta.url).href
         },
-        updateProducts() {
-            cartService.updateCart(this.cartProducts);
-        },
+        // Atualiza produtos do carrinho antes de ir para o checkout, setando as 
+        // beforeChekout() {
+        //     // Antes de permitir entrada no checkout, checa se usuário fez login - se fez continua para checkout,
+        //     // senão redireciona para /login.
+        //     AuthService.shouldRedirectToLogin(this.$router);
+        //     this.$router.push('/checkout');
+        // },
         /** Atualiza carrinho em local storage com valores inseridos pelo usuário em tela */
         updateCurrentProduct(product) {
             if (product.amount < 1) {
@@ -151,7 +153,7 @@ export default {
                 this.removeOneProduct(product);
             } else {
                 // Senão, só faz atualização dos novos valores.
-                this.updateProducts();
+                cartService.updateCart(this.cartProducts);
             }
         },
 

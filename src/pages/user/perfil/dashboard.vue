@@ -13,7 +13,7 @@ export default {
         userNavbar,
     },
     created() {
-      AuthService.redirectToLogin(this.$router);
+      AuthService.shouldRedirectToLogin(this.$router);
     }
 }
 </script>

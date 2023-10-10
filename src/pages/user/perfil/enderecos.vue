@@ -56,12 +56,11 @@
   </template>
 
   
-  <script lang="ts">
+  <script>
   import axios from 'axios';
   import userNavbar from '@/components/user/userNavbar.vue'
   import { ElMessage } from 'element-plus';
   import AuthService from '@/store/authService.js';
-  import { GET_CLIENT_ADDRESSES, CREATE_ADRESS } from '@/store/constants.js';
 
   export default {
     components: {
@@ -117,7 +116,7 @@
         // Adquire o token do usuário logado e prepara config da requisição.
         const config = { headers: { Authorization: AuthService.getToken() } }
         
-        axios.post(CREATE_ADRESS, this.endereco, config)
+        axios.post('http://localhost:8081/users/create-new-address', this.endereco, config)
           .then(response => {
             ElMessage.success("Endereço cadastrado com sucesso!");
             console.log(response.data)
@@ -129,7 +128,7 @@
       },
       /** Adquire todos endereços cadastrados do usuário. */
       getUserAddresses() {
-        axios.get(GET_CLIENT_ADDRESSES)
+        axios.get(`http://localhost:8081/users/get-user-address/${AuthService.getTokenClaim('userId')}`)
           .then(response => {
             this.tableData = response.data;
           })

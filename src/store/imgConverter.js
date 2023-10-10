@@ -15,7 +15,7 @@ export default {
     },
 
 	/** Define se deve atribuir imagem default ao produto (caso nenhuma imagem seja fornecida). */
-    async isSettingDefaultImage() {
+    async shouldSetDefaultImage() {
         //a fazer...
     },
 }
