@@ -58,6 +58,7 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
                 </el-form>
 
                 <div class="actions">
+                    <router-link to="/carrinho"><el-button type="info" plain><el-icon><DArrowLeft /></el-icon> Retornar ao carrinho</el-button></router-link>
                     <el-button type="primary" @click="nextStep">Próximo passo <el-icon><ArrowRightBold /></el-icon></el-button>
                 </div>
             </div>
@@ -518,21 +519,11 @@ export default {
         flex-basis: 45%;
         margin: 0 10px;
     }
-    .endereco{
-        .actions {
-          display: flex;
-          justify-content: end;
-          margin-top: 3rem;
-        }
-    }
-
-    .forma-pagamento{
-        .actions {
+    .actions {
           display: flex;
           justify-content: space-between;
           margin-top: 3rem;
         }
-    }
 
     .side-info {
         flex-basis: 30%;

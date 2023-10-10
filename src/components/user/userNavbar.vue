@@ -1,19 +1,11 @@
 <template>
   <div>
     <h1 class="perfil-title"><el-icon style="font-size:25px"><UserFilled /></el-icon>Minha Conta</h1>
-    <el-menu
-    class="el-menu-demo"
-    mode="horizontal"
-    @select="handleSelect"
-    background-color="transparent"
-    active-text-color="#000000"
-  >
-    <router-link to="/perfil"><el-menu-item index="1">Geral</el-menu-item></router-link>
-    <router-link to="/perfil/pedidos"><el-menu-item index="2">Pedidos</el-menu-item></router-link>
-    <router-link to="/perfil/orcamentos"><el-menu-item index="3">Orçamentos</el-menu-item></router-link>
-    <router-link to="/perfil/enderecos"><el-menu-item index="4">Endereços</el-menu-item></router-link>
-    <router-link to="/perfil/configuracoes"><el-menu-item index="5">Configurações</el-menu-item></router-link>
-  </el-menu>
+    <el-tabs v-model="activeName" @tab-click="handleClick">
+    <el-tab-pane label="Geral" name="first"></el-tab-pane>
+    <el-tab-pane label="Pedidos" name="second"></el-tab-pane>
+    <el-tab-pane label="Configurações" name="third"></el-tab-pane>
+  </el-tabs>
 
   </div>
 </template>

@@ -10,8 +10,8 @@
       <hr>
 
 
-      <h2>Criação</h2>
-      <el-form-item label="Possibilitar criação">
+      <h2>Modelagem</h2>
+      <el-form-item label="Possibilitar modelagem">
         <el-switch v-model="categoria.allow_creation"></el-switch>
       </el-form-item>
 

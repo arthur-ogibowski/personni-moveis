@@ -1,12 +1,12 @@
 <template>
     <div class="container">
 
-        <h1>Criação de móveis</h1>
+        <h1>Modelagem de móveis</h1>
 
         <h2>Escolha a categoria</h2>
 
         <div class="categorias-grid">
-          <router-link :to="'/criar/' + i.id" v-for="i in categorias" :key="i">
+          <router-link :to="'/modelar/' + i.id" v-for="i in categorias" :key="i">
           <div class="categoria-item" v-if="i.allow_creation">
             <h3> {{  i.name }} </h3>
           </div>

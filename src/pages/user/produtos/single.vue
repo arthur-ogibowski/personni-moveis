@@ -53,6 +53,7 @@
 import cartService from '@/store/cartService.js';
 import axios from 'axios';
 import { ElLoading } from 'element-plus';
+import { ElMessage } from 'element-plus'
 
 export default {
     data(){
@@ -83,6 +84,10 @@ export default {
     methods: {
         addToCart() {
             cartService.addToCart(this.product);
+            ElMessage({
+              message: 'Produto adicionado ao carrinho',
+              type: 'success',
+            })
         }
     }
 }

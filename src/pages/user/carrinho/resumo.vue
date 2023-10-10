@@ -5,7 +5,7 @@
         <h1 class="page-title">Carrinho</h1>
 
         <div class="criar-content" v-if="!cartIsEmpty() || !cmpIsEmpty()">
-            <el-button class="cta" color="$cta-color" @click="removeAll()">Esvaziar carrinho</el-button>
+            <el-text type="info" tag="ins"  style="cursor: pointer;" @click="removeAll()">Esvaziar carrinho</el-text>
         </div>
 
         <h1 class="page-title" v-if="cartIsEmpty() & cmpIsEmpty() ">Não há produtos no seu carrinho no momento.</h1>
@@ -36,7 +36,7 @@
             </div>
 
         <!-- CMP -->
-        <h1 class="page-title" v-if="!cmpIsEmpty()">Móveis criados por você:</h1>
+        <h1 class="page-title" v-if="!cmpIsEmpty()">Móveis modelados:</h1>
             <div class="listagem-produtos">
                 <div class="produto-card" v-for="cmp in cmpProducts" :key="cmp">
                     <el-card class="carrinho-item" shadow="never">
@@ -62,11 +62,28 @@
         </div>
 
         <!-- Total da compra no carrinho -->
-        <div class="preco-final" v-if="!cartIsEmpty() || !cmpIsEmpty()">
-            <h2>Subotal: R${{ calcularTotal() }}</h2>
-            <el-text size="small">+ (Frete)</el-text>
-            <router-link to="/checkout"><el-button class="cta" color="$cta-color" @click="updateProducts()">Ir para o pagamento</el-button></router-link>
-        </div>
+        <div class="side-info" v-if="!cartIsEmpty() || !cmpIsEmpty()">
+            <el-card class="box-card" shadow="never">
+                    <div class="card-header card-item">
+                        <h2>Resumo</h2>
+                    </div>
+                    <div class="card-item count-products">
+                        <el-text type="info" size="small">Móveis prontos / personalizados ({{ cartProducts.length }} ite{{ cartProducts.length == 1 ? "m" : "ns" }}): </el-text><h4>{{ totalProducts != 0 ? "R$ " + formatPrice(totalProducts) : "--" }}
+                        </h4>
+                    </div>
+                    <div class="card-item count-products">
+                        <el-text type="info" size="small">Móveis modelados: ({{ cmpProducts.length }} ite{{ cmpProducts.length == 1 ? "m" : "ns" }}): </el-text><h4> {{ totalCmps != 0 ? "R$ " + formatPrice(totalCmps) : "--" }}
+                        </h4>
+                    </div>
+                    <div class="card-item subtotal">
+                        <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3> R$ {{ formatPrice(calcularTotal()) }}
+                        </h3>
+                    </div>
+
+                    <router-link to="/checkout"><el-button class="cta" color="$cta-color" @click="updateProducts()">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
+                   
+                </el-card>
+            </div>
     </div>
 </template>
 
@@ -88,7 +105,10 @@ export default {
                     amount: 1
                 }
             ],
-            cmpProducts: []
+            cmpProducts: [],
+            products: [],
+            totalProducts: "", // preco dos itens padrao do carrinho
+            totalCmps: "", // preco dos itens modelados do carrinho
         }
     },
     created() {
@@ -101,6 +121,7 @@ export default {
         this.getCartProductsFromLocalStorage();
         this.getCartCmpProductsFromLocalStorage();
 
+        this.products = this.cartProducts.concat(this.cmpProducts);
         setTimeout(() => {
             loading.close()
           }, 250)
@@ -108,9 +129,9 @@ export default {
     methods: {
         // Produto
         calcularTotal() {
-            const totalProducts = this.cartProducts.reduce((total, product) => total + product.value * product.amount, 0);
-            const totalCmps = this.cmpProducts.reduce((total, cmp) => total + cmp.value * cmp.amount, 0);
-            return totalProducts + totalCmps;
+            this.totalProducts = this.cartProducts.reduce((total, product) => total + product.value * product.amount, 0);
+            this.totalCmps = this.cmpProducts.reduce((total, cmp) => total + cmp.value * cmp.amount, 0);
+            return this.totalProducts + this.totalCmps;
         },
         getCartProductsFromLocalStorage() {
             this.cartProducts = cartService.getCartItems();
@@ -133,6 +154,16 @@ export default {
             .catch(() => {
                 // Se o usuário clicar em "Não" ou fechar a caixa de diálogo, nada precisa ser feito.
             });
+        },
+        calcularFrete() {
+            let frete = 0;
+            /*if (this.products && this.products.length > 0) {
+                frete += this.products.length * 10;
+            }*/
+            return frete;
+        },
+        formatPrice(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         },
         removeOneProduct(product) {
             cartService.removeFromCart(product);
@@ -198,13 +229,154 @@ export default {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+
+    .preco-final {
+      display: flex;
+      flex-direction: column;
+    }
+    .side-info {
+        flex-basis: 30%;
+        margin: 0 10px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+
+        .box-card {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .el-card {
+            background-color: $primary-color;
+            border: 0px;
+            :deep(.el-card__body) {
+              display: flex;
+              flex-direction: column;
+              align-items: baseline;
+              padding: 3rem;
+
+              a{
+                align-self: center;
+                width: 100%;
+
+                .cta{
+                    width: 100%;
+                }
+              }
+            }
+
+            h2 {
+              display: flex;
+              align-items: center;
+              font-size: 20px;
+              margin: 0;
+
+              i {
+                margin-right: 10px;
+              }
+            }
+
+            h3{
+                font-weight: 400;
+                font-size: 18px;
+                margin-bottom: 5px;
+                margin-top: 0px;
+            }
+
+            h4 {
+              font-size: 14px;
+              font-weight: 400;
+              margin-top: 0px;
+            }
+
+            .card-item{
+                padding: 0 0 16px 0;
+            }
+
+            .card-item-inner {
+                font-size: 12px;
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                padding-bottom: 2rem;
+                border-bottom: 1px solid var(--el-card-border-color);
+
+                    .card-item-about {
+                      width: 70%;
+                      padding-right: 4rem;
+
+                      .el-text--small {
+                          overflow: hidden;
+                          text-overflow: ellipsis;
+                          word-break: normal;
+                        }
+                    }
+
+                    .card-item-price {
+                      width: 30%;
+                      text-align: end;
+                      //margin-left: 30%;
+                    }
+
+            }
+
+            .card-item.subtotal {
+              display: flex;
+              justify-content: end;
+              align-items: baseline;
+
+              h4 {
+                margin-bottom: 0px;
+              }
+              h3{
+                margin-left: 1rem;
+              }
+            }
+
+            .card-item.count-products {
+              display: flex;
+              justify-content: end;
+              align-items: baseline;
+
+              h4{
+                margin-left: 1rem;
+                margin-bottom: 0px;
+              }
+            }
+
+
+            .preco-final {
+                font-size: 20px;
+                padding: 20px;
+                text-align: center;
+
+                h3 {
+                    color: green;
+                }
+            }
+        }
+
+        .actions {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            button {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    }
 }
 
 div.carrinho-content{
-    margin-right: 50px;
+    margin-right: 30px;
 
     .carrinho-item{
-        width: 60vw;
+        width: 55vw;
         margin: 10px 0;
         border: none !important;
 

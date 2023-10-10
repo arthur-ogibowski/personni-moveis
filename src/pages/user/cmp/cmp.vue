@@ -63,7 +63,7 @@
 
     <div class="last-section" v-if="isLastSection">
 
-      <h1>Revisar criação</h1>
+      <h1>Revisar modelagem</h1>
 
       <div class="revisar-section">
             <div v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">

@@ -13,7 +13,7 @@
     <el-menu-item><router-link to="/produtos">Catálogo</router-link></el-menu-item>
     <el-menu-item><router-link to="/perfil">Meu perfil</router-link></el-menu-item>
     <el-menu-item><router-link to="/carrinho">Carrinho {{ cartItemsCounter }}</router-link></el-menu-item>
-    <router-link to="/criar"><el-button class="cta" color="$cta-color">Criar meu móvel</el-button></router-link>
+    <router-link to="/modelar"><el-button class="cta" color="$cta-color">Começar à modelar</el-button></router-link>
   </el-menu>
 </template>
 

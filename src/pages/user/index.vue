@@ -5,10 +5,10 @@
         <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
         <div class="about">
           <h2> Personni Móveis </h2>
-          <h1> Crie e personalize móveis do seu jeito </h1>
+          <h1> Modelagem e personalização de móveis </h1>
           <p> Lorem ipsum dolor, sit amet consectetur adipisicing elit. Commodi, quisquam? Sint animi ex culpa tempora laboriosam dolor repellat nesciunt, labore soluta qui ducimus ab, fugit id in sed ipsum odio? </p>
           <br>
-          <router-link to="/criar"><el-button class="cta" color="$cta-color">Criar meu móvel</el-button></router-link>
+          <router-link to="/modelar"><el-button class="cta" color="$cta-color">Começar à modelar</el-button></router-link>
 
         </div>
       </div>
