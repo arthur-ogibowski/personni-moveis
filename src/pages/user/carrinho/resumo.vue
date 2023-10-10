@@ -180,9 +180,13 @@ export default {
             // permitindo alterar imagens estáticas dinamicamente.
             return new URL(`/src/assets/img/${img}`, import.meta.url).href
         },
-        updateProducts() {
-            cartService.updateCart(this.cartProducts);
-        },
+        // Atualiza produtos do carrinho antes de ir para o checkout, setando as 
+        // beforeChekout() {
+        //     // Antes de permitir entrada no checkout, checa se usuário fez login - se fez continua para checkout,
+        //     // senão redireciona para /login.
+        //     AuthService.shouldRedirectToLogin(this.$router);
+        //     this.$router.push('/checkout');
+        // },
         /** Atualiza carrinho em local storage com valores inseridos pelo usuário em tela */
         updateCurrentProduct(product) {
             if (product.amount < 1) {
@@ -190,7 +194,7 @@ export default {
                 this.removeOneProduct(product);
             } else {
                 // Senão, só faz atualização dos novos valores.
-                this.updateProducts();
+                cartService.updateCart(this.cartProducts);
             }
         },
 

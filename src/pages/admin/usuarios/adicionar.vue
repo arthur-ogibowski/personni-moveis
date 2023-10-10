@@ -34,7 +34,7 @@
   
   <script> 
 import axios from 'axios';
-import AuthService from '@/authService';
+import AuthService from '@/store/authService.js';
 
   export default {
       data() {

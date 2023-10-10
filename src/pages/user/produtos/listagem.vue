@@ -4,7 +4,7 @@
       <div class="catalogo-top">
             <h1>Catálogo</h1>
 
-            <el-input v-model="input4" placeholder="Procurar produto">
+            <el-input v-model="productSearchInput" placeholder="Procurar produto">
               <template #prefix>
                 <el-icon class="el-input__icon"><search /></el-icon>
               </template>
@@ -13,25 +13,31 @@
 
             <el-divider />
 
+            <el-button v-if="this.filterCategory != ''" @click="removeSelectedCategory()">Remover Categoria</el-button>
             <div class="catalogo-content">
               <div class="filters">
                 <div class="filters-item">
                 <el-divider content-position="center">Categorias</el-divider>
-                <el-radio-group v-model="categoriaFiltro" size="large">
+                <el-radio-group v-model="filterCategory" size="large">
                   <el-radio-button
-                    v-for="categoria in categorias"
-                    :key="categoria"
-                    :label="categoria.name">
-                    {{ categoria.name }}
+                    v-for="category in categories"
+                    :key="category.id"
+                    :label="category.id"
+                    :value="category.id">
+                    {{ category.name }}
                   </el-radio-button>
                 </el-radio-group>
               </div>
 
               <div class="filters-item">
                 <el-divider content-position="center">Preço</el-divider>
-                <el-radio-group v-model="precoFiltro" size="large">
+                <el-radio-group v-model="priceFilter" size="large">
                   <el-radio-button label="crescente">
-                    Menor para maior <el-icon><CaretTop /></el-icon>
+                    Menor para maior 
+                    <!-- Se filtro para ordenar pelo maior é selecionado -->
+                    <el-icon v-if="!priceFilter"><CaretTop /></el-icon>
+                    <!-- Se filtro para ordenar é selecionado de novo. -->
+                    <el-icon v-if="priceFilter" @click="removePriceFilter()"><Close /></el-icon>
                   </el-radio-button>
                   <el-radio-button label="decrescente">
                     Maior para Menor <el-icon><CaretBottom /></el-icon>
@@ -39,22 +45,11 @@
                 </el-radio-group>
               </div>
               
-              <div class="filters-item">
-                <el-divider content-position="center">Materiais</el-divider>
-                <el-radio-group v-model="materialFiltro" size="large">
-                  <el-radio-button>
-                    Madeira
-                  </el-radio-button>
-                  <el-radio-button>
-                    Metal
-                  </el-radio-button>
-                </el-radio-group>
-              </div>
             </div>
 
 
               <div class="produtos-listing">
-                <div class="produto-card" v-for="product in products" :key="product">
+                <div class="produto-card" v-for="product in getFilteredProducts()" :key="product">
                   <router-link :to='"/produtos/" + product.productId'>
                     <el-card :body-style="{ padding: '0px' }">
                         <img
@@ -88,43 +83,43 @@
 
 <script>
 import axios from 'axios';
-import { ElLoading } from 'element-plus'
+import { ElLoading } from 'element-plus';
 
 export default {
-    data(){
-        return{
-            categorias: [],
-            products: [],
-            loading: true,
-            categoriaFiltro: [],
-            precoFiltro: [],
-            materialFiltro: [],
-        }
+    data() {
+      return{
+        categories: [],
+        products: [],
+        loading: true,
+        // Filtros:
+        filterCategory: '',
+        productSearchInput: '',
+        priceFilter: null,
+      }
     },
-    async created() {
-      const loading = ElLoading.service({
-            lock: true,
-            text: 'Carregando',
-            background: 'rgba(0, 0, 0, 0.7)'
-      });
-      axios.get('http://localhost:8081/category')
-        .then(response => {
-          response.data.forEach(categoria => this.categorias.push(categoria));
-        })
-        .catch(error => {
-          console.error('Erro ao obter dados da API:', error);
-      });
-      axios.get('http://localhost:8081/products')
-        .then(response => {
-          response.data.forEach(product => this.products.push(product));
-          setTimeout(() => {
-            loading.close()
-          }, 250)
-        })
-        .catch(error => {
-          console.error('Erro ao obter dados da API:', error);
-      });
-    
+  async created() {
+    const loading = ElLoading.service({
+          lock: true,
+          text: 'Carregando',
+          background: 'rgba(0, 0, 0, 0.7)'
+    });
+    axios.get('http://localhost:8081/category')
+      .then(response => {
+        this.categories = response.data;
+      })
+      .catch(error => {
+        console.error('Erro ao obter dados da API:', error);
+    });
+    axios.get('http://localhost:8081/products')
+      .then(response => {
+        this.products = response.data;
+        setTimeout(() => {
+          loading.close()
+        }, 250)
+      })
+      .catch(error => {
+        console.error('Erro ao obter dados da API:', error);
+    });
   },
   methods: {
     filtrarPorCategoria(categoryId) {
@@ -148,9 +143,29 @@ export default {
         .catch(error => {
           console.error('Erro ao obter dados da API:', error);
         });
+    },
+    /** Filtra produtos com base no input do usuário. */
+    inputSearch(searchInput, products) {
+      return products.filter(product => product.name.toUpperCase().includes(searchInput.toUpperCase()));
+    },
+    /** Filtra os produtos com base na categoria selecionada. Se nehuma foi selecionada, retorna todos produtos. */
+    filterByCategory(selectedCategory, products) {
+      return products.filter(product => selectedCategory == '' || product.categoryId == selectedCategory);
+    },
+    /** Aplica todos os filtros e retorna os produtos. */
+    getFilteredProducts() {
+      const filteredByCategory = this.filterByCategory(this.filterCategory, this.products);
+      return this.inputSearch(this.productSearchInput, filteredByCategory);
+    },
+    /** Remove a categoria selecionada no momento. */
+    removeSelectedCategory() {
+      this.filterCategory = '';
+    },
+    /** Remove filtro de preço após filtro ser selecionado. */
+    removePriceFilter() {
+      this.priceFilter = null;
     }
-  }
-
+  },
 }
 </script>
 

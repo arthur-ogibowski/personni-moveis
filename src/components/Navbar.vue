@@ -9,7 +9,7 @@
   >
     <el-menu-item><router-link to="/"><img style="width: 200px;" src="../assets/img/personniLogo-Gold.png"/></router-link></el-menu-item>
     <div class="flex-grow" />
-    <el-menu-item><router-link to="/admin">Admin</router-link></el-menu-item>
+    <el-menu-item v-if="isUserSysColaborator()"><router-link to="/admin">Admin</router-link></el-menu-item>
     <el-menu-item><router-link to="/produtos">Catálogo</router-link></el-menu-item>
     <el-menu-item><router-link to="/perfil">Meu perfil</router-link></el-menu-item>
     <el-menu-item><router-link to="/carrinho">Carrinho {{ cartItemsCounter }}</router-link></el-menu-item>
@@ -18,10 +18,14 @@
 </template>
 
 <script>
+import AuthService from '@/store/authService';
+import cartService from '@/store/cartService';
+import jwtDecode from 'jwt-decode';
+
 export default {
   data() {
     return {
-      cartItemsCounter: '',
+      cartItemsCounter: cartService.amountOfProductsInCart(),
     };
   },
   computed: {
@@ -36,20 +40,14 @@ export default {
     /** Cria o eventListner e atualiza a quantidade de itens no icone do carrinho. */
     getAmountOfProductsInCart() {
       window.addEventListener('cartUpdated', () => {
-        const localStorageProducts = JSON.parse(localStorage.getItem('carrinho'));
-        const localStorageCmps = JSON.parse(localStorage.getItem('carrinhoCMP'));
-        // Se carrinho foi criado com sucesso e tem ao menos um produto, coloca qtde de produtos, senão uma string vazia.
-        let totalItems = 0
-        if (localStorageProducts && localStorageProducts.length > 0) {
-          totalItems += localStorageProducts.length || 0;
-        }
-        if(localStorageCmps && localStorageCmps.length > 0) {
-          totalItems += localStorageCmps.length || 0;
-        }
-        // Atribui total de itens se for diferente de 0 ou string vazia.
-        this.cartItemsCounter = totalItems != 0 ? totalItems : '';
+        this.cartItemsCounter = cartService.amountOfProductsInCart();
       });
     },
+    /** Retorna true para usuários logados com permissão de colab ou admin. */
+    isUserSysColaborator() {
+      //return AuthService.isUserColaborator();
+      return true
+    }
   },
 }
 </script>

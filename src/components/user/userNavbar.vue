@@ -11,9 +11,24 @@
 </template>
 
 <script>
+import AuthService from '@/store/authService.js';
 
 export default {
-  
+  methods: {
+    handleLogout() {
+      this.$confirm('Tem certeza que deseja sair?', 'Confirmação', {
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Cancelar',
+        type: 'warning'
+      }).then(() => {
+        // Usuário confirmou a saída, então faz o logout
+        AuthService.clearToken();
+        this.$router.push({ path: '/login' });
+      }).catch(() => {
+        // Usuário cancelou a saída, não faz nada
+      });
+    }
+  }
 }
 </script>
 
@@ -34,6 +49,7 @@ h1.perfil-title{
 .el-menu--horizontal{
   border-bottom: 2px solid #A4A4A4;
   height: auto;
+  // justify-content: space-between;
 
   li.el-menu-item:hover {
     color: $text-color;
@@ -46,5 +62,14 @@ h1.perfil-title{
       border-bottom: 2px solid $text-color;
       margin-bottom: -2px;
     }
+}
+
+// .profile-links {
+//   display: flex;
+// }
+
+.sair-btn, .sair-btn:hover {
+  color: red !important;
+  border-bottom: none;
 }
 </style>

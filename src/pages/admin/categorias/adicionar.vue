@@ -98,7 +98,7 @@
   
 <script>
 import axios from 'axios';
-import AuthService from '@/authService';
+import AuthService from '@/store/authService.js';
 import { ElMessage } from 'element-plus'
 
 export default {

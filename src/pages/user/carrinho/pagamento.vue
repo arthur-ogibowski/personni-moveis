@@ -152,6 +152,7 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
 </template>
 
 <script>
+import AuthService from '@/store/authService';
 import cartService from '@/store/cartService.js';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
@@ -205,8 +206,11 @@ export default {
             cepExists: false,
         };
     },
+    mounted() {
+        // Usuário deve estar logado para acessar checkout.
+        AuthService.shouldRedirectToLogin(this.$router);
+    },
     methods: {
-
         Pagar() {
             const currentDate = new Date();
             // Dados do pedido adaptados ao formato JavaScript
@@ -257,7 +261,6 @@ export default {
                     "https://meusite.com/notificacoes"
                 ],
             };
-
             // Envia a solicitação POST para a API do PagSeguro
             axios
                 .post('http://localhost:8081/payments', pedidoPagSeguro, {
@@ -274,8 +277,6 @@ export default {
                     console.error(error);
                 });
         },
-
-
         consultarCEP() {
             const cep = this.endereco.cep;
 
@@ -306,10 +307,7 @@ export default {
                     })
                     .catch((error) => {
                         // Trate erros na solicitação, se necessário
-                        ElMessage({
-                            message: 'CEP não encontrado.',
-                            type: 'error',
-                        })
+                        ElMessage.error('CEP não encontrado.');
                     });
             }
         },
