@@ -31,13 +31,6 @@
                       <span>Pedidos</span>
                   </el-menu-item>
                 </router-link> 
-
-                <router-link to="/admin/materiais">
-                  <el-menu-item index="4">
-                      <el-icon><ElementPlus /></el-icon>
-                      <span>Materiais</span>
-                  </el-menu-item>
-                </router-link> 
               
                   <el-menu-item index="5">
                     <router-link to="/admin/usuarios">
