@@ -1,14 +1,21 @@
 <template>
-  <div class="container">
-    <el-steps align-center :active="currentSection">
+  <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="#112620"
+        active-text-color="$tertiary-color" @select="handleSelect">
+        <el-menu-item><router-link to="/"><img style="width: 200px;"
+                    src="../../../assets/img/personniLogo-Green.png" /></router-link></el-menu-item>
+
+        <h1> Modelagem de móveis </h1>
+    </el-menu>
+    <el-steps align-center :active="currentSection" finish-status="success">
       <el-step v-for="section in categoria.sectionCmps" :key="section.id" :title="section.name" />
     </el-steps>
+  <div class="container">
 
     <div class="cmp-container">
       <div class="cmp-sections">
         <el-form :model="selected">
           <div class="section" v-for="section in categoria.sectionCmps" :key="section.id">
-            <div class="inner-section" v-if="currentSection == categoria.sectionCmps.indexOf(section) + 1 && section.name !== 'Revisar'">
+            <div class="inner-section" v-if="currentSection == categoria.sectionCmps.indexOf(section) && section.name !== 'Revisar'">
               <h1>{{ section.name }}</h1>
               <div class="section-elements">
                 <div v-for="element in section.elementCmps" :key="element.id" class="ml-4 element-item">
@@ -20,13 +27,19 @@
                       size="large"
                       @change="resumoCmp"
                       :label="option.id">
-                      {{ option.name }} (R${{ option.price }})
+                      <div class="option-image">
+                        <el-image/>
+                      </div>
+                      <div class="option-info">
+                       <div class="option-name">{{ option.name }}</div>
+                       <div class="option-price">{{ option.price != 0 ? "R$ " + option.price : "--" }}</div>
+                      </div>
                     </el-radio-button>
                   </el-radio-group>
                 </div>
               </div>
               <div class="actions">
-                <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="currentSection !== 1"><el-icon><CaretLeft /></el-icon> Voltar</el-button>
+                <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="currentSection !== 0"><el-icon><CaretLeft /></el-icon> Voltar</el-button>
                 <el-button class="cta" color="$cta-color" style="visibility: hidden;" type="primary" @click="previousSection" v-else></el-button>
                 <el-button class="cta" color="$cta-color" type="primary" @click="nextSection">Próximo passo <el-icon><CaretRight /></el-icon></el-button>
               </div>
@@ -35,7 +48,7 @@
         </el-form>
       </div>
 
-      <div class="resumo" v-if="!isLastSection">
+      <!--<div class="resumo" v-if="!isLastSection">
         <h1>Resumo</h1>
         <div class="resumo-section" >
             <div v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">
@@ -57,7 +70,7 @@
           <h2>Total</h2>
           <h3>R$ {{ products_cmp.value }}</h3>
         </div>
-      </div>
+      </div>-->
 
     </div>
 
@@ -100,7 +113,8 @@ import cartService from '@/store/cartService';
 export default {
   data() {
     return {
-      currentSection: 1,
+      testImage: "@assets/img/cadeira1.png",
+      currentSection: 0,
       selected: [], 
       selectedOptionsInfo: [], 
       products_cmp: {
@@ -149,7 +163,7 @@ export default {
   },
   computed: {
     isLastSection() {
-      return this.currentSection === this.categoria.sectionCmps.length;
+      return this.currentSection === this.categoria.sectionCmps.length -1;
     },
   },
   methods: {
@@ -168,9 +182,32 @@ export default {
     },
     nextSection() {
       this.currentSection += 1;
+      const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+      });
+      setTimeout(() => {
+        this.scrollToTop();
+        loading.close()
+      }, 250);
     },
     previousSection() {
       this.currentSection -= 1;
+      const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+      });
+      setTimeout(() => {
+        this.scrollToTop();
+        loading.close()
+      }, 250);
+    },
+    scrollToTop() {
+      window.scrollTo({
+        top: 0,
+      });
     },
     encontrarElementoESeçãoPorOpção(optionIds) {
       const correspondencias = [];
@@ -304,37 +341,85 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/styles/scss/basics.scss';
-:deep(.el-step__head.is-finish) {
+
+/*:deep(.el-step__head.is-finish) {
   color: $cta-color;
   border-color: $cta-color;
 }
 
 :deep(.el-step__title.is-finish) {
   color: $cta-color;
+}*/
+:deep(.el-step__icon-inner.is-status) {
+  transform: translate(-5px, -6px);
+}
+:deep(.el-icon svg) {
+  height: 25px;
+  width: 25px;
+}
+.el-steps{
+  background-color: transparent !important;
+  margin: 20px auto;
+}
+
+.el-menu{
+  justify-content: space-between;
+  h1 {
+  font-size: 32px;
+  font-weight: 400;
+  color: $text-color;
+  margin-right: 5%;
+}
 }
 
 .cmp-container{
   display: flex;
-  flex-direction: columns;
-  justify-content: space-between;
+  flex-direction: row;
+  justify-content: center;
+  background-color: $secondary-color;
 
   .cmp-sections{
-    width: 60%;
+    width: 70%;
     height: 100%;
     border-radius: 10px;
-    margin-right: 20px;
     padding: 20px;
 
     .inner-section{
       display: flex;
       flex-direction: column;
+
+      h1{
+        font-size: 8rem;
+        text-align: center;
+        font-weight: 400;
+      }
       .section-elements{
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         flex-wrap: wrap;
 
         .element-item{
           margin: 20px;
+
+          .el-image{
+            width: 100px;
+            height: 100px;
+            margin-bottom: 10px;
+          }
+
+          .option-info{
+            display: flex;
+            flex-direction: column;
+
+            .option-name{
+              font-size: 14px;
+              font-weight: 600;
+            }
+            .option-price{
+              font-size: 12px;
+              font-weight: 400;
+            }
+          }
         }
       }
 
@@ -436,6 +521,34 @@ h2{
       justify-content: space-between;
     }
   }
+}
+}
+
+div.el-radio-group{
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  :deep(.el-radio-button){
+    margin: 10px;
+    transition: all 0.2s ease-in-out;
+    &:hover{
+      transform: scale(1.1);
+    }
+  };
+  :deep(span.el-radio-button__inner) {
+    padding: 10px 0;
+    width: 120px;
+    background-color: transparent;
+    color: var(--el-text-color-regular) !important;
+
+
+  }
+  :deep(.el-radio-button.is-active > .el-radio-button__inner) {
+    transition: 0.1s;
+  background-color: transparent !important;
+  outline: 3px solid $cta-color !important;
+  color: var(--el-text-color-regular) !important;
+
 }
 }
 </style>

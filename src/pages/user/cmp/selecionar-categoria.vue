@@ -1,7 +1,12 @@
 <template>
-    <div class="container">
+   <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="#112620"
+        active-text-color="$tertiary-color" @select="handleSelect">
+        <el-menu-item><router-link to="/"><img style="width: 200px;"
+                    src="../../../assets/img/personniLogo-Green.png" /></router-link></el-menu-item>
 
-        <h1>Modelagem de móveis</h1>
+        <h1> Modelagem de móveis </h1>
+    </el-menu>
+    <div class="container">
 
         <h2>Escolha a categoria</h2>
 
@@ -49,10 +54,21 @@ export default {
 
 <style scoped lang="scss">
 @import '@/assets/styles/scss/basics.scss';
+.el-menu{
+  justify-content: space-between;
+  h1 {
+  font-size: 32px;
+  font-weight: 400;
+  color: $text-color;
+  margin-right: 5%;
+}
+}
 
 h2{
     text-align: center;
     font-size: 2.5rem;
+    font-family: lato-regular;
+    font-weight: 400;
 }
 div.categorias-grid{
   display: flex;

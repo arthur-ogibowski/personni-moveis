@@ -16,7 +16,7 @@
                 <el-image style="width: 100px; height: 100px" :src="product.imgUrl" :fit="fit" />
               </el-carousel-item>
             </el-carousel>
-            <el-image style="width: 500px; height: 500px" :src="product.imgUrl" :fit="fit" />
+            <el-image style="width: 500px; height: 500px" :src="product.mainImg" :fit="fit" />
 
             <div class="info-box">
                 <h2 style="font-size: 4rem;">{{  product.name }}</h2>
