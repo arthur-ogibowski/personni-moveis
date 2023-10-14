@@ -144,7 +144,7 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
                     <el-button type="info" plain @click="previousStep"><el-icon>
                             <ArrowLeftBold />
                         </el-icon> Voltar</el-button>
-                    <el-button type="success" @click="Pagar" size="large">Confirmar</el-button>
+                    <el-button type="success" @click="ConfirmarPedido" size="large">Confirmar</el-button>
                 </div>
             </div>
 
@@ -228,8 +228,26 @@ export default {
         AuthService.shouldRedirectToLogin(this.$router);
     },
     methods: {
+        ConfirmarPedido(){
+            axios
+                .post('http://localhost:8081/payments', pedidoPagSeguro, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(async (response) => {
+                    const dataUrl = response.data;
+                    const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
+                    this.QrCode = base64String;
+                    console.log(this.QrCode);
+                })
+                .catch((error) => {
+                    // Lidar com erros aqui
+                    console.error(error);
+                });
+        },
+
         Pagar() {
-            const currentDate = new Date();
             // Dados do pedido adaptados ao formato JavaScript
             const pedidoPagSeguro = {
 
