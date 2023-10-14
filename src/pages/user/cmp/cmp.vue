@@ -28,7 +28,7 @@
                       @change="resumoCmp"
                       :label="option.id">
                       <div class="option-image">
-                        <el-image/>
+                        <el-image :src="option.img"/>
                       </div>
                       <div class="option-info">
                        <div class="option-name">{{ option.name }}</div>
@@ -84,7 +84,9 @@
                 <h2>{{ optionInfo.section }}</h2>
               <div class="revisar-section-list">
                 <div v-for="element in optionInfo.elements" :key="element" class="revisar-section-item">
-                  <el-image></el-image>
+                  <div style="width: 100px; height: 150px;">
+                        <el-image :src="element.img"/>
+                  </div>
                   <h4>{{ element.element }}</h4>
                   <div class="revisar-section-item-option">
                     <el-text type="success">{{ element.option }}</el-text>
@@ -102,7 +104,6 @@
     
     
   </div>
-
 </template>
 <script>
 import axios from 'axios';
@@ -246,7 +247,7 @@ export default {
               "id": option.id,
               "name": option.name,
               "price": option.price,
-              "imgUrl": "string",
+              "img": option.img,
               "elementCmpId": 0
             };
           } else {
@@ -261,7 +262,7 @@ export default {
                 "id": option.id,
                 "name": option.name,
                 "price": option.price,
-                "imgUrl": "string",
+                "img": option.img,
                 "elementCmpId": 0
               }
             };
@@ -285,7 +286,7 @@ export default {
                 "id": option.id,
                 "name": option.name,
                 "price": option.price,
-                "imgUrl": "string",
+                "img": option.img,
                 "elementCmpId": 0
               }
             }]
@@ -309,6 +310,7 @@ export default {
           element: element.name,
           option: option.name,
           price: option.price,
+          img: option.img
         };
 
         selectedOptionsInfo[selectedOptionsInfo.length - 1].elements.push(elementInfo);
@@ -523,6 +525,7 @@ h2{
   }
 }
 }
+
 
 div.el-radio-group{
   flex-direction: row;

@@ -59,6 +59,14 @@
                                                 <el-input v-model="option.price" size="small"></el-input>
                                             </el-form-item>
                                         </el-col>
+                                        <el-form-item label="Imagem principal">
+                                            <div>
+                                                <el-upload :show-file-list="true" :auto-upload="false" limit="1"
+                                                    @change="handleImageChange($event, option)">
+                                                    <el-button size="small" type="primary">Selecionar Imagem</el-button>
+                                                </el-upload>
+                                            </div>
+                                        </el-form-item>
                                     </el-row>
 
 
@@ -100,6 +108,7 @@
 import axios from 'axios';
 import AuthService from '@/store/authService.js';
 import { ElMessage } from 'element-plus'
+import imgConverter from '@/store/imgConverter.js';
 
 export default {
     data() {
@@ -140,6 +149,15 @@ export default {
                     Elemento.optionCmps.splice(OptionCmpindex, 1);
                 }
 
+            }
+        },
+
+        async handleImageChange(file, option) {
+            try {
+                // Adquire imagem como string base64.
+                option.img = await imgConverter.fileToBase64String(file.raw);
+            } catch (error) {
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
             }
         },
 
@@ -194,7 +212,7 @@ export default {
         newOption(element) {
             element.optionCmps.push({
                 name: "Nova opção",
-                imgUrl: "",
+                img: "",
                 price: 0,
             })
 

@@ -61,6 +61,17 @@
                         <el-input v-model="option.price" size="small"></el-input>
                       </el-form-item>
                     </el-col>
+                    <el-form-item label="Imagem principal">
+                      <div>
+                        <el-upload :show-file-list="true" :auto-upload="false" limit="1"
+                          @change="handleImageChange($event, option)">
+                          <el-button size="small" type="primary">Selecionar Imagem</el-button>
+                          <div style="width: 50px; height: 50px;">
+                            <el-image :src="option.img" />
+                          </div>
+                        </el-upload>
+                      </div>
+                    </el-form-item>
                   </el-row>
 
 
@@ -103,6 +114,7 @@
 <script>
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
+import imgConverter from '@/store/imgConverter.js';
 export default {
   data() {
     return {
@@ -160,31 +172,9 @@ export default {
       } else if (Elemento != null && Option == null) { // Se o ID do elemento for fornecido, exclua todas as opções desse elemento
         categoria.sectionCmps.forEach(sectionCmp => {
           const elementCmpIndex = sectionCmp.elementCmps.findIndex(element => element === Elemento);
-          if (elementCmpIndex !== -1 && Elemento.id != 0) {
-            axios.delete(`http://localhost:8081/ElementCmp/${Elemento.id}`)
-              .then(response => {
-                this.categorias = response.data;
-                window.location.reload();
-              })
-              .catch(error => {
-                ElMessage.error('Erro ao deletar Elemento! Veja se não tem Opções relacionadas!');
-              });
-          } else {
-
-            const index = Seccao.elementCmps.indexOf(Elemento)
-            if (index != -1) {
-              Seccao.elementCmps.splice(index, 1);
-            }
-
-          }
-        });
-      } else if (Elemento != null && Option != null) { // Se o ID do elemento e da opção forem fornecidos, exclua a opção específica
-        categoria.sectionCmps.forEach(sectionCmp => {
-          const elementCmp = sectionCmp.elementCmps.find(element => element === Elemento);
-          if (elementCmp) {
-            const optionIndex = elementCmp.optionCmps.findIndex(option => option === Option);
-            if (optionIndex !== -1 && Option.id != 0) {
-              axios.delete(`http://localhost:8081/OptionCmp/${Option.id}`)
+          if (elementCmpIndex != -1) {
+            if (elementCmpIndex !== -1 && Elemento.id != 0) {
+              axios.delete(`http://localhost:8081/ElementCmp/${Elemento.id}`)
                 .then(response => {
                   this.categorias = response.data;
                   window.location.reload();
@@ -193,10 +183,37 @@ export default {
                   ElMessage.error('Erro ao deletar Elemento! Veja se não tem Opções relacionadas!');
                 });
             } else {
-              elementCmp.optionCmps.splice(optionIndex, 1);
+              sectionCmp.elementCmps.splice(elementCmpIndex, 1);
             }
           }
         });
+      } else if (Seccao != null && Elemento != null && Option != null) { // Se o ID do elemento e da opção forem fornecidos, exclua a opção específica
+        const elementCmp = Seccao.elementCmps.find(element => element === Elemento);
+        if (elementCmp) {
+          const optionIndex = elementCmp.optionCmps.findIndex(option => option === Option);
+          if (optionIndex !== -1 && Option.id != 0) {
+            axios.delete(`http://localhost:8081/OptionCmp/${Option.id}`)
+              .then(response => {
+                this.categorias = response.data;
+                window.location.reload();
+              })
+              .catch(error => {
+                ElMessage.error('Erro ao deletar Opção!');
+              });
+          } else {
+            elementCmp.optionCmps.splice(optionIndex, 1);
+          }
+        }
+        ;
+      }
+    },
+
+    async handleImageChange(file, option) {
+      try {
+        // Adquire imagem como string base64.
+        option.img = await imgConverter.fileToBase64String(file.raw);
+      } catch (error) {
+        ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
       }
     },
 
@@ -259,7 +276,7 @@ export default {
       element.optionCmps.push({
         id: 0,
         name: "Nova opção",
-        imgUrl: "",
+        img: "",
         price: 0,
         elementCmpId: element.id,
       })
@@ -298,4 +315,5 @@ hr {
     text-align: center;
     color: $admin-grey;
   }
-}</style>
+}
+</style>
