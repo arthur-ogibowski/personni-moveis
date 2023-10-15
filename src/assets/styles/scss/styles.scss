@@ -170,7 +170,7 @@ body{
     
     button.cta{
         border: none;
-        background-color: $cta-color;
+        background-color: $cta-color !important; 
         color: white;
         text-transform: uppercase;
         letter-spacing: 0.5px;
@@ -189,7 +189,17 @@ body{
     button.el-button{
         padding: 20px 40px !important;
     }
+    button.cta.is-disabled{
+        background-color: $cta-color;
+        opacity: 0.5;
+        cursor: not-allowed;
+        &:hover{
+            transform: none;
+            background-color: $cta-color;
+        }
+    }
 
+    // element plus
     div.el-breadcrumb {
         margin-bottom: 50px;
 
@@ -237,6 +247,13 @@ body{
             background-color: $tertiary-color;
             color: $cta-color;
         }
+      }
+      .el-input__wrapper.is-focus {
+        box-shadow: 0 0 0 1px $cta-color inset;
+      }
+      .el-switch.is-checked .el-switch__core {
+        border-color: $cta-color;
+        background-color: $cta-color;
       }
 
 }

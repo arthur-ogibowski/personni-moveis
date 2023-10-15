@@ -64,14 +64,14 @@
 
                                 </div>
 
-                                <el-button type="primary" v-on:click="newOption(element)"><el-icon>
+                                <el-button class="cta" type="primary" v-on:click="newOption(element)"><el-icon>
                                         <Plus />
                                     </el-icon> Opção</el-button>
 
                             </div>
 
                         </div>
-                        <el-button type="primary" v-on:click="newElement(section)"><el-icon>
+                        <el-button class="cta" type="primary" v-on:click="newElement(section)"><el-icon>
                                 <Plus />
                             </el-icon> Elemento </el-button>
                     </div>
@@ -82,7 +82,7 @@
 
                 </div>
 
-                <el-button type="primary" v-on:click="newSection"><el-icon>
+                <el-button class="cta" type="primary" v-on:click="newSection"><el-icon>
                         <Plus />
                     </el-icon> Seção</el-button>
 
@@ -90,7 +90,7 @@
 
 
             <el-form-item>
-                <el-button type="primary" @click="criarCategoria" :disabled="!categoria.name">Salvar</el-button>
+                <el-button class="cta" type="primary" @click="criarCategoria" :disabled="!categoria.name">Salvar</el-button>
             </el-form-item>
         </el-form>
     </div>
