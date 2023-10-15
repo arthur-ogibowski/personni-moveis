@@ -76,6 +76,11 @@ export default {
         this.updateCart([]);
     },
 
+    /** Remove tudo de ambos carrinhos. */
+    removeAllFromCarts() {
+        this.removeAllfromCart();
+        this.removeAllFromCmpCart();
+    },
 
     // CMP:
 

@@ -3,6 +3,7 @@ import NotFound from '@/pages/user/not-found.vue';
 
 import UserDashboard from '@/pages/user/perfil/dashboard.vue';
 import UserListarPedidos from '@/pages/user/perfil/pedidos.vue';
+import UserListarEnderecos from '@/pages/user/perfil/enderecos.vue';
 
 import ProdutosListar from '@/pages/user/produtos/listagem.vue';
 import ProdutosSingle from '@/pages/user/produtos/single.vue'
@@ -38,6 +39,7 @@ export const routes = [
   { path: '/', component: Index },
   { path: '/perfil', component: UserDashboard},
   { path: '/perfil/pedidos', component: UserListarPedidos},
+  { path: '/perfil/enderecos', component: UserListarEnderecos},
 
   { path: '/produtos', component: ProdutosListar },
   { path: '/produtos/:id', component: ProdutosSingle },

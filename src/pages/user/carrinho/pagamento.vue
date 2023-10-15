@@ -1,5 +1,5 @@
 <script setup>
-import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/icons-vue'
+import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 </script>
 
 <template>
@@ -144,7 +144,7 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
                     <el-button type="info" plain @click="previousStep"><el-icon>
                             <ArrowLeftBold />
                         </el-icon> Voltar</el-button>
-                    <el-button type="success" @click="Pagar" size="large">Confirmar</el-button>
+                    <el-button type="success" @click="makeProductOrder()" size="large">Confirmar</el-button>
                 </div>
             </div>
 
@@ -170,9 +170,7 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
 import AuthService from '@/store/authService';
 import cartService from '@/store/cartService.js';
 import axios from 'axios';
-import { ElMessage } from 'element-plus';
-import { ElLoading } from 'element-plus'
-import imgConverter from '@/store/imgConverter.js';
+import { ElLoading, ElMessage } from 'element-plus';
 
 export default {
     data() {
@@ -201,7 +199,7 @@ export default {
                 sectionCmps: [],
             },
             endereco: {
-                cep: "",
+                cep: "80240320",
                 rua: "",
                 numero: "",
                 complemento: "",
@@ -217,18 +215,41 @@ export default {
                 ano: "",
                 CvvCartao: ""
             },
+            ordersRequest: [
+                {
+                    product: '',
+                    amount: null
+                }      
+            ],
             products: [],
             regularProducts: [],
             productCmps: [],
             cepExists: false,
         };
     },
-    mounted() {
+    created() {
         // Usuário deve estar logado para acessar checkout.
         AuthService.shouldRedirectToLogin(this.$router);
+        
+        const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+        });
+        // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
+
+        this.regularProducts = cartService.getCartItems();
+        this.cmpProducts = cartService.getCmpItems();
+
+        this.products = this.regularProducts.concat(this.cmpProducts);
+        setTimeout(() => {
+            loading.close()
+        }, 250)
     },
     methods: {
         Pagar() {
+            // Registra pedido do cliente no back.
+            this.makeProductOrder();
             const currentDate = new Date();
             // Dados do pedido adaptados ao formato JavaScript
             const pedidoPagSeguro = {
@@ -265,6 +286,29 @@ export default {
                     console.error(error);
                 });
 
+            /** Limpa carrinho após finalizar o pedido. */
+            cartService.removeAllFromCarts();
+        },
+        makeProductOrder() {
+            const config = { headers: { Authorization: AuthService.getToken() } }
+            // Configura objeto order para processar pedido no back.
+            const orders = [];
+            cartService.getCartItems().forEach(prod => orders.push({product: prod, amount: prod.amount}));
+
+            // Faz requisição enviando pedidos.
+            if(cartService.getCartItems() != null || cartService.getCartItems().length > 0) {
+                axios.post('http://localhost:8081/orders/create-product-order', orders, config)
+                    .then(response => {
+                        ElMessage.success('Pedido registrado com sucesso.');
+                        const dataUrl = response.data;
+                        const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
+                        this.QrCode = base64String;
+                        console.log(this.QrCode);
+                    })
+                    .catch(error => {
+                        ElMessage.error('Não foi possível registrar o pedido.');
+                    });
+            }
         },
         consultarCEP() {
             const cep = this.endereco.cep;
@@ -374,24 +418,6 @@ export default {
             // }, 0);
             return 0;
         },
-    },
-    created() {
-        const loading = ElLoading.service({
-            lock: true,
-            text: 'Carregando',
-            background: 'rgba(0, 0, 0, 0.7)'
-        });
-        // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
-
-        this.regularProducts = cartService.getCartItems();
-        this.cmpProducts = cartService.getCmpItems();
-
-        this.products = this.regularProducts.concat(this.cmpProducts);
-
-
-        setTimeout(() => {
-            loading.close()
-        }, 250)
     },
 }
 </script>
