@@ -1,11 +1,12 @@
 <template>
     <div class="container">
-      <div class="login">
+      <img src="../../assets/img/personniLogo-Green.png" alt="Personni Móveis" class="logo"/>
+      <div class="login-container">
       <div class="side-image">
         <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
       </div>
       <!-- <div class="blue-rectangle"> -->
-          <div class="login-dialog">
+          <div class="dialog">
               <h1>Login</h1>
                   <el-input
                     v-model="login.email"
@@ -20,14 +21,16 @@
                       type="password"
                       show-password
                     />
+                    <router-link class="recuperar-senha" to="/login/recuperar-senha"><el-link size="small">Esqueci minha senha</el-link></router-link>
                   <el-button color="$cta-color" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="fazerLogin()">Entrar</el-button>
-                  <router-link to="/login/recuperar-senha"><el-link>Esqueci minha senha</el-link></router-link>
                   <div class="register">
-            <!-- <h2>Não possui uma conta?</h2> -->
-            <router-link to="/login/cadastro"><el-link>Criar Conta</el-link></router-link>
-          </div>
+                            <el-divider>Ou</el-divider>
+                    <!-- <h2>Não possui uma conta?</h2> -->
+                    <router-link class="criar-conta" to="/login/cadastro"><el-link>Criar Conta</el-link></router-link>
+                  </div>
           </div>
       </div>
+      <h2><router-link class="voltar" to="/"><el-icon><ArrowLeftBold /></el-icon> Voltar</router-link></h2>
     </div>
   
   </template>
@@ -86,44 +89,61 @@ export default {
 
 div.container{
   display: flex;
-  justify-content: center;
+  justify-content: start;
+  flex-direction: column;
   align-items: center;
   background-color: #CECECE;
+  padding-top: 0;
+  padding-bottom: 0;
+  .logo{
+    width: 25rem;
+    margin-bottom: 20px;
+  }
 }
 
-div.login{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    width: 50vw;
-    max-height: 500px;
-    height: 500px;
-
+div.login-container{
     img {
       object-fit: cover;
       height: 100%;
     }
 
-    .side-image, .login-dialog {
+    :deep(.side-image) {
       flex-basis: 50%;
+    }
+    .dialog{
+      flex-basis: 70%;
     }
 }
 
 
-div.login-dialog{
-    background: $tertiary-color;
-    box-shadow: none;
-    display: flex;
-    flex-direction: column;
-    padding: 4rem;
-    justify-content: space-around;
-    width: 100%;
+div.dialog{
     .el-link{
       color: $admin-grey;
       text-decoration: underline;
     }
     .el-link.is-underline:hover::after {
       border-bottom:none;
+    }
+    .recuperar-senha{
+      text-align: right;
+
+      .el-link{
+        font-size: 12px;
+      }
+    }
+    :deep(.el-divider){
+      border-top: 1px solid $admin-grey;
+    }
+    :deep(.el-divider__text) {
+      background-color: $tertiary-color;
+      color: $admin-grey;
+    }
+    .register{
+      text-align: center;
+
+      .el-link{
+        font-size: 16px;
+      }
     }
 }
 
@@ -137,7 +157,14 @@ h1{
 
 h2 {
   text-align: center;
-  color: #FFF;
+  margin-top: 20px;
+  color: $cta-color;
+  font-weight: 400;
+
+  .voltar{
+    display: flex;
+    align-items: center;
+  }
 }
 
 </style>
