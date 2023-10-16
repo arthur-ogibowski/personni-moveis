@@ -1,78 +1,34 @@
-<!-- <template>
-<div class="cadastrar-se">
-  <div class="group-29">
-    <div class="rectangle-9"></div>
-
-    <div class="group-75">
-      <div class="rectangle-92"></div>
-
-      <div class="email">Email</div>
-
-      <input type="email" class="rectangle-31">
-
-      <svg
-        class="rectangle-33"
-        width="335"
-        height="71"
-        viewBox="0 0 335 71"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path d="M0 0H334.542V70.1008H0V0Z" fill="#343434" />
-      </svg>
-
-      <div class="senha">Senha</div>
-
-      <input type="text" class="rectangle-32">
-
-      <div class="lorem">Lorem</div> -->
-
-      <!-- <div class="lorem2">Lorem</div> -->
-
-      <!-- <div class="nome-completo">Nome Completo</div>
-
-      <input type="text" class="rectangle-34"> -->
-
-      <!-- <div class="lorem3">Lorem</div> -->
-
-      <!-- <div class="cpf">CPF</div>
-
-      <input type="text" class="rectangle-35"> -->
-
-      <!-- <div class="lorem4">Lorem</div> -->
-
-      <!-- <a href="/login" class="criar-conta">Criar conta</a>
-
-      <div class="crie-sua-conta">Crie sua conta</div>
-    </div>
-  </div>
-</div> -->
-<!-- </template> -->
 
 <template>
-  <div class="container login">
-    <div class="side-image"></div>
-    <div class="login-dialog">
-          <h1>Crie sua Conta</h1>
+  <div class="container">
+    <img src="../../assets/img/personniLogo-Green.png" alt="Personni Móveis" class="logo"/>
+    <div class="login-container">
+      <div class="side-image">
+        <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
+      </div>
+    <div class="dialog">
+          <h1>Crie sua conta</h1>
             <div class="cadastro-form">
-              <el-form-item class="input-label" label="Nome">
+              <el-form-item>
                 <el-input v-model="cadastro.name" size="large" placeholder="Nome"/>
               </el-form-item>
-              <el-form-item class="input-label" label="Email">
+              <el-form-item>
                 <el-input v-model="cadastro.email" size="large" placeholder="Email" />
               </el-form-item>
-              <el-form-item class="input-label" label="CPF">
+              <el-form-item >
                 <el-input v-model="cadastro.cpf" size="large" placeholder="CPF" />
               </el-form-item>
-              <el-form-item class="input-label" label="Telefone">
+              <el-form-item>
                 <el-input v-model="cadastro.phoneNumber" size="large" placeholder="Telefone" />
               </el-form-item>
-              <el-form-item class="input-label" label="Senha">
+              <el-form-item>
                 <el-input type="password" v-model="cadastro.password" size="large" placeholder="Senha" />
               </el-form-item>
             </div>
-                <el-button color="#343434" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="cadastrarUsuario()">Criar Conta</el-button>
+                <el-button color="$cta-color" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="cadastrarUsuario()">Criar Conta</el-button>
         </div>
+      </div>
+      <h2><router-link class="voltar" to="/login"><el-icon><ArrowLeftBold /></el-icon> Voltar para login</router-link></h2>
   </div>
 
 </template>
@@ -113,79 +69,84 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/styles/scss/basics.scss';
 
-div.login{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    background-color: #112620;
+div.container{
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  align-items: center;
+  background-color: #CECECE;
+  padding-top: 0;
+  padding-bottom: 0;
+  .logo{
+    width: 25rem;
+    margin-bottom: 20px;
+  }
 }
 
-.container {
-  width: auto;
-  padding: 5%;
-}
+div.login-container{
+    img {
+      object-fit: cover;
+      height: 100%;
+    }
 
-div.side-image{
-    background-color: black;
-}
-
-div.login-dialog{
-    background: #FCFAF1;
-    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.20);
-    margin: 160px;
-    margin-top: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 960px;
-    height: 820px;
-    padding: 60px;
-    margin-bottom: 0;
-    :deep(.el-input), :deep(.el-button){
-         width: 330px;
-         height: 56px;
-         margin: 25px;
-         color: #FCFAF1;
+    :deep(.side-image) {
+      flex-basis: 50%;
+    }
+    .dialog{
+      flex-basis: 70%;
     }
 }
 
-.cadastro-form {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
 
-.cadastro-form .input-label {
-  width: 48%;
-  margin-bottom: 1rem;
-}
+div.dialog{
+    .el-link{
+      color: $admin-grey;
+      text-decoration: underline;
+    }
+    .el-link.is-underline:hover::after {
+      border-bottom:none;
+    }
+    .recuperar-senha{
+      text-align: right;
 
-.cadastro-form .input-label:last-child {
-  width: 100%;
+      .el-link{
+        font-size: 12px;
+      }
+    }
+    :deep(.el-divider){
+      border-top: 1px solid $admin-grey;
+    }
+    :deep(.el-divider__text) {
+      background-color: $tertiary-color;
+      color: $admin-grey;
+    }
+    .register{
+      text-align: center;
+
+      .el-link{
+        font-size: 16px;
+      }
+    }
 }
 
 h1{
-    color: #112620;
+    color: $primary-color;
     text-align: center;
-    font-family: Inter;
-    font-size: 41px;
-    font-style: normal;
-    font-weight: 700;   
-    line-height: normal;
+    font-family: shadows-into-light;
+    font-size: 4rem;
+    font-weight: 400;   
 }
+h2 {
+  text-align: center;
+  margin-top: 20px;
+  color: $cta-color;
+  font-weight: 400;
 
-.cadastro-form {
-  margin: 5%;
+  .voltar{
+    display: flex;
+    align-items: center;
+  }
 }
-
-.input-label {
-  display: flex;
-  flex-direction: column;
-  align-items: start;
-  font-size: var(--font-size);
-}
-
 </style>

@@ -1,29 +1,36 @@
 <template>
-    <div class="container login">
-      <div class="side-image"></div>
+    <div class="container">
+      <img src="../../assets/img/personniLogo-Green.png" alt="Personni Móveis" class="logo"/>
+      <div class="login-container">
+      <div class="side-image">
+        <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
+      </div>
       <!-- <div class="blue-rectangle"> -->
-          <div class="login-dialog">
+          <div class="dialog">
               <h1>Login</h1>
                   <el-input
                     v-model="login.email"
                     size="large"
                     placeholder="Email"
+                    label="Email"
                   />
-                  <el-input
-                    v-model="login.password"
-                    size="large"
-                    placeholder="Senha"
-                    type="password"
-                    show-password
-                  />
-                  <el-button color="#343434" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="fazerLogin()">Entrar</el-button>
-                  <router-link to="/login/recuperar-senha"><el-link>Esqueci minha senha</el-link></router-link>
+                    <el-input
+                      v-model="login.password"
+                      size="large"
+                      placeholder="Senha"
+                      type="password"
+                      show-password
+                    />
+                    <router-link class="recuperar-senha" to="/login/recuperar-senha"><el-link size="small">Esqueci minha senha</el-link></router-link>
+                  <el-button color="$cta-color" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="fazerLogin()">Entrar</el-button>
+                  <div class="register">
+                            <el-divider>Ou</el-divider>
+                    <!-- <h2>Não possui uma conta?</h2> -->
+                    <router-link class="criar-conta" to="/login/cadastro"><el-link>Criar Conta</el-link></router-link>
+                  </div>
           </div>
-          <div class="register">
-            <!-- <h2>Não possui uma conta?</h2> -->
-            <router-link to="/login/cadastro"><el-button class="cadastro-btn" size="large">Criar Conta</el-button></router-link>
-          </div>
-      <!-- </div> -->
+      </div>
+      <h2><router-link class="voltar" to="/"><el-icon><ArrowLeftBold /></el-icon> Voltar</router-link></h2>
     </div>
   
   </template>
@@ -78,85 +85,86 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import '@/assets/styles/scss/basics.scss';
 
-div.login{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    height: 100vh;
-    background-color: #112620;
+div.container{
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  align-items: center;
+  background-color: #CECECE;
+  padding-top: 0;
+  padding-bottom: 0;
+  .logo{
+    width: 25rem;
+    margin-bottom: 20px;
+  }
 }
-// div.blue-rectangle{
-//     width: 800px;
-//     height: 800px;
-//     flex-shrink: 0;
-//     background: #2A58E1;
 
-//     :deep(.el-input), :deep(.el-button){
-//         width: 330px;
-//         height: 56px;
-//         margin: 25px;
-//         color: #FCFAF1;
-// text-align: center;
-// font-size: 26px;
-// font-style: normal;
-// line-height: normal;
-// letter-spacing: -0.333px;
-//     }
-// }
+div.login-container{
+    img {
+      object-fit: cover;
+      height: 100%;
+    }
+
+    :deep(.side-image) {
+      flex-basis: 50%;
+    }
+    .dialog{
+      flex-basis: 70%;
+    }
+}
 
 
-div.login-dialog{
-    background: #FCFAF1;
-    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.50);
-    margin: 80px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 480px;
-    height: 480px;
-    :deep(.el-input), :deep(.el-button){
-         width: 330px;
-         height: 56px;
-         margin: 25px;
-         color: #FCFAF1;
+div.dialog{
+    .el-link{
+      color: $admin-grey;
+      text-decoration: underline;
+    }
+    .el-link.is-underline:hover::after {
+      border-bottom:none;
+    }
+    .recuperar-senha{
+      text-align: right;
+
+      .el-link{
+        font-size: 12px;
+      }
+    }
+    :deep(.el-divider){
+      border-top: 1px solid $admin-grey;
+    }
+    :deep(.el-divider__text) {
+      background-color: $tertiary-color;
+      color: $admin-grey;
+    }
+    .register{
+      text-align: center;
+
+      .el-link{
+        font-size: 16px;
+      }
     }
 }
 
 h1{
-    color: #1a2930;
+    color: $primary-color;
     text-align: center;
-    font-family: Inter;
-    font-size: 41px;
-    font-style: normal;
-    font-weight: 700;   
-    line-height: normal;
+    font-family: shadows-into-light;
+    font-size: 4rem;
+    font-weight: 400;   
 }
 
 h2 {
   text-align: center;
-  color: #FFF;
-}
+  margin-top: 20px;
+  color: $cta-color;
+  font-weight: 400;
 
-.cadastro-btn {
-  width: 480px;
-  height: 60px;
-  font-size: 20px;
-  // text-transform: uppercase;
-  font-weight: bold;
-  color: #1a2930;
-}
-
-.cadastro-btn:hover {
-  color: #1a2930;
-  background-color: #cecece;
-}
-
-.cadastro-btn:active, .cadastro-btn:focus {
-  color: #1a2930;
+  .voltar{
+    display: flex;
+    align-items: center;
+  }
 }
 
 </style>

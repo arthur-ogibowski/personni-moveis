@@ -1,8 +1,12 @@
 <template>
-  <div class="container login">
-    <div class="side-image"></div>
+  <div class="container">
+    <img src="../../assets/img/personniLogo-Green.png" alt="Personni Móveis" class="logo"/>
+    <div class="login-container">
+      <div class="side-image">
+        <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
+      </div>
     <!-- <div class="blue-rectangle"> -->
-        <div class="login-dialog">
+        <div class="dialog">
             <h1>Recuperar Senha</h1>
             <h3>informe o e-mail de sua conta para receber uma requisição de troca de senha.</h3>
                 <el-input
@@ -10,8 +14,10 @@
                   size="large"
                   placeholder="Email"
                 />
-                <router-link to="/login"><el-button color="#343434" size="large">Enviar</el-button></router-link>
+                <el-button class="cta" color="$cta-color" size="large">Enviar</el-button>
         </div>
+      </div>
+      <h2><router-link class="voltar" to="/login"><el-icon><ArrowLeftBold /></el-icon> Voltar para login</router-link></h2>
   </div>
 
 </template>
@@ -29,69 +35,90 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
-div.login{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    width: 100vw;
-    height: 100vh;
-    background-color: #112620;
+@import '@/assets/styles/scss/basics.scss';
+div.container{
+  display: flex;
+  justify-content: start;
+  flex-direction: column;
+  align-items: center;
+  background-color: #CECECE;
+  padding-top: 0;
+  padding-bottom: 0;
+  .logo{
+    width: 25rem;
+    margin-bottom: 20px;
+  }
 }
-// div.blue-rectangle{
-//     width: 800px;
-//     height: 800px;
-//     flex-shrink: 0;
-//     background: #2A58E1;
 
-//     :deep(.el-input), :deep(.el-button){
-//         width: 330px;
-//         height: 56px;
-//         margin: 25px;
-//         color: #FCFAF1;
-// text-align: center;
-// font-size: 26px;
-// font-style: normal;
-// line-height: normal;
-// letter-spacing: -0.333px;
-//     }
-// }
+div.login-container{
+    img {
+      object-fit: cover;
+      height: 100%;
+    }
+
+    :deep(.side-image) {
+      flex-basis: 50%;
+    }
+    .dialog{
+      flex-basis: 70%;
+    }
+}
 
 
-div.login-dialog{
-    background: #FCFAF1;
-    box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.50);
-    margin: 80px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    width: 480px;
-    height: 480px;
-    :deep(.el-input), :deep(.el-button){
-         width: 330px;
-         height: 56px;
-         margin: 25px;
-         color: #FCFAF1;
+div.dialog{
+    .el-link{
+      color: $admin-grey;
+      text-decoration: underline;
+    }
+    .el-link.is-underline:hover::after {
+      border-bottom:none;
+    }
+    .recuperar-senha{
+      text-align: right;
+
+      .el-link{
+        font-size: 12px;
+      }
+    }
+    :deep(.el-divider){
+      border-top: 1px solid $admin-grey;
+    }
+    :deep(.el-divider__text) {
+      background-color: $tertiary-color;
+      color: $admin-grey;
+    }
+    .register{
+      text-align: center;
+
+      .el-link{
+        font-size: 16px;
+      }
     }
 }
 
 h1{
-    color: #1a2930;
+    color: $primary-color;
     text-align: center;
-    font-family: Inter;
-    font-size: 41px;
-    font-style: normal;
-    font-weight: 700;   
-    line-height: normal;
+    font-family: shadows-into-light;
+    font-size: 4rem;
+    font-weight: 400;   
 }
-
 h3 {
-  width: 330px;
-  text-align: justify;
-  font-size: 16px;
-  letter-spacing: 0.9px;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: 400;
+  margin-bottom: 2%;
+  color: $secondary-color;
 }
+h2 {
+  text-align: center;
+  margin-top: 20px;
+  color: $cta-color;
+  font-weight: 400;
 
+  .voltar{
+    display: flex;
+    align-items: center;
+  }
+}
 </style>

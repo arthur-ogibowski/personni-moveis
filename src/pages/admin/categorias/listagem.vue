@@ -1,7 +1,7 @@
 <template>
     <div class="admin-container">
       <h1>Categorias</h1>
-      <router-link :to="{path: '/admin/categorias/adicionar'}"><el-button class="admin-cta" color="$admin-cta">+ Nova Categoria</el-button></router-link>
+      <router-link :to="{path: '/admin/categorias/adicionar'}"><el-button class="cta" color="$admin-cta">+ Nova Categoria</el-button></router-link>
    
       <el-table :data="categorias" style="width: 100%;" class="admin-table">
           <el-table-column type="selection" width="50"/>
