@@ -144,7 +144,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                     <el-button type="info" plain @click="previousStep"><el-icon>
                             <ArrowLeftBold />
                         </el-icon> Voltar</el-button>
-                    <el-button type="success" @click="makeProductOrder()" size="large">Confirmar</el-button>
+                    <el-button type="success" @click="makeOrder()" size="large">Confirmar</el-button>
                 </div>
             </div>
 
@@ -215,11 +215,17 @@ export default {
                 ano: "",
                 CvvCartao: ""
             },
-            ordersRequest: [
+            orders: [
                 {
-                    product: '',
-                    amount: null
-                }      
+                    requestProduct: {
+                        product: null,
+                        amount: null
+                    },
+                    requestCmp: {
+                        productCmp: null,
+                        amount: null
+                    }
+                }
             ],
             products: [],
             regularProducts: [],
@@ -247,59 +253,29 @@ export default {
         }, 250)
     },
     methods: {
-        Pagar() {
-            // Registra pedido do cliente no back.
-            this.makeProductOrder();
-            const currentDate = new Date();
-            // Dados do pedido adaptados ao formato JavaScript
-            const pedidoPagSeguro = {
-
-                "calendario": {
-                    "expiracao": 3600
-                },
-                "devedor": {
-                    "cpf": "12345678909",
-                    "nome": "Francisco da Silva"
-                },
-                "valor": {
-                    "original": "00.01"
-                },
-                "chave": "",
-                "solicitacaoPagador": "Cobrança dos serviços prestados Personni Móveis."
-
-            };
-            // Envia a solicitação POST para a API do PagSeguro
-            axios
-                .post('http://localhost:8081/payments', pedidoPagSeguro, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(async (response) => {
-                    const dataUrl = response.data;
-                    const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
-                    this.QrCode = base64String;
-                    console.log(this.QrCode);
-                })
-                .catch((error) => {
-                    // Lidar com erros aqui
-                    console.error(error);
-                });
-
-            /** Limpa carrinho após finalizar o pedido. */
-            cartService.removeAllFromCarts();
-        },
-        makeProductOrder() {
+        /** Faz pedidos e retorna qrcode pix. */
+        makeOrder() {
             const config = { headers: { Authorization: AuthService.getToken() } }
             // Configura objeto order para processar pedido no back.
-            const orders = [];
-            cartService.getCartItems().forEach(prod => orders.push({product: prod, amount: prod.amount}));
-
+           const ordersReq = [];
+            cartService.getCartItems().forEach(prod => ordersReq.push(
+                {
+                    requestProduct: {
+                        product: prod, 
+                        amount: prod.amount
+                    },
+                    // requestCmp = {
+                    //     productCmp: null,
+                    //     amount: null
+                    // }
+                }
+            ));
             // Faz requisição enviando pedidos.
             if(cartService.getCartItems() != null || cartService.getCartItems().length > 0) {
-                axios.post('http://localhost:8081/orders/create-product-order', orders, config)
+                axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
                     .then(response => {
                         ElMessage.success('Pedido registrado com sucesso.');
+                        // Seta pix em tela.
                         const dataUrl = response.data;
                         const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
                         this.QrCode = base64String;
@@ -307,7 +283,10 @@ export default {
                     })
                     .catch(error => {
                         ElMessage.error('Não foi possível registrar o pedido.');
+                        console.error(error);
                     });
+                /** Limpa carrinho após finalizar o pedido. */
+                cartService.removeAllFromCarts();
             }
         },
         consultarCEP() {
@@ -316,8 +295,7 @@ export default {
             // Verifique se o CEP foi fornecido antes de fazer a solicitação
             if (cep) {
                 this.cepLoading = true;
-                axios
-                    .get(`https://viacep.com.br/ws/${cep}/json/`)
+                axios.get(`https://viacep.com.br/ws/${cep}/json/`)
                     .then((response) => {
                         const data = response.data;
 

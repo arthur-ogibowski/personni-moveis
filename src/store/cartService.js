@@ -76,12 +76,6 @@ export default {
         this.updateCart([]);
     },
 
-    /** Remove tudo de ambos carrinhos. */
-    removeAllFromCarts() {
-        this.removeAllfromCart();
-        this.removeAllFromCmpCart();
-    },
-
     // CMP:
 
     getCmpItems() {
@@ -124,4 +118,12 @@ export default {
             this.updateCmpCart(cartCmpItems);
         }
     },
+
+    // utilidades.
+
+    /** Remove tudo de ambos carrinhos. */
+    removeAllFromCarts() {
+        this.removeAllfromCart();
+        this.removeAllFromCmpCart();
+    }
 };
