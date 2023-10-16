@@ -236,7 +236,7 @@ export default {
     created() {
         // Usuário deve estar logado para acessar checkout.
         AuthService.shouldRedirectToLogin(this.$router);
-        
+
         const loading = ElLoading.service({
             lock: true,
             text: 'Carregando',
@@ -257,21 +257,53 @@ export default {
         makeOrder() {
             const config = { headers: { Authorization: AuthService.getToken() } }
             // Configura objeto order para processar pedido no back.
-           const ordersReq = [];
-            cartService.getCartItems().forEach(prod => ordersReq.push(
-                {
-                    requestProduct: {
-                        product: prod, 
+            // const ordersReq = [];
+            // cartService.getCartItems().forEach(prod => ordersReq.push(
+            //     {
+            //         requestProduct: {
+            //             product: prod, 
+            //             amount: prod.amount
+            //         },
+            //         // requestCmp = {
+            //         //     productCmp: null,
+            //         //     amount: null
+            //         // }
+            //     }
+            // ));
+
+            const getReqProduct = [];
+            const getReqCmp = [];
+            // Insere produtos no array de prods.
+            if (cartService.getCartItems().length > 0) {
+                cartService.getCartItems().forEach(prod => getReqProduct.push(
+                    {
+                        product: prod,
                         amount: prod.amount
-                    },
-                    // requestCmp = {
-                    //     productCmp: null,
-                    //     amount: null
-                    // }
+                    }
+                ));
+            }
+            // Insere cmps no array de cmps.
+            if (cartService.getCmpItems().length > 0) {
+                cartService.getCmpItems().forEach(cmp => getReqCmp.push(
+                    {
+                        productCmp: cmp,
+                        amount: cmp.amount
+                    }
+                ));
+            }
+            // Monta dto para processamento do pedido no back.
+            const ordersReq = 
+            {
+                orderRequest: {
+                    requestProduct: getReqProduct,
+                    requestCmp: getReqCmp
                 }
-            ));
+            }
+
+            console.log(ordersReq);
+
             // Faz requisição enviando pedidos.
-            if(cartService.getCartItems() != null || cartService.getCartItems().length > 0) {
+            if (cartService.getCartItems() != null || cartService.getCartItems().length > 0) {
                 axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
                     .then(response => {
                         ElMessage.success('Pedido registrado com sucesso.');
