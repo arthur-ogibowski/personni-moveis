@@ -5,7 +5,7 @@
    
       <el-table :data="usuarios" style="width: 100%;" class="admin-table">
           <el-table-column type="selection" width="50"/>
-          <el-table-column prop="id" label="ID" sortable width="80" />
+          <el-table-column prop="userId" label="ID" sortable width="80" />
           <el-table-column prop="name" label="Nome" sortable width="250"/>
           <el-table-column prop="email" label="Email" sortable width="250"/>
           <el-table-column prop="cpf" sortable label="CPF" width="250"/>
@@ -13,10 +13,10 @@
           <el-table-column prop="profile" sortable label="Perfil" width="250">
 
           </el-table-column>
-          <el-table-column label="Ações" prop="id"> 
+          <el-table-column label="Ações" prop="userId"> 
             <template #default="scope">  
-              <router-link :to="{path: '/admin/usuarios/' + scope.row.id}"><el-button class="table-edit" color="#A8A8A8" plain>Editar</el-button></router-link>
-              <el-button v-on:click="deleteUser(scope.row.id)" class="table-delete" color="#F56C6C" plain>Deletar</el-button>
+              <router-link :to="{path: '/admin/usuarios/' + scope.row.userId}"><el-button class="table-edit" color="#A8A8A8" plain>Editar</el-button></router-link>
+              <el-button v-on:click="deleteUser(scope.row.userId)" class="table-delete" color="#F56C6C" plain>Deletar</el-button>
             </template>
           </el-table-column>
           <!--<el-pagination layout="prev, pager, next" :total="this.categorias.length" @current-change="setPage">
@@ -28,6 +28,7 @@
 <script>
 import axios from 'axios'
 import { ElMessage } from 'element-plus';
+import AuthService from '@/store/authService';
 export default {
   data() {
     return {
@@ -37,7 +38,9 @@ export default {
     }
   },
   created() {
-    axios.get('http://localhost:8081/users')
+    const config = { headers: { Authorization: AuthService.getToken() } };
+
+    axios.get('http://localhost:8081/users', config)
       .then(response => {
          this.usuarios = response.data;
       })
@@ -57,8 +60,10 @@ export default {
     /*setPage(page) {
       this.page = page
     },*/
-    deleteCategory(id) {
-      axios.delete(`http://localhost:8081/users/${id}`)
+    deleteUser(id) {
+      console.log("ID:", id);
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.delete(`http://localhost:8081/users/${id}`, config)
       .then(response => {
         this.usuarios = response.data;
         ElMessage.success('Usuário deletado com Sucesso!')  
