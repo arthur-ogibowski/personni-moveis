@@ -8,20 +8,29 @@
             </el-form-item>
             <hr>
             <h2>Modelagem</h2>
-            <el-form-item label="Possibilitar modelagem">
+            <el-form-item>
                 <el-switch v-model="categoria.allow_creation"></el-switch>
             </el-form-item>
 
             <div class="criar-content" v-if="categoria.allow_creation">
 
                 <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
+                    <el-divider></el-divider>
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
 
                         <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;"
-                            :size="20" color="#FF0000">
-                            <CloseBold />
+                            :size="20" color="#A8A8A8">
+                            <Delete />
                         </el-icon>
+                    </el-form-item>
+                    <el-form-item label="Ordem">
+                        <el-input-number 
+                            :precision="0" 
+                            :min="1"
+                            :max="categoria.sectionCmps.length"
+                            v-model="section.index">
+                        </el-input-number>
                     </el-form-item>
 
 
@@ -32,10 +41,11 @@
                             <div class="element-card">
                                 <el-icon v-on:click="deleteCascade(section, element, null)"
                                     style="margin-left: 8px; float: right; margin-top: 8px; cursor: pointer;" :size="20"
-                                    color="#FF0000">
-                                    <CloseBold />
+                                    color="#A8A8A8">
+                                    <Delete />
                                 </el-icon>
-                                <h2>{{ element.name.toUpperCase() }}</h2>
+                                <h2 v-if="element.name">{{ element.name.toUpperCase() }}</h2>
+                                <h2 v-else>ELEMENTO</h2>
 
                                 <el-form-item label="Nome">
                                     <el-input v-model="element.name"></el-input>
@@ -43,38 +53,41 @@
 
 
                                 <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
+                                    <el-divider></el-divider>
                                     <el-icon v-on:click="deleteCascade(section, element, option)"
-                                        style="margin-left: 8px; float: right; margin-top: 33px; cursor: pointer;"
-                                        :size="20" color="#FF0000">
-                                        <CloseBold />
+                                        style="margin-left: 8px; float: right; cursor: pointer;"
+                                        :size="20" color="#A8A8A8">
+                                        <Delete />
                                     </el-icon>
-                                    <el-row :gutter="20">
-                                        <el-col :span="12">
-                                            <el-form-item label="Opção">
-                                                <el-input v-model="option.name" size="small"></el-input>
-                                            </el-form-item>
-                                        </el-col>
-                                        <el-col :span="12">
-                                            <el-form-item label="Preço">
-                                                <el-input v-model="option.price" size="small"></el-input>
-                                            </el-form-item>
-                                        </el-col>
-                                        <el-form-item label="Imagem principal">
+                                    <div class="inputs">
+                                    <div class="basic-inputs">
+                                                <el-form-item label="Opção">
+                                                    <el-input v-model="option.name" size="small"></el-input>
+                                                </el-form-item>
+                                                <el-form-item label="Preço">
+                                                    <el-input v-model="option.price" size="small">
+                                                        <template #prepend>R$</template></el-input>
+                                                </el-form-item>
+                                    </div>
+                                        <el-form-item label="Imagem">
                                             <div>
-                                                <el-upload :show-file-list="true" :auto-upload="false" limit="1"
+                                                <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
                                                     @change="handleImageChange($event, option)">
-                                                    <el-button size="small" type="primary">Selecionar Imagem</el-button>
+                                                    <img v-if="option.img" :src="option.img" class="avatar" />
+                                                    <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
                                                 </el-upload>
                                             </div>
                                         </el-form-item>
-                                    </el-row>
+                                    </div>
 
 
                                 </div>
 
-                                <el-button class="cta" type="primary" v-on:click="newOption(element)"><el-icon>
+                                <el-divider class="divider-button" v-on:click="newOption(element)">
+                                    <el-icon>
                                         <Plus />
-                                    </el-icon> Opção</el-button>
+                                    </el-icon> Opção
+                                </el-divider>
 
                             </div>
 
@@ -85,14 +98,13 @@
                     </div>
 
 
-
-                    <hr>
-
                 </div>
 
-                <el-button class="cta" type="primary" v-on:click="newSection"><el-icon>
-                        <Plus />
-                    </el-icon> Seção</el-button>
+                <el-divider class="divider-button" v-on:click="newSection">
+                                    <el-icon>
+                                        <Plus />
+                                    </el-icon> Seção
+                                </el-divider>
 
             </div>
 
@@ -244,12 +256,70 @@ hr {
 .element-card {
     border: 2px solid $admin-grey;
     padding: 0 20px 20px 20px;
-    width: 300px;
-    margin: 20px 20px 0 0;
+    width: 400px;
+    margin: 0px 20px 20px 0;
 
     h2 {
         text-align: center;
         color: $admin-grey;
     }
+}
+
+:deep(.avatar-uploader .el-upload) {
+  border: 1px dashed var(--el-border-color);
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+.avatar-uploader .el-upload:hover {
+  border-color: var(--el-color-primary);
+}
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 100px;
+  height: 100px;
+  text-align: center;
+}
+
+.avatar-uploader .avatar {
+  width: 100px;
+  height: 100px;
+  display: block;
+  min-width: 100px;
+  min-height: 100px;
+}
+
+:deep(ul.el-upload-list){
+    display: none;
+}
+.inputs {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+.basic-inputs {
+  padding-right: 40px;
+}
+div.admin-container button.el-button{
+    margin-top: 0;
+}
+:deep(.el-divider__text.is-center) {
+  display: flex;
+  align-items: center;
+  color: $cta-color;
+
+    .el-icon {
+        margin-right: 10px;
+    }
+}
+.divider-button{
+    border-top: 1px solid $cta-color;
+    cursor: pointer;
+    height: 10px;
 }
 </style>

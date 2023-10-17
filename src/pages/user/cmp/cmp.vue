@@ -11,7 +11,7 @@
     </el-steps>
   <div class="container">
 
-    <div class="cmp-container">
+    <div class="cmp-container" v-if="!isLastSection">
       <div class="cmp-sections">
         <el-form :model="selected">
           <div class="section" v-for="section in categoria.sectionCmps" :key="section.id">
@@ -27,8 +27,11 @@
                       size="large"
                       @change="resumoCmp"
                       :label="option.id">
-                      <div class="option-image">
+                      <div class="option-image" v-if="option.img != ''">
                         <el-image :src="option.img"/>
+                      </div>
+                      <div class="option-image-placeholder" v-else>
+                        <img src="../../../assets/img/personniLogo-Grey.png"/>
                       </div>
                       <div class="option-info">
                        <div class="option-name">{{ option.name }}</div>
@@ -48,30 +51,6 @@
         </el-form>
       </div>
 
-      <!--<div class="resumo" v-if="!isLastSection">
-        <h1>Resumo</h1>
-        <div class="resumo-section" >
-            <div v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">
-              <el-divider></el-divider>
-                <h2>{{ optionInfo.section }}</h2>
-              <div class="resumo-section-list">
-                <div v-for="element in optionInfo.elements" :key="element" class="resumo-section-item">
-                  <h4>{{ element.element }}</h4>
-                  <div class="resumo-section-item-option">
-                    <el-text type="success">{{ element.option }}</el-text>
-                    <el-text type="info">R$ {{ element.price }}</el-text>
-                  </div>
-                </div>
-              </div>
-          </div>
-        </div>
-        <div class="preco">
-          <el-divider></el-divider>
-          <h2>Total</h2>
-          <h3>R$ {{ products_cmp.value }}</h3>
-        </div>
-      </div>-->
-
     </div>
 
     <div class="last-section" v-if="isLastSection">
@@ -84,17 +63,24 @@
                 <h2>{{ optionInfo.section }}</h2>
               <div class="revisar-section-list">
                 <div v-for="element in optionInfo.elements" :key="element" class="revisar-section-item">
-                  <div style="width: 100px; height: 150px;">
+                  <el-text type="info">{{ element.element }}</el-text>
+                  <div class="element-image" v-if="element.img">
                         <el-image :src="element.img"/>
                   </div>
-                  <h4>{{ element.element }}</h4>
+                  <div class="element-image" v-else>
+                        <img src="../../../assets/img/personniLogo-Grey.png"/>
+                  </div>
                   <div class="revisar-section-item-option">
                     <el-text type="success">{{ element.option }}</el-text>
-                    <el-text type="info">R$ {{ element.price }}</el-text>
+                    <el-text >R$ {{ element.price }}</el-text>
                   </div>
                 </div>
               </div>
           </div>
+        </div>
+        <el-divider></el-divider>
+        <div class="preco-final">
+          <h3>Preço final:</h3> <h2>R$ {{ products_cmp.value }}</h2>
         </div>
         <div class="revisar-actions">
           <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="isLastSection"><el-icon><CaretLeft /></el-icon> Voltar</el-button>    
@@ -409,6 +395,17 @@ export default {
             margin-bottom: 10px;
           }
 
+          .option-image-placeholder{
+            width: 100px;
+            height: 100px;
+            margin: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #EBEBEB;
+          }
+
           .option-info{
             display: flex;
             flex-direction: column;
@@ -416,10 +413,12 @@ export default {
             .option-name{
               font-size: 14px;
               font-weight: 600;
+              white-space: normal;
             }
             .option-price{
               font-size: 12px;
               font-weight: 400;
+              white-space: normal;
             }
           }
         }
@@ -472,6 +471,7 @@ export default {
         .resumo-section-item-option{
           display: flex;
           justify-content: space-between;
+
         }
       }
     }
@@ -498,20 +498,43 @@ h2{
     padding: 10px;
     min-width: 150px;
     background-color: #EBEBEB;
+    width: 200px;
+    display: flex;
+    justify-content: space-around;
+    flex-direction: column;
 
     .el-image{
-      min-width: 150px;
-      margin: -10px -10px 10px -10px;
+      width: 150px;
+      height: 150px; 
 
       :deep(.el-image__error){
         min-height: 150px;
       }
     }
 
+    img {
+      width: 150px;
+    }
+
+    .element-image {
+      width: 150px;
+      height: 150px;
+      display: flex;
+      margin: 10px 0;
+      justify-content: center;
+      align-items: center;
+      align-self: center;
+    }
+
     h4{
       margin-top: 0;
       margin-bottom: 10px;
       font-size:  14px;
+      text-align: center;
+    }
+    .el-text {
+      max-width: 50%;
+      word-break: normal;
     }
     p{
       font-size: 12px;
@@ -521,6 +544,9 @@ h2{
     .revisar-section-item-option{
       display: flex;
       justify-content: space-between;
+      :deep(.el-text) {
+            align-self: end !important;
+      }
     }
   }
 }
@@ -544,6 +570,10 @@ div.el-radio-group{
     background-color: transparent;
     color: var(--el-text-color-regular) !important;
 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
 
   }
   :deep(.el-radio-button.is-active > .el-radio-button__inner) {
@@ -553,5 +583,22 @@ div.el-radio-group{
   color: var(--el-text-color-regular) !important;
 
 }
+}
+.preco-final {
+  display: flex;
+  align-items: baseline;
+  justify-content: end;
+
+  h2 {
+    margin-left: 10px;
+    font-size: 20px;
+  }
+  h3{
+    font-weight: 400;
+  }
+}
+
+.el-text--success{
+  font-size: 18px;
 }
 </style>

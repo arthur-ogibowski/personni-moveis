@@ -55,7 +55,7 @@
             <h2>Detalhes do produto</h2>
             <div class="elements">
                 <div class="element-item" v-for="detail in product.details" v-bind:key="detail">
-                    <el-icon v-on:click="removeItem(product.details, detail)" style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                    <el-icon v-on:click="removeItem(product.details, detail)" style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#A8A8A8"><CloseBold /></el-icon>
                     <div class="element-card">
                         <h2>{{ detail.fieldContent.toUpperCase() }}</h2>
                         <el-row :gutter="20">
@@ -140,7 +140,7 @@
 
 
                         <div class="element-card">
-                            <el-icon v-on:click="removeItem(product.sections, section)" style="margin-right:-5px; float: right; margin-top: 10px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                            <el-icon v-on:click="removeItem(product.sections, section)" style="margin-right:-5px; float: right; margin-top: 10px; cursor: pointer;" :size="20" color="#A8A8A8"><CloseBold /></el-icon>
 
                             <h2>{{ section.name.toUpperCase() }}</h2>
 

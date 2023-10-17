@@ -21,7 +21,7 @@
           <el-form-item label="Seção">
             <el-input v-model="section.name" class="section-input"></el-input>
             <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;" :size="20"
-              color="#FF0000">
+              color="#A8A8A8">
               <CloseBold />
             </el-icon>
           </el-form-item>
@@ -33,7 +33,7 @@
 
               <div class="element-card">
                 <el-icon v-on:click="deleteCascade(section, element, null)"
-                  style="margin-left: 8px; float: right; margin-top: 8px; cursor: pointer;" :size="20" color="#FF0000">
+                  style="margin-left: 8px; float: right; margin-top: 8px; cursor: pointer;" :size="20" color="#A8A8A8">
                   <CloseBold />
                 </el-icon>
                 <h2>{{ element.name.toUpperCase() }}</h2>
@@ -47,7 +47,7 @@
 
                 <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
                   <el-icon v-on:click="deleteCascade(section, element, option)"
-                    style="margin-left: 8px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#FF0000">
+                    style="margin-left: 8px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#A8A8A8">
                     <CloseBold />
                   </el-icon>
                   <el-row :gutter="20">
