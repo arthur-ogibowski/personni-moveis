@@ -119,4 +119,15 @@ export default {
             this.updateCmpCart(cartCmpItems);
         }
     },
+
+    //Utils
+
+    removeAllFromCarts() {
+        this.removeAllfromCart();
+        this.removeAllFromCmpCart();
+    },
+
+    getAllCartProducts() {
+        return this.getCartItems().concat(this.getCmpItems());
+    }
 };

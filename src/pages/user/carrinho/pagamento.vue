@@ -1,5 +1,5 @@
 <script setup>
-import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/icons-vue'
+import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 </script>
 
 <template>
@@ -115,7 +115,7 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
                     <div class="card-item" v-for="product in products" :key="product">
                         <div class="card-item-inner">
                             <div class="card-item-about">
-                                <h3>{{ product.quantity }} x {{ product.name }}</h3>
+                                <h3>{{ product.amount }} x {{ product.name }}</h3>
                                 <el-text type="info" size="small">{{ product.description }}</el-text>
                             </div>
                             <div class="card-item-price">
@@ -129,12 +129,12 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
                         </h4>
                     </div>
                     <div class="card-item subtotal">
-                        <el-text type="info" size="medium">Total ({{ products.length }} itens): </el-text>
+                        <el-text type="info" size="medium">Total ({{ totalAmount() }} itens): </el-text>
                         <h3> {{ totalPrice() != 0 ? "R$" + formatPrice(totalPrice()) : "--" }}
                         </h3>
                     </div>
 
-                    <img :src="'data:image/png;base64,' + QrCode">
+                    <img v-if="QrCode != null" :src="'data:image/png;base64,' + QrCode">
 
 
 
@@ -144,7 +144,7 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
                     <el-button type="info" plain @click="previousStep"><el-icon>
                             <ArrowLeftBold />
                         </el-icon> Voltar</el-button>
-                    <el-button type="success" @click="ConfirmarPedido" size="large">Confirmar</el-button>
+                    <el-button type="success" @click="makeOrder()" size="large">Confirmar</el-button>
                 </div>
             </div>
 
@@ -170,9 +170,7 @@ import { LocationFilled, WalletFilled, StarFilled, Select } from '@element-plus/
 import AuthService from '@/store/authService';
 import cartService from '@/store/cartService.js';
 import axios from 'axios';
-import { ElMessage } from 'element-plus';
-import { ElLoading } from 'element-plus'
-import imgConverter from '@/store/imgConverter.js';
+import { ElLoading, ElMessage } from 'element-plus';
 
 export default {
     data() {
@@ -217,72 +215,83 @@ export default {
                 ano: "",
                 CvvCartao: ""
             },
+            orders: [
+                {
+                    requestProduct: {
+                        product: null,
+                        amount: null
+                    },
+                    requestCmp: {
+                        productCmp: null,
+                        amount: null
+                    }
+                }
+            ],
             products: [],
             regularProducts: [],
             productCmps: [],
             cepExists: false,
         };
     },
-    mounted() {
+    created() {
         // Usuário deve estar logado para acessar checkout.
         AuthService.shouldRedirectToLogin(this.$router);
+        
+        const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+        });
+        // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
+
+        this.regularProducts = cartService.getCartItems();
+        this.cmpProducts = cartService.getCmpItems();
+
+        this.products = this.regularProducts.concat(this.cmpProducts);
+        setTimeout(() => {
+            loading.close()
+        }, 250)
     },
     methods: {
-        ConfirmarPedido(){
-            axios
-                .post('http://localhost:8081/payments', pedidoPagSeguro, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(async (response) => {
-                    const dataUrl = response.data;
-                    const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
-                    this.QrCode = base64String;
-                    console.log(this.QrCode);
-                })
-                .catch((error) => {
-                    // Lidar com erros aqui
-                    console.error(error);
-                });
+        totalAmount() {
+            let total = 0;
+            const amounTotal = cartService.getCartItems().forEach(prod => total += prod.amount);
+            return amounTotal;
         },
-
-        Pagar() {
-            // Dados do pedido adaptados ao formato JavaScript
-            const pedidoPagSeguro = {
-
-                "calendario": {
-                    "expiracao": 3600
-                },
-                "devedor": {
-                    "cpf": "12345678909",
-                    "nome": "Francisco da Silva"
-                },
-                "valor": {
-                    "original": "00.01"
-                },
-                "chave": "",
-                "solicitacaoPagador": "Cobrança dos serviços prestados Personni Móveis."
-
-            };
-            // Envia a solicitação POST para a API do PagSeguro
-            axios
-                .post('http://localhost:8081/payments', pedidoPagSeguro, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(async (response) => {
-                    const dataUrl = response.data;
-                    const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
-                    this.QrCode = base64String;
-                    console.log(this.QrCode);
-                })
-                .catch((error) => {
-                    // Lidar com erros aqui
-                    console.error(error);
-                });
-
+        /** Faz pedidos e retorna qrcode pix. */
+        makeOrder() {
+            const config = { headers: { Authorization: AuthService.getToken() } }
+            // Configura objeto order para processar pedido no back.
+           const ordersReq = [];
+            cartService.getCartItems().forEach(prod => ordersReq.push(
+                {
+                    requestProduct: {
+                        product: prod, 
+                        amount: prod.amount
+                    },
+                    // requestCmp = {
+                    //     productCmp: null,
+                    //     amount: null
+                    // }
+                }
+            ));
+            // Faz requisição enviando pedidos.
+            if(cartService.getCartItems() != null || cartService.getCartItems().length > 0) {
+                axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
+                    .then(response => {
+                        ElMessage.success('Pedido registrado com sucesso.');
+                        // Seta pix em tela.
+                        const dataUrl = response.data;
+                        const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
+                        this.QrCode = base64String;
+                        /** Limpa carrinho após finalizar o pedido. */
+                        cartService.removeAllFromCarts();
+                    })
+                    .catch(error => {
+                        ElMessage.error('Não foi possível registrar o pedido.');
+                        console.error(error);
+                    });
+            }
         },
         consultarCEP() {
             const cep = this.endereco.cep;
@@ -290,8 +299,7 @@ export default {
             // Verifique se o CEP foi fornecido antes de fazer a solicitação
             if (cep) {
                 this.cepLoading = true;
-                axios
-                    .get(`https://viacep.com.br/ws/${cep}/json/`)
+                axios.get(`https://viacep.com.br/ws/${cep}/json/`)
                     .then((response) => {
                         const data = response.data;
 
@@ -363,7 +371,7 @@ export default {
                     personalizationTotal = this.totalOption(product.sections);
                 }
                 // Calcula o total do produto considerando o valor base e as personalizações
-                let productTotal = (product.value + personalizationTotal) * product.quantity;
+                let productTotal = (product.value + personalizationTotal) * product.amount;
                 // Soma o total do produto ao total geral.
                 return total + productTotal;
             }, 0);
@@ -392,24 +400,6 @@ export default {
             // }, 0);
             return 0;
         },
-    },
-    created() {
-        const loading = ElLoading.service({
-            lock: true,
-            text: 'Carregando',
-            background: 'rgba(0, 0, 0, 0.7)'
-        });
-        // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
-
-        this.regularProducts = cartService.getCartItems();
-        this.cmpProducts = cartService.getCmpItems();
-
-        this.products = this.regularProducts.concat(this.cmpProducts);
-
-
-        setTimeout(() => {
-            loading.close()
-        }, 250)
     },
 }
 </script>

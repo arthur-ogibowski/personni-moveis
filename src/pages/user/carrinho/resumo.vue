@@ -80,7 +80,7 @@
                         </h3>
                     </div>
 
-                    <router-link to="/checkout"><el-button class="cta" color="$cta-color" @click="updateProducts()">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
+                    <router-link to="/checkout"><el-button class="cta" color="$cta-color">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
                    
                 </el-card>
             </div>
