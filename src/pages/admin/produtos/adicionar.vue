@@ -81,47 +81,14 @@
                             <Plus />
                         </el-icon> Detalhe </el-button>
             </div>
-            <!-- Tags -->
-            <el-form-item label="Tags">
-                <el-select
-                    filterable
-                    clearable
-                    multiple
-                    allow-create
-                    collapse-tags
-                    collapse-tags-tooltip
-                    :max-collapse-tags="3"
-                    v-model="this.selectedTags"
-                    placeholder="Selecione">
-                    <el-option v-for="tag in this.fetchedTags"
-                        :key="tag.tagId"
-                        :label="tag.tagName"
-                        :value="tag.tagId" />
-                </el-select>
-            </el-form-item>
-            <!-- Material -->
-            <el-form-item required label="Material">
-                <el-select
-                    filterable
-                    clearable
-                    v-model="this.product.material"
-                    placeholder="Selecione">
-                    <el-option v-for="material in this.fetchedMaterials"
-                        :key="material.materiald"
-                        :label="material.materialName"
-                        :value="material.materiald" />
-                    </el-select>
-            </el-form-item>
             <!-- Imagem principal -->
             <el-form-item label="Imagem principal">
                 <div>
-                    <el-upload
-                        :show-file-list="true"
-                        :auto-upload="false"
-                        limit="1"
-                        @change="handleImageChange">
-                        <el-button size="small" type="primary">Selecionar Imagem</el-button>
-                    </el-upload>
+                    <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
+                                                    @change="handleImageChange">
+                                                    <img v-if="product.mainImg" :src="product.mainImg" class="avatar" />
+                                                    <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
+                                                </el-upload>
                 </div>
             </el-form-item>
             <!-- <el-form-item label="Imagens secundárias">
@@ -375,15 +342,6 @@ hr {
   height: 178px;
   display: block;
 }
-.avatar-uploader .el-upload {
-  border: 1px dashed var(--el-border-color);
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-  transition: var(--el-transition-duration-fast);
-}
-
 .avatar-uploader .el-upload:hover {
   border-color: var(--el-color-primary);
 }
@@ -391,9 +349,20 @@ hr {
 .el-icon.avatar-uploader-icon {
   font-size: 28px;
   color: #8c939d;
-  width: 178px;
-  height: 178px;
+  width: 100px;
+  height: 100px;
   text-align: center;
+}
+
+.avatar-uploader .avatar {
+  width: 100px;
+  height: 100px;
+  display: block;
+  min-width: 100px;
+  min-height: 100px;
+}
+:deep(ul.el-upload-list){
+    display: none;
 }
 
 </style>

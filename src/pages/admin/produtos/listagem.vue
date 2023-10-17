@@ -6,6 +6,7 @@
     <el-table :data="tableData" style="width: 100%;" class="admin-table">
       <el-table-column type="selection" width="50" />
       <el-table-column prop="productId" label="ID" sortable width="80" />
+      <el-table-column prop="mainImg" label="Imagem" width="100" />
       <el-table-column prop="name" label="Name" sortable width="80" />
       <el-table-column prop="value" sortable label="Preço" />
       <el-table-column prop="quantity" sortable label="Estoque" />

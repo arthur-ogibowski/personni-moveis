@@ -16,7 +16,7 @@
                 <div class="produto-card" v-for="product in cartProducts" :key="product">
                     <el-card class="carrinho-item" shadow="never">
                         <img
-                        :src="getImgPath(product.mainImgUrl)"
+                        :src="product.mainImg"
                         class="image"
                         />
                         <h2> {{ product.name }} </h2>

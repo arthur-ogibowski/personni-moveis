@@ -52,8 +52,8 @@
                 <div class="produto-card" v-for="product in getFilteredProducts()" :key="product">
                   <router-link :to='"/produtos/" + product.productId'>
                     <el-card :body-style="{ padding: '0px' }">
-                        <img
-                          src="@/assets/img/cadeira1.png"
+                        <el-image
+                          :src="product.mainImg"
                           class="image"
                         />
                         <div style="padding: 14px">
