@@ -70,6 +70,7 @@ body{
                 div.cell{
                     word-break: break-word;
                     padding: 2rem;
+                    
                 }
             }
         }
@@ -81,6 +82,22 @@ body{
     div.admin-page {
         display: flex;
         flex-direction: row;
+    }
+    
+    .el-form-item{
+        margin-bottom: 30px;
+    }
+
+    .top-content {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 50px;
+        .el-input{
+            height: 40px;
+            width: 200px;
+          }
     }
 
     div.admin-container {
@@ -152,12 +169,33 @@ body{
                 div.cell {
                   background: #fff;
                   height: 100px !important;
-                  padding: 0 !important;
+                  padding: 10px !important;
                   width: 100%;
                   display: flex;
                   justify-content: center;
                   align-items: center;
-                
+                  word-break: normal;
+                  white-space: pre;
+                }
+
+                h2 {
+                    font-size: 20px;
+                    font-weight: 400;
+                }
+                h3 {
+                    font-size: 16px;
+                    font-weight: 400;
+                    color: $cta-color;
+                }
+
+                h4 {
+                    font-size: 14px;
+                    font-weight: 400;
+                }
+
+                .el-icon.table-edit, .el-icon.table-delete {
+                    margin: 0 5px;
+                    cursor: pointer;
                 }
 
                 span.el-checkbox__inner {
@@ -271,7 +309,12 @@ body{
             color: $cta-color;
         }
       }
-      .el-input__wrapper.is-focus {
+
+      // element plus personni theme
+      .el-input__wrapper.is-focus, .el-select 
+      .el-input__wrapper.is-focus,
+      .el-select .el-input.is-focus .el-input__wrapper,
+      .el-textarea__inner:focus {
         box-shadow: 0 0 0 1px $cta-color inset !important;
       }
       .el-switch.is-checked .el-switch__core {
@@ -281,7 +324,23 @@ body{
       .el-select-dropdown {
         background-color: $primary-color;
       }
+      .el-select-dropdown__item.selected {
+        color: $cta-color;
+      }
+      .el-input-number__decrease:hover, .el-input-number__increase:hover {
+        color: $cta-color;
+      }
+      .el-input-number__decrease:hover ~ .el-input:not(.is-disabled) .el-input__wrapper, .el-input-number__increase:hover ~ .el-input:not(.is-disabled) .el-input__wrapper {
+        box-shadow: 0 0 0 1px $cta-color inset !important;
+      }
+      .el-switch__label.is-active {
+        color: $cta-color;
+      }
+      .el-table .ascending .sort-caret.ascending {
+        border-bottom-color: $cta-color;
+      }
+      .el-table .descending .sort-caret.descending {
+        border-top-color: $cta-color;
+      }
 
 }
-
-

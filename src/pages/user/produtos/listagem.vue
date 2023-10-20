@@ -227,6 +227,7 @@ div.el-card{
           justify-content: space-between;
           align-items: end;
         }
+
       }
 }
 div.produtos-listing{
@@ -239,4 +240,9 @@ div.produtos-listing{
     margin: 0 15px 15px 15px;
   }
 }
+
+.el-image.image {
+          width: 100%;
+          height: 200px;
+        }
 </style>

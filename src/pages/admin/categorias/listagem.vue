@@ -1,21 +1,44 @@
 <template>
     <div class="admin-container">
-      <h1>Categorias</h1>
-      <router-link :to="{path: '/admin/categorias/adicionar'}"><el-button class="cta" color="$admin-cta">+ Nova Categoria</el-button></router-link>
-   
-      <el-table :data="categorias" style="width: 100%;" class="admin-table">
-          <el-table-column type="selection" width="50"/>
-          <el-table-column prop="id" label="ID" sortable width="80" />
-          <el-table-column prop="name" label="Nome" sortable width="250"/>
-          <el-table-column prop="allow_creation" sortable label="Possibilitar modelagem">
+      <div class="top-content">
+        <div class="left">
+          <h1>Categorias</h1>
+          <router-link :to="{path: '/admin/categorias/adicionar'}"><el-button class="cta" color="$admin-cta">+ Nova Categoria</el-button></router-link>
+        </div>
+        <el-input v-model="categorySearch" placeholder="Procurar por nome">
+          <template #prefix>
+            <el-icon class="el-input__icon"><search /></el-icon>
+          </template>
+        </el-input>
+      </div>
 
+      <el-table :data="filteredList() ? filteredList() : categorias" style="width: 100%;" class="admin-table">
+          <el-table-column prop="id" label="ID" sortable width="80">
+            <template v-slot="scope">
+              <div class="id">
+                <h4># {{ scope.row.id }}</h4>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="name" label="Nome" sortable width="*">
+            <template v-slot="scope">
+              <div class="nome">
+                <h2>{{ scope.row.name }}</h2>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="allow_creation" sortable label="Possibilitar modelagem">
+            <template v-slot="scope">
+              <div class="personalizavel">
+                <el-icon v-if="scope.row.allow_creation == false" color="#F56C6C"><CircleCloseFilled /></el-icon>
+                <el-icon v-if="scope.row.allow_creation == true" color="#67c23a"><SuccessFilled /></el-icon>
+              </div>
+            </template>
           </el-table-column>
           <el-table-column label="Ações" prop="id"> 
-            <template #default="scope">  
-              <el-button class="table-edit" color="#A8A8A8" plain>
-              <router-link :to="{path: '/admin/categorias/' + scope.row.id}">Editar</router-link>
-            </el-button>
-              <el-button v-on:click="deleteCategory(scope.row.id)" class="table-delete" color="#F56C6C" plain>Deletar</el-button>
+            <template #default="scope"> 
+              <el-icon class="table-edit" size="20" color="#A8A8A8" @click="redirectToEditCategory(scope)"><Edit/></el-icon>
+              <el-icon class="table-delete" size="20" color="#F56C6C" plain @click="showDeleteMessage(scope.row.id)"><Delete/></el-icon> 
             </template>
           </el-table-column>
           <!--<el-pagination layout="prev, pager, next" :total="this.categorias.length" @current-change="setPage">
@@ -26,19 +49,28 @@
 
 <script>
 import axios from 'axios'
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 export default {
   data() {
     return {
       categorias: [],
       page: 1,
       pageSize: 10,
+      categorySearch: '',
     }
   },
   created() {
+    const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+      });
     axios.get('http://localhost:8081/category')
       .then(response => {
         this.categorias = response.data;
+        setTimeout(() => {
+            loading.close()
+          }, 250)
       })
       .catch(error => {
         console.error('Erro ao obter dados da API:', error);
@@ -56,14 +88,35 @@ export default {
     /*setPage(page) {
       this.page = page
     },*/
+    redirectToEditCategory(scope) {
+      return this.$router.push(`/admin/categorias/${scope.row.id}`);
+    },
+    filteredList() {
+      return this.categorias.filter(categoria => {
+        return categoria.name.toLowerCase().includes(this.categorySearch.toLowerCase())
+      })
+    },
+    showDeleteMessage(scope) {
+      ElMessageBox.confirm('Tem certeza que deseja remover a categoria?', 'Confirmação', {
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Não', // Nesse caso não faz nada.
+        type: 'warning',
+      })
+      .then(() => {
+        // Usuário marcou sim -> deletar produto e atualizar tabela.
+        this.deleteCategory(scope);
+        // Atualiza lista de produtos.
+        const excludedCategoryId = scope.row.id;
+        this.categorias = this.categorias.filter(categoria => categoria.id != excludedCategoryId);
+      })
+      .catch(() => {
+        // Nada é feito na seleção do 'não'.
+      });
+    },
     deleteCategory(id) {
       axios.delete(`http://localhost:8081/category/${id}`)
       .then(response => {
-        this.categorias = response.data;
         ElMessage.success('Categoria deletada com Sucesso!')  
-        setTimeout(() => {
-                window.location.reload()
-            }, 2000);
       })
       .catch(error => {
         ElMessage.error('Erro ao deletar Categoria');
