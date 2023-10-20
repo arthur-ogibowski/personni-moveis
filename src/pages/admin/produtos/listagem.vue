@@ -1,21 +1,71 @@
 <template>
   <div class="admin-container">
-    <h1>Produtos</h1>
-    <router-link :to="{path: '/admin/produtos/adicionar'}"><el-button class="cta" color="$admin-cta">+ Novo produto</el-button></router-link>
+    <div class="top-content">
+      <div class="left">
+        <h1>Produtos</h1>
+        <router-link :to="{path: '/admin/produtos/adicionar'}"><el-button class="cta" color="$admin-cta">+ Novo produto</el-button></router-link>
+      </div>
+      <el-input v-model="productSearch" placeholder="Procurar por nome">
+              <template #prefix>
+                <el-icon class="el-input__icon"><search /></el-icon>
+              </template>
+            </el-input>
+    </div>
 
-    <el-table :data="tableData" style="width: 100%;" class="admin-table">
-      <el-table-column type="selection" width="50" />
-      <el-table-column prop="productId" label="ID" sortable width="80" />
-      <el-table-column prop="mainImg" label="Imagem" width="100" />
-      <el-table-column prop="name" label="Name" sortable width="80" />
-      <el-table-column prop="value" sortable label="Preço" />
-      <el-table-column prop="quantity" sortable label="Estoque" />
-      <el-table-column prop="description" label="Detalhes do produto" sortable width="250" />
-      <el-table-column prop="editable" sortable label="Personalizável" />
-      <el-table-column prop="acoes" label="Ações">
+    <el-table :data="filteredList() ? filteredList() : tableData" style="width: 100%;" class="admin-table">
+      <el-table-column prop="productId" label="ID" sortable width="80">
+        <template v-slot="scope">
+          <div class="id">
+            <h4># {{ scope.row.productId }}</h4>
+          </div>
+        </template>
+        </el-table-column>
+        <el-table-column prop="categoryId" label="Categoria" sortable width="150">
+        <template v-slot="scope">
+          <div class="categoria">
+            <h4>{{ scope.row.categoryId }}</h4>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="mainImg" label="Imagem" width="100" >
+        <template v-slot="scope">
+          <img :src="scope.row.mainImg"/>
+        </template>
+      </el-table-column>
+      <el-table-column class="nome" prop="name" label="Nome" sortable width="*">
+        <template v-slot="scope">
+          <div class="nome">
+            <h2>{{ scope.row.name }}</h2>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="value" sortable label="Preço" width="100">
+        <template v-slot="scope">
+          <div class="preco">
+            <h3>R$ {{ formatPrice(scope.row.value) }}</h3>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="quantity" sortable label="Estoque" width="100">
+        <template v-slot="scope">
+          <div class="estoque">
+            <el-text type="success" v-if="scope.row.quantity > 1">{{ scope.row.quantity }}</el-text>
+            <el-text type="danger" v-else-if="scope.row.quantity == 0">0</el-text>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="editable" sortable label="Personalizável" width="150">
+        <template v-slot="scope">
+          <div class="personalizavel">
+            <el-icon v-if="scope.row.editable == false" color="#F56C6C"><CircleCloseFilled /></el-icon>
+            <el-icon v-if="scope.row.editable == true" color="#67c23a"><SuccessFilled /></el-icon>
+          </div>
+        </template>
+      </el-table-column>
+      <el-table-column prop="acoes" label="Ações" width="100" class="actions">
         <template #default="scope">
-          <el-button class="table-edit" color="#A8A8A8" plain @click="redirectToEditProduct(scope)">Editar</el-button>
-          <el-button class="table-delete" color="#F56C6C" plain @click="showDeleteMessage(scope)">Deletar</el-button>
+          <el-icon class="table-edit" size="20" color="#A8A8A8" @click="redirectToEditProduct(scope)"><Edit/></el-icon>
+          <el-icon class="table-delete" size="20" color="#F56C6C" plain @click="showDeleteMessage(scope)"><Delete/></el-icon>
         </template>
       </el-table-column>
     </el-table>
@@ -25,12 +75,13 @@
 
 <script>
 import axios from 'axios';
-import { ElMessage, ElMessageBox } from 'element-plus';
+import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
 
 export default {
   data() {
     return {
-      tableData: []
+      tableData: [],
+      productSearch: '',
     }
   },
   created() {
@@ -38,6 +89,17 @@ export default {
     this.getProducts();
   },
   methods: {
+    filteredList() {
+      return this.tableData.filter(product => {
+        return product.name.toLowerCase().includes(this.productSearch.toLowerCase())
+      })
+    },
+    formatPrice(x) {
+      if (x.toString().match(/\.\d{2}$/)) {
+        x = x.toString().replace(/\./g, ',');
+      }
+      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    },
     /** Faz redirecionamento para tela de edição do produto. */
     redirectToEditProduct(scope) {
       return this.$router.push(`/admin/produtos/${scope.row.productId}`);
@@ -71,9 +133,17 @@ export default {
         });
     },
     getProducts() {
+      const loading = ElLoading.service({
+            lock: true,
+            text: 'Carregando',
+            background: 'rgba(0, 0, 0, 0.7)'
+      });
       axios.get('http://localhost:8081/products')
         .then(response => {
           this.tableData = response.data;
+          setTimeout(() => {
+            loading.close()
+          }, 250)
         })
         .catch(error => {
           console.error('Erro ao obter dados da API:', error);
@@ -81,13 +151,10 @@ export default {
     },
     trueOrFalse(isEditable) {
       return isEditable ? 'Sim' : 'Não';
-    }
+    },
   }
 }
 </script>
 
-<script setup>
-
-</script>
-
-<style></style>
+<style scoped lang="scss">
+</style>

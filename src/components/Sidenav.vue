@@ -2,14 +2,20 @@
     <div>
         <el-col :span="12">
             <el-menu
-              default-active="2"
+              default-active="0"
               class="el-menu-vertical"
             >
 
                <div class="menu-items">         
                 
-                <router-link to="/admin/produtos"><h1>Personni Moveis</h1></router-link>
+                <router-link to="/"><h1><img src="../assets/img/personniLogo-White.png" alt="Personni Móveis" class="img-item"/></h1></router-link>
 
+                <router-link to="/admin">
+                  <el-menu-item index="0">
+                    <el-icon><Histogram /></el-icon>
+                      <span>Dashboard</span>
+                  </el-menu-item>
+                </router-link>
 
                 <router-link to="/admin/produtos">
                   <el-menu-item index="1">
@@ -64,10 +70,11 @@ export default {
 </script>
 
 <style lang="scss"  scoped>
+@import "@/assets/styles/scss/basics.scss";
 .el-menu-vertical {
     width: 200px;
     height: 100vh;
-    background-color: #112620;
+    background-color: $tertiary-color;
     position: fixed;
     z-index: 999;
     display: flex;
@@ -83,6 +90,9 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
     }
 
     .el-menu-item {
@@ -94,10 +104,16 @@ export default {
         &:hover{
             color: #545c64;
         }
+
+        &.is-active{
+            color: $tertiary-color !important;
+            background-color: $primary-color;
+        }
     }
+    
 
     a.router-link-active {
-        color: #B68D40 !important;
+        color:  $primary-color !important;
     
     }
 
@@ -118,6 +134,10 @@ export default {
       cursor: pointer;
       position: relative;
       box-sizing: border-box;
+
+      i {
+        margin-right: 10px;
+      }
     }
 
   

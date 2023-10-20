@@ -254,7 +254,7 @@ hr {
 }
 
 .element-card {
-    border: 2px solid $admin-grey;
+    border: 1px solid $admin-grey;
     padding: 0 20px 20px 20px;
     width: 400px;
     margin: 0px 20px 20px 0;
@@ -262,6 +262,7 @@ hr {
     h2 {
         text-align: center;
         color: $admin-grey;
+        font-weight: 400;
     }
 }
 
