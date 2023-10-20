@@ -36,20 +36,38 @@ export default {
         return totalItems != 0 ? totalItems : '';
     },
     /** Adiciona um produto no carrinho. Se o produto ja existe atualiza sua quantidade. */
-    addToCart(product) {
+    addToCart(product, options) {
         const cartItems = this.getCartItems();
         const index = cartItems.findIndex((item) => item.productId === product.productId);
-        // Produto esta sendo adiciona pela primeira vez.
+    
+        // Função para calcular o preço total com base nas opções selecionadas
+        const calculateTotalPrice = (product, options) => {
+            let totalPrice = product.value; // Inicializa com o preço base do produto
+    
+            if (options && options.length > 0) {
+                options.forEach((option) => {
+                    totalPrice += option.price;
+                });
+            }
+    
+            return totalPrice;
+        };
+    
         if (!this.productIsAlreadyInCart(product.productId)) {
+            // Produto está sendo adicionado pela primeira vez
             product.amount = 1;
+            product.value = calculateTotalPrice(product, options); // Calcula o preço total
             cartItems.push(product);
         } else {
-            // Adiciona +1 no amount de produto já existente.
+            // Adiciona +1 na quantidade do produto já existente
             const cartProduct = cartItems[index]; // Adquire referência do produto na lista.
             cartProduct.amount++;
+            cartProduct.value = calculateTotalPrice(cartProduct, options); // Atualiza o preço total
         }
-        this.updateCart(cartItems)
+    
+        this.updateCart(cartItems);
     },
+    
     /** Atualiza valores do localStorage com uma nova lista recebida como argumento. */
     updateCart(cartItems) {
         localStorage.setItem('carrinho', JSON.stringify(cartItems));

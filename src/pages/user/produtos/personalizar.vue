@@ -11,9 +11,10 @@
                 <div class="dropdown-outer" v-for="section in product.sections" :key="section">
                     <el-divider>{{ section.name }}</el-divider>
                     <div class="dropdown-content">
-                        <el-radio-group v-model="selected[section.sectionId]" size="large">
-                            <el-radio-button v-for="option in section.options" :key="option" @change="resumoCmp"
-                                :label="option.name">
+                        <el-radio-group v-model="selected[section.sectionId]">
+                            <el-radio-button v-for="option in section.options" :key="option.optionId" @change="resumoCmp"
+                                :label="option.optionId" size="large">
+
                                 {{ option.name }} (R${{ option.price }})
                             </el-radio-button>
                         </el-radio-group>
@@ -21,7 +22,7 @@
                 </div>
             </div>
             <div class="product-image">
-                <el-image style="width: 500px; height: 500px" :src="product.imgUrl" :fit="fit" />
+                <el-image style="width: 500px; height: 500px" :src="product.mainImg" :fit="fit" />
             </div>
             <div class="resumo">
                 <h1>Resumo da personalização</h1>
@@ -33,10 +34,11 @@
                             <h2 class="preco">R$ {{ optionInfo.price }}</h2>
                         </div>
                     </div>
+
                 </div>
 
                 <h2 class="total">Total: {{ calcularTotal() }}</h2>
-                <el-button class="cta" color="$cta-color">Adicionar ao carrinho</el-button>
+                <el-button class="cta" color="$cta-color" @click="addToCart">Adicionar ao carrinho</el-button>
             </div>
         </div>
     </div>
@@ -45,6 +47,7 @@
 
 <script>
 import { ElLoading } from 'element-plus';
+import cartService from '@/store/cartService.js';
 import axios from 'axios';
 
 export default {
@@ -52,7 +55,9 @@ export default {
         return {
             selectedOptionsInfo: [],
             selected: [],
-            product: [],
+            product: {
+                section: []
+            },
         }
     },
     methods: {
@@ -71,8 +76,6 @@ export default {
 
             return correspondencias;
         },
-
-
 
         // Método chamado quando uma opção é selecionada
         resumoCmp() {
@@ -107,7 +110,7 @@ export default {
                 let section = this.product.sections[i];
                 let selected = this.selected[section.sectionId];
                 if (selected) {
-                    total += section.options.find(option => option.name == selected).price;
+                    total += section.options.find(option => option.optionId == selected).price;
                 }
             }
             return total;
@@ -116,6 +119,14 @@ export default {
             this.product.personalizacoes += item;
             item.selected = true;
 
+        },
+
+        addToCart() {
+            cartService.addToCart(this.product, this.selectedOptionsInfo);
+            ElMessage({
+              message: 'Produto adicionado ao carrinho',
+              type: 'success',
+            })
         }
     },
     async created() {
