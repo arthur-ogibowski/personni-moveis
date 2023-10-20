@@ -21,8 +21,6 @@ export default {
         // Adquire produtos.
         const localStorageProducts = this.getCartItems();
         const localStorageCmps = this.getCmpItems();
-        // Adquire info do usuário adquirindo token.
-        //const userEmail = JSON.parse(jwtDecode(AuthService.getToken()));
 
         // Se carrinho foi criado com sucesso e tem ao menos um produto, coloca qtde de produtos, senão uma string vazia.
         let totalItems = 0
@@ -119,11 +117,53 @@ export default {
         }
     },
 
-    // utilidades.
+    // Utilidades.
 
     /** Remove tudo de ambos carrinhos. */
     removeAllFromCarts() {
         this.removeAllfromCart();
         this.removeAllFromCmpCart();
-    }
+    },
+    /** Calcula total dos valores no carrinho */
+    totalCartValue() {
+        return (this.productCartvalue() + this.cmpCartValue()) || 0;
+    },
+    /** Total dos produtos. */
+    productCartvalue() {
+        //return;
+    },
+    totalProductOptions(product) {
+        let totalOptions = 0;
+        if(product.sections) {
+            for(section of product.sections) {
+                if(section.options) {
+                    for(option of section.options) {
+                        totalOptions += option.price;
+                    }
+                }
+            }
+        }
+        return totalOptions;
+    },
+    /** Total dos cmps. */
+    cmpCartValue() {
+        console.log(this.getCmpItems().reduce((total, cmp) => total + (cmp.value + this.cmpOptionsPrice(cmp)) * cmp.amount, 0));
+    },
+    totalcmpOptions(cmp) {
+        let totalOptionPrice = 0;
+        if(cmp.sections) {
+            for (let sectionCmp of cmp.sections) {
+                if(sectionCmp.elementCmps) {
+                    for (let elementCmp of sectionCmp.elementCmps) {
+                        if(elementCmp.optionCmps) {
+                            for (let optionCmp of elementCmp.optionCmps) {
+                                totalOptionPrice += optionCmp.price;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return totalOptionPrice;
+    },
 };

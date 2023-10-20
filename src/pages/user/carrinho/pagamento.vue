@@ -134,7 +134,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                         </h3>
                     </div>
 
-                    <img :src="'data:image/png;base64,' + QrCode">
+                    <img v-if="QrCode != null" :src="QrCode">
 
 
 
@@ -199,7 +199,7 @@ export default {
                 sectionCmps: [],
             },
             endereco: {
-                cep: "80240320",
+                cep: "",
                 rua: "",
                 numero: "",
                 complemento: "",
@@ -256,21 +256,6 @@ export default {
         /** Faz pedidos e retorna qrcode pix. */
         makeOrder() {
             const config = { headers: { Authorization: AuthService.getToken() } }
-            // Configura objeto order para processar pedido no back.
-            // const ordersReq = [];
-            // cartService.getCartItems().forEach(prod => ordersReq.push(
-            //     {
-            //         requestProduct: {
-            //             product: prod, 
-            //             amount: prod.amount
-            //         },
-            //         // requestCmp = {
-            //         //     productCmp: null,
-            //         //     amount: null
-            //         // }
-            //     }
-            // ));
-
             const getReqProduct = [];
             const getReqCmp = [];
             // Insere produtos no array de prods.
@@ -294,24 +279,16 @@ export default {
             // Monta dto para processamento do pedido no back.
             const ordersReq = 
             {
-                orderRequest: {
-                    requestProduct: getReqProduct,
-                    requestCmp: getReqCmp
-                }
+                requestProduct: getReqProduct,
+                requestCmp: getReqCmp
             }
-
-            console.log(ordersReq);
-
             // Faz requisição enviando pedidos.
             if (cartService.getCartItems() != null || cartService.getCartItems().length > 0) {
                 axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
                     .then(response => {
                         ElMessage.success('Pedido registrado com sucesso.');
                         // Seta pix em tela.
-                        const dataUrl = response.data;
-                        const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
-                        this.QrCode = base64String;
-                        console.log(this.QrCode);
+                        this.QrCode = response.data;
                     })
                     .catch(error => {
                         ElMessage.error('Não foi possível registrar o pedido.');

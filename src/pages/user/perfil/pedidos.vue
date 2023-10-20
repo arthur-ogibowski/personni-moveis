@@ -20,82 +20,24 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import userNavbar from '@/components/user/userNavbar.vue'
 export default {
-    components: {
-        userNavbar,
+  data() {
+    return {
+      tableData: [
+        // {
+        //   id: null,
+        //   data: '15/04/2023',
+        //   produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
+        //   pagamento: 'Cartão de crédito',
+        //   valor: 'R$ 1.300,00',
+        //   status: 'Aguardando pagamento' 
+        // },
+      ],
     }
+  }
 }
-</script>
-<script lang="ts" setup>
-const tableData = [
-  {
-    id: 1,
-    data: '15/04/2023',
-    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
-    pagamento: 'Cartão de crédito',
-    valor: 'R$ 1.300,00',
-    status: 'Aguardando pagamento'
-  },
-  {
-    id: 2,
-    data: '15/04/2023',
-    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
-    pagamento: 'Cartão de crédito',
-    valor: 'R$ 1.300,00',
-    status: 'Aguardando pagamento'
-  },
-  {
-    id: 3,
-    data: '15/04/2023',
-    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
-    pagamento: 'Cartão de crédito',
-    valor: 'R$ 1.300,00',
-    status: 'Aguardando pagamento'
-  },
-  {
-    id: 4,
-    data: '15/04/2023',
-    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
-    pagamento: 'Cartão de crédito',
-    valor: 'R$ 1.300,00',
-    status: 'Aguardando pagamento'
-  },
-  {
-    id: 5,
-    data: '15/04/2023',
-    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
-    pagamento: 'Cartão de crédito',
-    valor: 'R$ 1.300,00',
-    status: 'Aguardando pagamento'
-  },
-  {
-    id: 6,
-    data: '15/04/2023',
-    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
-    pagamento: 'Cartão de crédito',
-    valor: 'R$ 1.300,00',
-    status: 'Aguardando pagamento'
-  },
-  {
-    id: 7,
-    data: '15/04/2023',
-    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
-    pagamento: 'Cartão de crédito',
-    valor: 'R$ 1.300,00',
-    status: 'Aguardando pagamento'
-  },
-  {
-    id: 8,
-    data: '15/04/2023',
-    produtos: 'Cadeira Eames, Mesa de Jantar, Rack',
-    pagamento: 'Cartão de crédito',
-    valor: 'R$ 1.300,00',
-    status: 'Aguardando pagamento'
-  },
-  
-]
 </script>
 
 <style>

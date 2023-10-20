@@ -15,8 +15,7 @@
             <div class="listagem-produtos">
                 <div class="produto-card" v-for="product in cartProducts" :key="product">
                     <el-card class="carrinho-item" shadow="never">
-                        <img
-                        :src=product.mainImg
+                        <img :src=product.mainImg
                         class="image"
                         />
                         <h2> {{ product.name }} </h2>
@@ -76,8 +75,7 @@
                         </h4>
                     </div>
                     <div class="card-item subtotal">
-                        <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3> R$ {{ formatPrice(calcularTotal()) }}
-                        </h3>
+                        <!-- <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3> R$ {{ formatPrice(calcularTotal()) }}</h3> -->
                     </div>
 
                     <router-link to="/checkout"><el-button class="cta" color="$cta-color">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
@@ -122,14 +120,18 @@ export default {
         this.products = this.cartProducts.concat(this.cmpProducts);
         setTimeout(() => {
             loading.close()
-          }, 250)
+        }, 250)
     },
     methods: {
-        // Produto
+        // Produto.
         calcularTotal() {
-            this.totalProducts = this.cartProducts.reduce((total, product) => total + product.value * product.amount, 0);
-            this.totalCmps = this.cmpProducts.reduce((total, cmp) => total + cmp.value * cmp.amount, 0);
-            return this.totalProducts + this.totalCmps;
+            this.totalProducts = cartService.totalCartValue();
+        },
+        totalProductOptions() {
+            //this.cartProducts = cartService.productCartValue();
+        },
+        totalcmpOptions() {
+            //this.cmpProducts = cartService.cmpCartValue();
         },
         getCartProductsFromLocalStorage() {
             this.cartProducts = cartService.getCartItems();
@@ -143,8 +145,7 @@ export default {
             })
             .then(() => {
                 // Esvazia o carrinho em local storage.
-                cartService.removeAllfromCart();
-                cartService.removeAllFromCmpCart();
+                cartService.removeAllFromCarts();
                 // Esvazia lista de produtos e cmp em tela.
                 this.cartProducts = [];
                 this.cmpProducts = [];

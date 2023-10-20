@@ -34,6 +34,7 @@
             <el-form-item required label="Estoque">
                 <el-input-number 
                     v-model="product.quantity"
+                    :change="manageProdQuantity()"
                     :min="0"
                     controls-position="right">
                 </el-input-number>
@@ -78,8 +79,8 @@
                     </div>
                 </div>
                 <el-button type="primary" v-on:click="newDetail()"><el-icon>
-                            <Plus />
-                        </el-icon> Detalhe </el-button>
+                    <Plus />
+                </el-icon> Detalhe </el-button>
             </div>
             <!-- Tags -->
             <el-form-item label="Tags">
@@ -336,6 +337,12 @@ export default {
             const index = itemList.indexOf(itemToBeRemoved);
             itemList.splice(index, 1);
         },
+        manageProdQuantity() {
+            // Se quantidade do produto é zero, torna indisponível.
+            if(this.product.quantity < 1) {
+                this.product.available = false;
+            }
+        }
     }
 }
 </script>
