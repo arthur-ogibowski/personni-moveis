@@ -58,11 +58,11 @@
                 <div class="element-item" v-for="detail in product.details" v-bind:key="detail">
                     <el-icon v-on:click="removeItem(product.details, detail)" style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
                     <div class="element-card">
-                        <h2>{{ detail.fieldContent.toUpperCase() }}</h2>
+                        <h2>{{ detail.detailField.toUpperCase() }}</h2>
                         <el-row :gutter="20">
                             <el-col :span="12">
                                 <el-form-item label="Nome do detalhe">
-                                    <el-input v-model="detail.fieldContent" size="small"></el-input>
+                                    <el-input v-model="detail.detailField" size="small"></el-input>
                                 </el-form-item>
                             </el-col>
                             <el-col :span="12">
@@ -72,7 +72,7 @@
                                         maxlength= "250"
                                         placeholder="Descrição..."
                                         show-word-limit label="Conteúdo"
-                                        v-model="detail.detailContent" size="small"></el-input>
+                                        v-model="detail.fieldContent" size="small"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
@@ -82,37 +82,6 @@
                     <Plus />
                 </el-icon> Detalhe </el-button>
             </div>
-            <!-- Tags -->
-            <el-form-item label="Tags">
-                <el-select
-                    filterable
-                    clearable
-                    multiple
-                    allow-create
-                    collapse-tags
-                    collapse-tags-tooltip
-                    :max-collapse-tags="3"
-                    v-model="this.selectedTags"
-                    placeholder="Selecione">
-                    <el-option v-for="tag in this.fetchedTags"
-                        :key="tag.tagId"
-                        :label="tag.tagName"
-                        :value="tag.tagId" />
-                </el-select>
-            </el-form-item>
-            <!-- Material -->
-            <el-form-item required label="Material">
-                <el-select
-                    filterable
-                    clearable
-                    v-model="this.product.material"
-                    placeholder="Selecione">
-                    <el-option v-for="material in this.fetchedMaterials"
-                        :key="material.materiald"
-                        :label="material.materialName"
-                        :value="material.materiald" />
-                    </el-select>
-            </el-form-item>
             <!-- Imagem principal -->
             <el-form-item label="Imagem principal">
                 <div>
@@ -187,7 +156,7 @@
 
             </div>
             <el-form-item>
-                <el-button type="primary" @click="createProduct">Salvar</el-button>
+                <el-button type="primary" @click="createProduct()">Salvar</el-button>
             </el-form-item>
         </el-form>
     </div>
@@ -265,19 +234,6 @@ export default {
                 ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos 1 em estoque');
                 return;
             }
-            // Setando valores das tags como atributo no produto.
-            if (this.selectedTags != null && this.selectedTags.length > 0) {
-                this.selectedTags.forEach(id => {
-                    // Checa se valor é int (é id e já existe).
-                    if (Number.isInteger(id)) {
-                        this.product.tags.push({ tagId: id });
-                    }
-                    // Senão é adição de nova tag. Atributo enviado como tagName sem id criará tag no BD.
-                    else {
-                        this.product.tags.push({ tagName: id });
-                    }
-                });
-            }
 
             // Se nehuma imagem foi selecionada, coloca imagem default - a fazer....
             //imgConverter.isSettingDefaultImage();
@@ -288,7 +244,7 @@ export default {
             axios.post('http://localhost:8081/products/save-full-product', this.product, config)
                 .then((response) => {
                     ElMessage.success('Produto criado com sucesso.')
-                    this.$router.push('/admin/produtos')
+                    this.$router.replace('/admin/produtos')
                 })
                 .catch((error) => {
                     ElMessage.error('Erro ao criar produto.');
@@ -319,7 +275,7 @@ export default {
          */
         newOption(section) {
             section.options.push({
-                name: '',
+                name: 'Nova opção',
                 mainImg: '',
                 price: 0
             });
@@ -327,8 +283,8 @@ export default {
         /**Insere novo detalhe do produto */
         newDetail() {
             this.product.details.push({
-                fieldContent: 'Novo detalhe',
-                detailContent: ''
+                detailField: 'Novo detalhe',
+                fieldContent: ''
             })
         },
         /** Deleta o item selecionado de qualquer coleção com itens. */

@@ -276,27 +276,30 @@ export default {
                     }
                 ));
             }
+            console.log(cartService.getCmpItems())
             // Monta dto para processamento do pedido no back.
-            const ordersReq = 
-            {
+            const ordersReq = {
                 requestProduct: getReqProduct,
                 requestCmp: getReqCmp
             }
             // Faz requisição enviando pedidos.
-            if (cartService.getCartItems() != null || cartService.getCartItems().length > 0) {
-                axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
-                    .then(response => {
-                        ElMessage.success('Pedido registrado com sucesso.');
-                        // Seta pix em tela.
-                        this.QrCode = response.data;
-                    })
-                    .catch(error => {
-                        ElMessage.error('Não foi possível registrar o pedido.');
-                        console.error(error);
-                    });
-                /** Limpa carrinho após finalizar o pedido. */
-                cartService.removeAllFromCarts();
-            }
+            // if ((cartService.getCartItems() != null || cartService.getCartItems().length > 0)
+            //     && (cartService.getCmpItems() != null || cartService.getCmpItems().length > 0)) {
+            //     axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
+            //         .then(response => {
+            //             ElMessage.success('Pedido registrado com sucesso.');
+            //             // Seta pix em tela.
+            //             this.QrCode = response.data;
+            //             /** Limpa carrinho após finalizar o pedido. */
+            //             cartService.removeAllFromCarts();
+            //         })
+            //         .catch(error => {
+            //             ElMessage.error('Não foi possível registrar o pedido.');
+            //             console.error(error);
+            //         });
+            // } else {
+            //     ElMessage.warning('Devem haver produtos no carrinho para realizar o pedido!');
+            // }
         },
         consultarCEP() {
             const cep = this.endereco.cep;
