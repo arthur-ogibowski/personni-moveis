@@ -113,7 +113,7 @@
                 <el-button class="cta" type="primary" @click="criarCategoria" :disabled="!categoria.name">Salvar</el-button>
             </el-form-item>
         </el-form>
-    </div>
+    </div>{{ categoria }}
 </template>
   
 <script>
