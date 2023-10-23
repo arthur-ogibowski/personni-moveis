@@ -14,7 +14,7 @@
 
             <div class="criar-content" v-if="categoria.allow_creation">
 
-                <div class="section-item" v-for="section in categoria.sectionCmp" v-bind:key="section">
+                <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-divider></el-divider>
                     <el-form-item label="Seção">
                         <el-input v-model="section.name" class="section-input"></el-input>
@@ -28,7 +28,7 @@
                         <el-input-number 
                             :precision="0" 
                             :min="1"
-                            :max="categoria.sectionCmp.length"
+                            :max="categoria.sectionCmps.length"
                             v-model="section.index">
                         </el-input-number>
                     </el-form-item>
@@ -131,7 +131,7 @@ export default {
                 id: 0,
                 name: "",
                 allow_creation: false,
-                sectionCmp: [
+                sectionCmps: [
 
                 ]
             }
@@ -146,9 +146,9 @@ export default {
             const categoria = this.categoria;
             // Se o ID da seção for fornecido, exclua tudo dentro dessa seção
             if (Seccao != null && Elemento == null && Option == null) {
-                const sectionCmpIndex = categoria.sectionCmp.indexOf(Seccao)
-                if (sectionCmpIndex != null) {
-                    categoria.sectionCmp.splice(sectionCmpIndex, 1);
+                const sectionCmpsIndex = categoria.sectionCmps.indexOf(Seccao)
+                if (sectionCmpsIndex != null) {
+                    categoria.sectionCmps.splice(sectionCmpsIndex, 1);
                 }
             } else if (Elemento != null && Option == null) { // Se o ID do elemento for fornecido, exclua todas as opções desse elemento
                 const ElementCmpindex = Seccao.elementCmps.indexOf(Elemento)
@@ -205,7 +205,7 @@ export default {
                 })
         },
         newSection() {
-            this.categoria.sectionCmp.push({
+            this.categoria.sectionCmps.push({
                 name: "Nova seção",
                 imgUrl: "",
                 elementCmps: []
