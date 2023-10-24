@@ -62,6 +62,14 @@
           </div>
         </template>
       </el-table-column>
+      <el-table-column prop="available" sortable label="Catálogo" width="120">
+        <template v-slot="scope">
+          <div class="personalizavel">
+            <el-icon v-if="scope.row.available == false" color="#F56C6C"><CircleCloseFilled /></el-icon>
+            <el-icon v-if="scope.row.available == true" color="#67c23a"><SuccessFilled /></el-icon>
+          </div>
+        </template>
+      </el-table-column>
       <el-table-column prop="acoes" label="Ações" width="100" class="actions">
         <template #default="scope">
           <el-icon class="table-edit" size="20" color="#A8A8A8" @click="redirectToEditProduct(scope)"><Edit/></el-icon>

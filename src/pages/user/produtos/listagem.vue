@@ -52,10 +52,13 @@
                 <div class="produto-card" v-for="product in getFilteredProducts()" :key="product">
                   <router-link :to='"/produtos/" + product.productId'>
                     <el-card :body-style="{ padding: '0px' }">
-                        <el-image
+                        <el-image v-if="product.mainImg"
                           :src="product.mainImg"
                           class="image"
                         />
+                        <div v-else>
+                          <img src="../../../assets/img/personniLogo-Grey.png" class="image placeholder"/>
+                          </div>
                         <div style="padding: 14px">
                           <div class="card-bottom">
                             <h2>{{  product.name }}</h2>
@@ -237,12 +240,16 @@ div.produtos-listing{
   width: 70vw;
 
   div.produto-card{
-    margin: 0 15px 15px 15px;
+    margin: 0 15px 30px 15px;
   }
 }
 
-.el-image.image {
+.el-image.image, .image {
           width: 100%;
           height: 200px;
         }
+.placeholder{
+  object-fit: contain;
+  padding: 10px;
+}
 </style>
