@@ -93,67 +93,73 @@
                         <el-button size="small" type="primary">Selecionar Imagem</el-button>
                     </el-upload>
                 </div>
-            </el-form-item>
-            <!-- <el-form-item label="Imagens secundárias">
 
-            </el-form-item> -->
-            <hr>
-            <h2>Edição</h2>
-            <el-form-item label="Possibilitar edição">
-                <el-switch v-model="product.editable"></el-switch>
-            </el-form-item>
+                <el-divider direction="vertical" />
 
-            <div class="criar-content" v-if="product.editable">
+                <div class="right-content">
+                    <h2>Personalização</h2>
+                    <el-form-item>
+                        <el-switch v-model="product.editable"></el-switch>
+                    </el-form-item>
 
-                <div class="elements">
-                    <div class="element-item" v-for="section in product.sections" v-bind:key="section">
+                    <div class="criar-content" v-if="product.editable">
 
+                        <div class="elements">
+                            <div class="element-item" v-for="section in product.sections" v-bind:key="section">
 
-                        <div class="element-card">
-                            <el-icon v-on:click="removeItem(product.sections, section)" style="margin-right:-5px; float: right; margin-top: 10px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                                <div class="element-card">
+                                    <el-icon v-on:click="removeItem(product.sections, section)" style="margin-right:-5px; float: right; margin-top: 10px; cursor: pointer;" :size="20" color="#A8A8A8"><CloseBold /></el-icon>
 
-                            <h2>{{ section.name.toUpperCase() }}</h2>
+                                    <h2 v-if="section.name">{{ section.name.toUpperCase() }}</h2>
+                                    <h2 v-else>SEÇÃO</h2>
 
-                            <el-form-item label="Nome">
-                                <el-input v-model="section.name"></el-input>
-                            </el-form-item>
+                                    <el-form-item label="Nome">
+                                        <el-input v-model="section.name"></el-input>
+                                    </el-form-item>
 
+                                    <div class="option-item" v-for="option in section.options" v-bind:key="option">
+                                        <el-divider/>
+                                        <div class="inputs">
+                                            <div class="basic-inputs">
+                                                    <el-form-item label="Opção">
+                                                        <el-input v-model="option.name" size="small"></el-input>
+                                                    </el-form-item>
+                                                    <el-form-item label="Preço">
+                                                        <el-input v-model="option.price" size="small">
+                                                            <template #prepend>R$</template></el-input>
+                                                    </el-form-item>
+                                            </div>
+                                            <el-form-item label="Imagem">
+                                                <div>
+                                                    <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
+                                                        @change="handleOptionImageChange($event, option)">
+                                                        <img v-if="option.mainImg" :src="option.mainImg" class="avatar" />
+                                                        <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
+                                                    </el-upload>
+                                                </div>
+                                            </el-form-item>
+                                        </div>
+                                    </div>
+                                    <el-divider class="divider-button" v-on:click="newOption(section)">
+                                            <el-icon>
+                                                <Plus />
+                                            </el-icon> Opção
+                                        </el-divider>
 
-                            <div class="option-item" v-for="option in section.options" v-bind:key="option">
-                                <el-icon v-on:click="removeOption(section.options, option)" style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
-                                <el-row :gutter="20">
-                                    <el-col :span="12">
-                                        <el-form-item label="Opção">
-                                            <el-input v-model="option.name" size="small"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="12">
-                                        <el-form-item label="Preço">
-                                            <el-input v-model="option.price" size="small"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-                                    <el-col :span="12">
-                                        <el-form-item label="Imagem">
-                                            <el-input v-model="option.image" size="small"></el-input>
-                                        </el-form-item>
-                                    </el-col>
-                                </el-row>
-
+                                </div>
 
                             </div>
 
-                            <el-button type="primary" v-on:click="newOption(section)"><el-icon>
-                                    <Plus />
-                                </el-icon> Opção</el-button>
-
+                            
+                            <el-divider class="divider-button" v-on:click="newSection()">
+                                    <el-icon>
+                                        <Plus />
+                                    </el-icon> Seção
+                                </el-divider>
                         </div>
 
                     </div>
-                    <el-button type="primary" v-on:click="newSection()"><el-icon>
-                            <Plus />
-                        </el-icon> Seção </el-button>
                 </div>
-
             </div>
             <el-form-item>
                 <el-button type="primary" @click="editProduct()">Salvar</el-button>
@@ -178,7 +184,7 @@ export default {
                 value: 0,
                 quantity: 1,
                 editable: false,
-                mainImgUrl: '',
+                mainmainImg: '',
                 description: '',
                 available: true,
                 sections: [],
@@ -221,6 +227,15 @@ export default {
             } else {
                 ElMessage.error('Id do produto é nulo. Não é possível fazer requsição para adquirir produto.');
             }
+        },
+        getCategories() {
+            axios.get('http://localhost:8081/category')
+                .then(response => {
+                    this.fetchedCategories = response.data;
+                }).catch(error => {
+                    console.error('Erro ao obter categorias: ', error);
+                });
+        
         },
         editProduct() {
             // Produto deve ter ao menos 1 em qtde para ser disponível.
@@ -344,7 +359,66 @@ export default {
             if(this.product.quantity < 1) {
                 this.product.available = false;
             }
-        }
+        },
+        async handleImageChange(file, fileList) {
+            try {
+                // Adquire imagem como string base64.
+                this.product.mainImg = await imgConverter.fileToBase64String(file.raw);
+            } catch(error) {
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+            }
+        },
+        async handleOptionImageChange(file, option) {
+            try {
+                // Adquire imagem como string base64.
+                option.mainImg = await imgConverter.fileToBase64String(file.raw);
+            } catch(error) {
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+            }
+        },
+        async handleSecondaryImagesChange(file, fileList) {
+            try {
+                // Adquire imagem como string base64.
+                this.product.secondaryImages.push(await imgConverter.fileToBase64String(file.raw));
+            } catch(error) {
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+            }
+        },
+        /**
+         * Adiciona seção no produto
+         * @param {Product} product Produto onde será adicionado a seção.
+         */
+        newSection() {
+            this.product.sections.push({
+                name: "Nova seção",
+                mainImg: "",
+                options: []
+            })
+        },
+        /**
+         * Adiciona a opção na seção.
+         * @param {Section} section Seção onde será adicionada a opção.
+         */
+        newOption(section) {
+            section.options.push({
+                name: '',
+                mainImg: '',
+                price: 0
+            });
+        },
+        /**Insere novo detalhe do produto */
+        newDetail() {
+            this.product.details.push({
+                fieldContent: '',
+                detailContent: ''
+            })
+        },
+        /** Deleta o item selecionado de qualquer coleção com itens. */
+        removeItem(itemList, itemToBeRemoved) {
+            // Encontra índice do item a ser removido e faz splice removendo.
+            const index = itemList.indexOf(itemToBeRemoved);
+            itemList.splice(index, 1);
+        },
     }
 }
 </script>
@@ -352,8 +426,6 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/styles/scss/basics.scss";
 
-.element-card {
-    border: 2px solid $admin-grey;
     padding: 0 20px 20px 20px;
     width: 300px;
     margin: 20px 20px 0 0;
@@ -363,10 +435,6 @@ export default {
         color: $admin-grey;
     }
 }
-.elements {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
 }
 
 </style>

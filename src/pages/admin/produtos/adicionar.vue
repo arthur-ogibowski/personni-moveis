@@ -147,7 +147,7 @@
                                                 <div>
                                                     <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
                                                         @change="handleOptionImageChange($event, option)">
-                                                        <img v-if="option.imgUrl" :src="option.imgUrl" class="avatar" />
+                                                        <img v-if="option.mainImg" :src="option.mainImg" class="avatar" />
                                                         <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
                                                     </el-upload>
                                                 </div>
@@ -284,7 +284,8 @@ export default {
         async handleOptionImageChange(file, option) {
             try {
                 // Adquire imagem como string base64.
-                option.imgUrl = await imgConverter.fileToBase64String(file.raw);
+                console.log(option)
+                option.mainImg = await imgConverter.fileToBase64String(file.raw);
             } catch(error) {
                 ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
             }

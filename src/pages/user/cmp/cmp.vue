@@ -6,9 +6,13 @@
 
         <h1> Modelagem de móveis </h1>
     </el-menu>
-    <el-steps align-center :active="currentSection" finish-status="success">
+    <div class="steps-container">
+      <h2 v-if="!isLastSection">{{ "Passo " + (currentSection + 1) + " de " + categoria.sectionCmps.length}}</h2>
+      <h2 v-else>{{ "Passo " + (currentSection + 1) + " de " + categoria.sectionCmps.length + ": Revisar modelagem" }}</h2>
+      <el-steps align-center :active="currentSection" finish-status="success">
       <el-step v-for="section in categoria.sectionCmps" :key="section.id" :title="section.name" />
     </el-steps>
+    </div>
   <div class="container">
 
     <div class="cmp-container" v-if="!isLastSection">
@@ -16,10 +20,9 @@
         <el-form :model="selected">
           <div class="section" v-for="section in categoria.sectionCmps" :key="section.id">
             <div class="inner-section" v-if="currentSection == categoria.sectionCmps.indexOf(section) && section.name !== 'Revisar'">
-              <h1>{{ section.name }}</h1>
               <div class="section-elements">
                 <div v-for="element in section.elementCmps" :key="element.id" class="ml-4 element-item">
-                  <el-divider>{{ element.name }}</el-divider>
+                  <h2>{{ element.name }}</h2>
                   <el-radio-group v-model="selected[element.id]">
                     <el-radio-button
                       v-for="option in element.optionCmps"
@@ -59,11 +62,10 @@
 
       <div class="revisar-section">
             <div v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">
-              <el-divider></el-divider>
+
                 <h2>{{ optionInfo.section }}</h2>
               <div class="revisar-section-list">
                 <div v-for="element in optionInfo.elements" :key="element" class="revisar-section-item">
-                  <el-text type="info">{{ element.element }}</el-text>
                   <div class="element-image" v-if="element.img">
                         <el-image :src="element.img"/>
                   </div>
@@ -71,14 +73,13 @@
                         <img src="../../../assets/img/personniLogo-Grey.png"/>
                   </div>
                   <div class="revisar-section-item-option">
-                    <el-text type="success">{{ element.option }}</el-text>
-                    <el-text >R$ {{ element.price }}</el-text>
+                    <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
+                    <h3 class="element-price">R$ {{ element.price }}</h3>
                   </div>
                 </div>
               </div>
           </div>
         </div>
-        <el-divider></el-divider>
         <div class="preco-final">
           <h3>Preço final:</h3> <h2>R$ {{ products_cmp.value }}</h2>
         </div>
@@ -338,6 +339,17 @@ export default {
 :deep(.el-step__title.is-finish) {
   color: $cta-color;
 }*/
+
+.container, .cmp-container{
+  background-color: #FFFFFF !important;
+  padding-top: 0;
+  h1{
+  font-size: 32px;
+  font-weight: 400;
+  color: $text-color;
+  margin-top: 5%;
+}
+}
 :deep(.el-step__icon-inner.is-status) {
   transform: translate(-5px, -6px);
 }
@@ -347,9 +359,26 @@ export default {
 }
 .el-steps{
   background-color: transparent !important;
-  margin: 20px auto;
+  width: 40%;
+}
+.steps-container{
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  padding-top: 10px;
+  display: flex;
+  justify-content: space-between;
+
+  h2{
+    padding-left: 20px;
+  }
 }
 
+h2{
+  font-size: 20px;
+  font-weight: 400;
+  margin-bottom: 10px;
+}
 .el-menu{
   justify-content: space-between;
   h1 {
@@ -409,6 +438,7 @@ export default {
           .option-info{
             display: flex;
             flex-direction: column;
+            text-transform: none;
 
             .option-name{
               font-size: 14px;
@@ -492,16 +522,33 @@ h2{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  border: 1px solid $admin-grey;
+  padding: 10px;
+  margin-bottom: 30px;
+
 
   .revisar-section-item{
-    margin: 0 10px 10px 0;
+    margin: 0 10px 0 0;
     padding: 10px;
     min-width: 150px;
-    background-color: #EBEBEB;
     width: 200px;
     display: flex;
     justify-content: space-around;
     flex-direction: column;
+    border: 1px solid $secondary-color;
+
+    .element-option{
+      font-size: 14px;
+      font-weight: 400;
+      color: $cta-color;
+    }
+    .element-price{
+      font-size: 12px;
+      font-weight: 400;
+      min-width: 50px;
+      text-align: end;
+      color: $text-color;
+    }
 
     .el-image{
       width: 150px;
@@ -530,7 +577,9 @@ h2{
       margin-top: 0;
       margin-bottom: 10px;
       font-size:  14px;
-      text-align: center;
+      text-align: left;
+      color: $admin-grey;
+      font-weight: 400;
     }
     .el-text {
       max-width: 50%;
@@ -544,6 +593,7 @@ h2{
     .revisar-section-item-option{
       display: flex;
       justify-content: space-between;
+      align-items: end;
       :deep(.el-text) {
             align-self: end !important;
       }
@@ -557,6 +607,7 @@ div.el-radio-group{
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  border: 1px solid $secondary-color;
   :deep(.el-radio-button){
     margin: 10px;
     transition: all 0.2s ease-in-out;
@@ -578,9 +629,9 @@ div.el-radio-group{
   }
   :deep(.el-radio-button.is-active > .el-radio-button__inner) {
     transition: 0.1s;
-  background-color: transparent !important;
-  outline: 3px solid $cta-color !important;
-  color: var(--el-text-color-regular) !important;
+    background-color: transparent !important;
+    outline: 2px solid $cta-color !important;
+    color: $text-color !important;
 
 }
 }
@@ -600,5 +651,8 @@ div.el-radio-group{
 
 .el-text--success{
   font-size: 18px;
+}
+:deep(.el-step__head.is-success) {
+  height: 24px;
 }
 </style>

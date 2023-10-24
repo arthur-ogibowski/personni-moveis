@@ -25,19 +25,20 @@
                 <el-image style="width: 500px; height: 500px" :src="product.mainImg" :fit="fit" />
             </div>
             <div class="resumo">
-                <h1>Resumo da personalização</h1>
+                <h1>Resumo</h1>
                 <div class="resumo-item">
+                    <el-divider/>
                     <div class="resumo-item-inner" v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">
                         <h3 class="label">{{ optionInfo.section }}</h3>
                         <div class="resumo-item-inner-escolhido">
-                            <h2 class="nome">{{ optionInfo.option }}</h2>
-                            <h2 class="preco">R$ {{ optionInfo.price }}</h2>
+                            <el-text type="info" class="nome">{{ optionInfo.option }}</el-text>
+                            <h2 class="preco">{{ optionInfo.price != 0 ? "R$" + formatPrice(optionInfo.price) : "--" }}</h2>
                         </div>
                     </div>
 
                 </div>
 
-                <h2 class="total">Total: {{ calcularTotal() }}</h2>
+                <h2 class="total">Total: {{ calcularTotal() != 0 ? "R$" + formatPrice(calcularTotal()) : "--" }}</h2>
                 <el-button class="cta" color="$cta-color" @click="addToCart">Adicionar ao carrinho</el-button>
             </div>
         </div>
@@ -119,6 +120,9 @@ export default {
             this.product.personalizacoes += item;
             item.selected = true;
 
+        },
+        formatPrice(x) {
+            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
         },
 
         addToCart() {
@@ -230,15 +234,15 @@ div.content {
 
     div.resumo {
 
-        border: 2px solid $user-grey;
+        border: 1px solid $user-grey;
         padding: 2rem 3rem;
         display: flex;
         flex-direction: column;
 
         h1 {
-            color: $user-grey;
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
+            color: $text-color;
+            font-size: 3.5rem;
+            margin-bottom: 0rem;
             text-align: center;
         }
 
@@ -248,12 +252,19 @@ div.content {
                 margin-bottom: 0;
                 margin-top: 2rem;
                 color: $user-grey;
+                font-weight: 400;
+            }
+
+            .el-text{
+                font-size: 2rem;
+                color: $text-color;
             }
 
             div.resumo-item-inner-escolhido {
                 display: flex;
                 flex-direction: row;
                 align-items: center;
+                justify-content: space-between;
 
 
                 h2.nome {
