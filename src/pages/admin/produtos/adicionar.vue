@@ -95,7 +95,7 @@
                                                 maxlength= "250"
                                                 placeholder="Descrição..."
                                                 show-word-limit label="Conteúdo"
-                                                v-model="detail.detailContent"></el-input>
+                                                v-model="detail.detailField"></el-input>
                                         </el-form-item>
                             </div>
                         </div>
@@ -323,7 +323,7 @@ export default {
         newDetail() {
             this.product.details.push({
                 fieldContent: '',
-                detailContent: ''
+                detailField: ''
             })
         },
         /** Deleta o item selecionado de qualquer coleção com itens. */
