@@ -20,7 +20,7 @@
   </div>
 </template>
 
-<script lang="ts">
+<script>
 import userNavbar from '@/components/user/userNavbar.vue'
 import axios from 'axios';
 export default {

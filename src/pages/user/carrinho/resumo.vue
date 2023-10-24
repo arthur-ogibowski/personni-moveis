@@ -15,8 +15,7 @@
             <div class="listagem-produtos">
                 <div class="produto-card" v-for="product in cartProducts" :key="product">
                     <el-card class="carrinho-item" shadow="never">
-                        <img
-                        :src="product.mainImg"
+                        <img :src=product.mainImg
                         class="image"
                         />
                         <h2> {{ product.name }} </h2>
@@ -41,7 +40,7 @@
                 <div class="produto-card" v-for="cmp in cmpProducts" :key="cmp">
                     <el-card class="carrinho-item" shadow="never">
                         <img
-                        :src="getImgPath(cmp.imgUrl)"
+                        :src="cmp.img"
                         class="image"
                         />
                         <h2> CMP </h2>
@@ -76,8 +75,7 @@
                         </h4>
                     </div>
                     <div class="card-item subtotal">
-                        <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3> R$ {{ formatPrice(calcularTotal()) }}
-                        </h3>
+                        <!-- <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3> R$ {{ formatPrice(calcularTotal()) }}</h3> -->
                     </div>
 
                     <router-link to="/checkout"><el-button class="cta" color="$cta-color">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
@@ -88,10 +86,8 @@
 </template>
 
 <script>
-import axios from 'axios';
 import cartService from '@/store/cartService.js';
-import { ElMessageBox } from 'element-plus';
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElMessageBox } from 'element-plus';
 
 export default {
     data() {
@@ -101,7 +97,7 @@ export default {
                     productId: null,
                     name: '',
                     value: null,
-                    mainImgUrl: '',
+                    mainImg: '',
                     amount: 1
                 }
             ],
@@ -124,14 +120,18 @@ export default {
         this.products = this.cartProducts.concat(this.cmpProducts);
         setTimeout(() => {
             loading.close()
-          }, 250)
+        }, 250)
     },
     methods: {
-        // Produto
+        // Produto.
         calcularTotal() {
-            this.totalProducts = this.cartProducts.reduce((total, product) => total + product.value * product.amount, 0);
-            this.totalCmps = this.cmpProducts.reduce((total, cmp) => total + cmp.value * cmp.amount, 0);
-            return this.totalProducts + this.totalCmps;
+            this.totalProducts = cartService.totalCartValue();
+        },
+        totalProductOptions() {
+            //this.cartProducts = cartService.productCartValue();
+        },
+        totalcmpOptions() {
+            //this.cmpProducts = cartService.cmpCartValue();
         },
         getCartProductsFromLocalStorage() {
             this.cartProducts = cartService.getCartItems();
@@ -145,8 +145,7 @@ export default {
             })
             .then(() => {
                 // Esvazia o carrinho em local storage.
-                cartService.removeAllfromCart();
-                cartService.removeAllFromCmpCart();
+                cartService.removeAllFromCarts();
                 // Esvazia lista de produtos e cmp em tela.
                 this.cartProducts = [];
                 this.cmpProducts = [];
@@ -175,18 +174,6 @@ export default {
         cartIsEmpty() {
             return this.cartProducts.length < 1;
         },
-        getImgPath(img) {
-            // Carrega imagem do contexto local em tempo de excução,
-            // permitindo alterar imagens estáticas dinamicamente.
-            return new URL(`/src/assets/img/${img}`, import.meta.url).href
-        },
-        // Atualiza produtos do carrinho antes de ir para o checkout, setando as 
-        // beforeChekout() {
-        //     // Antes de permitir entrada no checkout, checa se usuário fez login - se fez continua para checkout,
-        //     // senão redireciona para /login.
-        //     AuthService.shouldRedirectToLogin(this.$router);
-        //     this.$router.push('/checkout');
-        // },
         /** Atualiza carrinho em local storage com valores inseridos pelo usuário em tela */
         updateCurrentProduct(product) {
             if (product.amount < 1) {

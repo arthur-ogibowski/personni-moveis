@@ -80,12 +80,12 @@ export default {
                 }).catch(error => {
                     console.error('Erro ao obter usuarios: ', error);
                 });
-        /*axios.get('http://localhost:8081/orders')
+        axios.get('http://localhost:8081/orders')
                 .then(response => {
                     this.pedidos = response.data;
                 }).catch(error => {
                     console.error('Erro ao obter pedidos: ', error);
-                });*/
+                });
                 setTimeout(() => {
             loading.close()
           }, 250)

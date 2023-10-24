@@ -39,7 +39,8 @@ export default {
       });
       axios.get('http://localhost:8081/category')
         .then(response => {
-          response.data.forEach(categoria => this.categorias.push(categoria));
+          this.categorias = response.data;
+          
           setTimeout(() => {
             loading.close()
           }, 250)
