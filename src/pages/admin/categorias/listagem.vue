@@ -105,9 +105,6 @@ export default {
       .then(() => {
         // Usuário marcou sim -> deletar produto e atualizar tabela.
         this.deleteCategory(scope);
-        // Atualiza lista de produtos.
-        const excludedCategoryId = scope.row.id;
-        this.categorias = this.categorias.filter(categoria => categoria.id != excludedCategoryId);
       })
       .catch(() => {
         // Nada é feito na seleção do 'não'.
@@ -117,6 +114,7 @@ export default {
       axios.delete(`http://localhost:8081/category/${id}`)
       .then(response => {
         ElMessage.success('Categoria deletada com Sucesso!')  
+        this.categorias = this.categorias.filter(categoria => categoria.id != id);
       })
       .catch(error => {
         ElMessage.error('Erro ao deletar Categoria');
