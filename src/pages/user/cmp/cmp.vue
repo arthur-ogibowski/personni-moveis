@@ -219,8 +219,6 @@ export default {
       if (correspondencias.length > 0) {
         const selectedOptionsInfo = []; // Array para armazenar as informações de cada opção escolhida
         
-
-
       correspondencias.forEach(({ section, element, option }) => {
         // Verifique se a seção já existe na lista de seções
         const existingSection = this.products_cmp.sectionProductCmpDtos.find(sec => sec.sectionId === section.id);
@@ -282,9 +280,6 @@ export default {
           this.products_cmp.sectionProductCmpDtos.push(sectionObj);
         }
           
-        
-
-
         if (!selectedOptionsInfo.find((sec) => sec.section === section.name)) {
           selectedOptionsInfo.push({ 
             section: section.name,

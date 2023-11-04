@@ -27,6 +27,13 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="status" label="Status" sortable width="*">
+            <template v-slot="scope">
+              <div class="status">
+                <h3>{{ scope.row.status }}</h3>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label="Ações" prop="id"> 
             <template #default="scope"> 
               <el-icon class="table-edit" size="20" color="#A8A8A8" @click="redirectToEditCategory(scope)"><Edit/></el-icon>
