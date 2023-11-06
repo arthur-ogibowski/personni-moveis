@@ -10,19 +10,19 @@
           <h1>Crie sua conta</h1>
             <div class="cadastro-form">
               <el-form-item>
-                <el-input v-model="cadastro.name" size="large" placeholder="Nome"/>
+                <el-input v-model="cadastro.name" size="medium" placeholder="Nome"/>
               </el-form-item>
               <el-form-item>
-                <el-input v-model="cadastro.email" size="large" placeholder="Email" />
+                <el-input v-model="cadastro.email" size="medium" placeholder="Email" />
               </el-form-item>
               <el-form-item >
-                <el-input v-model="cadastro.cpf" size="large" placeholder="CPF" />
+                <el-input v-model="cadastro.cpf" size="medium" placeholder="CPF" />
               </el-form-item>
               <el-form-item>
-                <el-input v-model="cadastro.phoneNumber" size="large" placeholder="Telefone" />
+                <el-input v-model="cadastro.phoneNumber" size="medium" placeholder="Telefone" />
               </el-form-item>
               <el-form-item>
-                <el-input type="password" v-model="cadastro.password" size="large" placeholder="Senha" />
+                <el-input type="password" v-model="cadastro.password" size="medium" placeholder="Senha" />
               </el-form-item>
             </div>
                 <el-button color="$cta-color" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="cadastrarUsuario()">Criar Conta</el-button>
@@ -55,7 +55,7 @@ export default {
             .then(response => {
           if (response.status === 201) {
             // Colocar tela de cadastro concluido ou algum aviso
-            this.$router.push('/');
+            this.$router.push('/login');
           } else {
             console.error('Erro ao realizar cadastro. Código de status:', response.status);
           }
@@ -73,7 +73,7 @@ export default {
 
 div.container{
   display: flex;
-  justify-content: start;
+   justify-content: flex-start;
   flex-direction: column;
   align-items: center;
   background-color: #CECECE;

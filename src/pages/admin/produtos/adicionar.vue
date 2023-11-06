@@ -240,6 +240,11 @@ export default {
         /** Faz requisição para criar produto. */
         createProduct() {
             // Produto deve ter ao menos 1 em qtde para ser disponível.
+            const loading = ElLoading.service({
+                lock: true,
+                text: 'Criando produto',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
             if(this.product.quantity < 1 && this.product.available) {
                 ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos 1 em estoque');
                 return;
@@ -267,10 +272,12 @@ export default {
             axios.post('http://localhost:8081/products/save-full-product', this.product, config)
                 .then((response) => {
                     ElMessage.success('Produto criado com sucesso.')
+                    loading.close()
                     this.$router.push('/admin/produtos')
                 })
                 .catch((error) => {
                     ElMessage.error('Erro ao criar produto.');
+                    loading.close()
                 });
         },
         async handleImageChange(file, fileList) {
@@ -379,10 +386,10 @@ h2{
 }
 
 :deep(.el-upload){
-    border: 1px dotted $admin-grey;
+    border: 1px dashed $admin-grey;
 
     &:hover{
-        border: 1px dotted $cta-color;
+        border: 1px dashed $cta-color;
     }
 }
 

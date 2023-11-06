@@ -15,7 +15,7 @@
                             <el-radio-button v-for="option in section.options" :key="option.optionId" @change="resumoCmp"
                                 :label="option.optionId" size="large">
 
-                                {{ option.name }} (R${{ option.price }})
+                                <el-image :src="option.mainImg"/>{{ option.name }} (R${{ option.price }})
                             </el-radio-button>
                         </el-radio-group>
                     </div>
@@ -182,6 +182,12 @@ div.content {
             label.el-radio-button,
             :deep(span.el-radio-button__inner) {
                 width: 250px;
+
+                .el-image{
+                    width: 50px;
+                    height: 50px;
+                    margin-right: 10px;
+                }
             }
 
 

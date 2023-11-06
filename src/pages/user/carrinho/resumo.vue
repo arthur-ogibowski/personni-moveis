@@ -314,7 +314,7 @@ export default {
 
             .card-item.subtotal {
               display: flex;
-              justify-content: end;
+               justify-content: flex-end;
               align-items: baseline;
 
               h4 {
@@ -327,7 +327,7 @@ export default {
 
             .card-item.count-products {
               display: flex;
-              justify-content: end;
+               justify-content: flex-end;
               align-items: baseline;
 
               h4{

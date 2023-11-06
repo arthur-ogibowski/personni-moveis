@@ -15,9 +15,20 @@ export default {
 div.footer{
     height: 100px;
     background-color: $tertiary-color;
+    margin-top: 20px;
 
     display: flex;
         justify-content: center;
         align-items: center;
+}
+
+@media (max-width: 768px) {
+    div.footer{
+        height: 50px;
+
+        h1{
+            font-size: 2rem;
+        }
+    }
 }
 </style>

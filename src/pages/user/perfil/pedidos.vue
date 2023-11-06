@@ -21,28 +21,38 @@
 </template>
 
 <script>
-import userNavbar from '@/components/user/userNavbar.vue'
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
+import userNavbar from '@/components/user/userNavbar.vue';
+import AuthService from '@/store/authService.js';
+
 export default {
   components: {
     userNavbar,
   },
   data() {
     return {
-      pedidos: [],
-      page: 1,
-      pageSize: 10,
-    }
+      tableData: [], // Inicialmente vazio, será preenchido com os dados dos pedidos
+    };
   },
   created() {
-    axios.get('http://localhost:8081/orders')
-      .then(response => {
-        this.pedidos = response.data;
-      })
-      .catch(error => {
-        console.error('Erro ao obter dados da API:', error);
-      });
+    AuthService.shouldRedirectToLogin(this.$router);
+    this.getPedidos();
   },
-}
+  methods: {
+    getPedidos() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+
+      axios.get('http://localhost:8081/orders/client-orders', config)  // Altere a URL para a endpoint correta de pedidos do usuário
+        .then((response) => {
+          this.tableData = response.data;  // Atualize os dados da tabela com os dados dos pedidos
+        })
+        .catch((error) => {
+          ElMessage.error('Erro ao carregar pedidos.');
+          console.error('Erro:', error);
+        });
+    },
+  },
+};
 </script>
 <style></style>

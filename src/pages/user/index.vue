@@ -221,7 +221,7 @@ div.content {
     }
 
     .el-carousel {
-      width: 100vw;
+      width: 90vw;
       min-height: 400px;
     }
 
@@ -292,6 +292,78 @@ div.content {
   }
 
 
+}
+
+@media (max-width: 768px){
+  div.content{
+    div.hero{
+      flex-direction: column;
+      img.img-item, div.about{
+        width: 100vw;
+        height: 400px;
+      }
+      div.about{
+        padding: 2rem;
+        h1 {
+          font-size: 3rem;
+          margin-bottom: 0;
+          margin-top: 20px;
+        }
+        h2{
+          font-size: 2rem;
+        }
+        p {
+          font-size: 1rem;
+          margin: 2rem 0;
+          line-height: 1.5rem;
+        }
+        a {
+          font-size: 1rem;
+        }
+      }
+    }
+    div.novidades{
+      padding: 0 2rem;
+      h2 {
+        font-size: 2rem;
+        margin: 2rem 0 1rem 0;
+      }
+      h3 {
+        font-size: 1.5rem;
+      }
+      p{
+        font-size: 1rem;
+      }
+      img {
+        max-width: 300px;
+      }
+      .el-carousel__item {
+        padding: 0;
+      }
+      .carousel-content {
+        flex-direction: column;
+      }
+      .carousel-image {
+        margin-top: 1rem;
+      }
+    }
+    div.categorias{
+      padding: 0 2rem;
+      h2 {
+        font-size: 2rem;
+        margin: 2rem 0 1rem 0;
+      }
+      div.categorias-grid{
+        flex-direction: column;
+        align-items: center;
+      }
+      div.categoria-item{
+        width: 100%;
+        margin: 1rem 0;
+      }
+    }
+    
+  }
 }
 
 </style>

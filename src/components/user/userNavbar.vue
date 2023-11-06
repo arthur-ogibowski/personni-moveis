@@ -1,21 +1,13 @@
 <template>
   <div>
     <h1 class="perfil-title"><el-icon style="font-size:25px"><UserFilled /></el-icon>Minha Conta</h1>
-    <el-tabs v-model="activeName" @tab-click="handleClick">
-    <el-tab-pane label="Geral" name="first"></el-tab-pane>
-    <el-tab-pane label="Pedidos" name="second">
-      <el-table :data="pedidos" class="perfil-table" style="width: 100%">
-        <el-table-column prop="orderId" label="#" width="100" />
-        <el-table-column prop="totalPrice" label="Valor Total" />
-        <el-table-column prop="status" label="Status" />
-        <el-table-column>
-          <el-button plain>Detalhes</el-button>
-        </el-table-column>
-      </el-table>
-    </el-tab-pane>
-    <el-tab-pane label="Configurações" name="third"></el-tab-pane>
-  </el-tabs>
-
+    <el-tabs class="profile-links" v-model="activeName" @tab-click="handleClick">
+      <el-tab-pane label="Geral" name="perfil"></el-tab-pane>
+      <el-tab-pane label="Pedidos" name="pedidos"></el-tab-pane>
+      <el-tab-pane label="Configurações" name="configuracoes"></el-tab-pane>
+      <el-tab-pane label="Endereços" name="enderecos"></el-tab-pane>
+      <el-button class="sair-btn" type="text" @click="handleLogout">Sair</el-button>
+    </el-tabs>
   </div>
 </template>
 
@@ -26,12 +18,13 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      pedidos: [],
-      page: 1,
-      pageSize: 10,
-    }
+      activeName: 'perfil' // Define 'first' como ativo por padrão
+    };
   },
   methods: {
+    handleClick(tab) {
+      this.activeName = tab.name; // Atualiza o elemento ativo ao ser clicado
+    },
     handleLogout() {
       this.$confirm('Tem certeza que deseja sair?', 'Confirmação', {
         confirmButtonText: 'Sim',
@@ -46,15 +39,18 @@ export default {
       });
     }
   },
-
-  created() {
-    axios.get('http://localhost:8081/orders')
-      .then(response => {
-        this.pedidos = response.data;
-      })
-      .catch(error => {
-        console.error('Erro ao obter dados da API:', error);
-      });
+  watch: {
+    activeName(newTab) {
+      if (newTab === 'perfil') {
+        this.$router.push('/perfil');
+      } else if (newTab === 'pedidos') {
+        this.$router.push('/perfil/pedidos');
+      } else if (newTab === 'configuracoes') {
+        this.$router.push('/perfil/configuracoes');
+      } else if (newTab === 'enderecos') {
+        this.$router.push('/perfil/enderecos')
+      }
+    }
   },
 }
 </script>
@@ -91,9 +87,9 @@ h1.perfil-title{
     }
 }
 
-// .profile-links {
-//   display: flex;
-// }
+.profile-links {
+  display: flex;
+}
 
 .sair-btn, .sair-btn:hover {
   color: red !important;

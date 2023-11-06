@@ -38,12 +38,12 @@
                 </el-menu-item>
               </router-link> 
             
+              <router-link to="/admin/usuarios">
                 <el-menu-item index="4">
-                  <router-link to="/admin/usuarios">
                     <el-icon><UserFilled /></el-icon>
                     <span>Usuários</span>
-                  </router-link>
                 </el-menu-item>
+              </router-link>
               
                 <el-menu-item index="5">
                   <router-link to="/admin/configuracoes">

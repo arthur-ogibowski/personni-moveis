@@ -21,37 +21,58 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
             <div class="endereco" v-if="currentStep == 0">
                 <h1>Endereço de entrega</h1>
-                <el-form :model="endereco" label-position="top">
-                    <el-col :span="10">
-                        <el-form-item label="CEP">
-                            <el-input placeholder="#####-###" v-model="endereco.cep" required @blur="consultarCEP"
-                                v-mask="'#####-###'" maxlength="9"></el-input>
-                        </el-form-item>
-                    </el-col>
-                    <el-alert type="info" v-if="!cepExists" show-icon :closable="false">
-                        <p>O endereço será automaticamente preenchido assim que o CEP for validado.</p>
-                    </el-alert>
-
-                    <div class="after-cep" v-loading="cepLoading">
-                        <el-form-item label="Rua">
-                            <el-input v-model="endereco.rua" :disabled="!cepExists" required></el-input>
-                        </el-form-item>
-                        <div class="small-inputs">
-                            <el-form-item label="Número">
-                                <el-input v-model="endereco.numero" :disabled="!cepExists" required></el-input>
-                            </el-form-item>
-                            <el-form-item label="Complemento (Opcional)">
-                                <el-input v-model="endereco.complemento" :disabled="!cepExists"></el-input>
-                            </el-form-item>
-                            <el-form-item label="Cidade">
-                                <el-input v-model="endereco.cidade" :disabled="!cepExists" required></el-input>
-                            </el-form-item>
-                            <el-form-item label="Estado">
-                                <el-input v-model="endereco.estado" :disabled="!cepExists" required></el-input>
-                            </el-form-item>
-                        </div>
+                <h2 class="titulo-address">Escolha um endereço cadastrado</h2>
+                <el-radio-group v-model="addressChoice">
+                    <el-radio label="existingAddress">Escolher endereço cadastrado</el-radio>
+                </el-radio-group>
+                <div v-if="addressChoice === 'existingAddress'">
+                    
+                <div v-for="address in userAddresses" :key="address.addressId">
+                        <label :for="address.addressId" class="radio-label">
+                        <input type="radio" :id="address.addressId" v-model="selectedAddress" :value="address" />
+                        <span class="radio-button"></span>
+                            {{ address.addressNickname }}
+                        </label>
                     </div>
-                </el-form>
+                </div>
+
+                <h2 class="titulo-address">Cadastre um endereço</h2>
+
+                <el-radio-group v-model="addressChoice">
+                    <el-radio label="newAddress" @change="clearSelectedAddress">Cadastrar novo endereço</el-radio>
+                </el-radio-group>
+
+      <el-form :model="endereco" label-position="top" v-if="addressChoice === 'newAddress'">
+        <el-col :span="10">
+          <el-form-item label="CEP">
+            <el-input placeholder="#####-###" v-model="endereco.cep" required @blur="consultarCEP"
+              v-mask="'#####-###'" maxlength="9"></el-input>
+          </el-form-item>
+      </el-col>
+      <el-alert type="info" v-if="!cepExists" show-icon :closable="false">
+        <p>O endereço será automaticamente preenchido assim que o CEP for validado.</p>
+      </el-alert>
+
+      <div class="after-cep" v-loading="cepLoading">
+        <el-form-item label="Rua">
+          <el-input v-model="endereco.rua" :disabled="!cepExists" required></el-input>
+        </el-form-item>
+        <div class="small-inputs">
+          <el-form-item label="Número">
+            <el-input v-model="endereco.numero" :disabled="!cepExists" required></el-input>
+          </el-form-item>
+          <el-form-item label="Complemento (Opcional)">
+            <el-input v-model="endereco.complemento" :disabled="!cepExists"></el-input>
+          </el-form-item>
+          <el-form-item label="Cidade">
+            <el-input v-model="endereco.cidade" :disabled="!cepExists" required></el-input>
+          </el-form-item>
+          <el-form-item label="Estado">
+            <el-input v-model="endereco.estado" :disabled="!cepExists" required></el-input>
+          </el-form-item>
+        </div>
+      </div>
+    </el-form>
 
                 <div class="actions">
                     <router-link to="/carrinho"><el-button type="info" plain><el-icon>
@@ -129,11 +150,12 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                         </h4>
                     </div>
                     <div class="card-item subtotal">
+                        <el-text type="info" size="medium">Total ({{ totalAmount() }} itens): </el-text>
                         <h3> {{ totalPrice() != 0 ? "R$" + formatPrice(totalPrice()) : "--" }}
                         </h3>
                     </div>
 
-                    <img v-if="QrCode != null" :src="QrCode">
+                    <img v-if="QrCode != null" :src="'data:image/png;base64,' + QrCode">
 
 
 
@@ -229,13 +251,16 @@ export default {
             products: [],
             regularProducts: [],
             productCmps: [],
+            userAddresses: [],
             cepExists: false,
+            selectAddress: null,
+            addressChoice: 'existingAddress',
         };
     },
     created() {
         // Usuário deve estar logado para acessar checkout.
         AuthService.shouldRedirectToLogin(this.$router);
-
+        
         const loading = ElLoading.service({
             lock: true,
             text: 'Carregando',
@@ -246,48 +271,52 @@ export default {
         this.regularProducts = cartService.getCartItems();
         this.cmpProducts = cartService.getCmpItems();
 
+        // Faça a solicitação GET para obter os endereços do usuário
+        this.loadUserAddresses();
+
         this.products = this.regularProducts.concat(this.cmpProducts);
         setTimeout(() => {
             loading.close()
         }, 250)
     },
     methods: {
+        // selectAddress(address) {
+        //     this.selectedAddress = address;
+        // },
+        clearSelectedAddress() {
+            this.selectedAddress = null;
+        },
+        totalAmount() {
+            let total = 0;
+            const amounTotal = cartService.getCartItems().forEach(prod => total += prod.amount);
+            return amounTotal;
+        },
         /** Faz pedidos e retorna qrcode pix. */
         makeOrder() {
             const config = { headers: { Authorization: AuthService.getToken() } }
-            const getReqProduct = [];
-            const getReqCmp = [];
-            // Insere produtos no array de prods.
-            if (cartService.getCartItems().length > 0) {
-                cartService.getCartItems().forEach(prod => getReqProduct.push(
-                    {
-                        product: prod,
+            // Configura objeto order para processar pedido no back.
+           const ordersReq = [];
+            cartService.getCartItems().forEach(prod => ordersReq.push(
+                {
+                    requestProduct: {
+                        product: prod, 
                         amount: prod.amount
-                    }
-                ));
-            }
-            // Insere cmps no array de cmps.
-            if (cartService.getCmpItems().length > 0) {
-                cartService.getCmpItems().forEach(cmp => getReqCmp.push(
-                    {
-                        productCmp: cmp,
-                        amount: cmp.amount
-                    }
-                ));
-            }
-            // Monta dto para processamento do pedido no back.
-            const ordersReq = {
-                requestProduct: getReqProduct,
-                requestCmp: getReqCmp
-            }
+                    },
+                    // requestCmp = {
+                    //     productCmp: null,
+                    //     amount: null
+                    // }
+                }
+            ));
             // Faz requisição enviando pedidos.
-            if ((cartService.getCartItems() != null || cartService.getCartItems().length > 0)
-                && (cartService.getCmpItems() != null || cartService.getCmpItems().length > 0)) {
-                axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
+            if(cartService.getCartItems() != null || cartService.getCartItems().length > 0) {
+                axios.post('http://localhost:8081/orders/create-order', config, ordersReq)
                     .then(response => {
                         ElMessage.success('Pedido registrado com sucesso.');
                         // Seta pix em tela.
-                        this.QrCode = response.data;
+                        const dataUrl = response.data;
+                        const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
+                        this.QrCode = base64String;
                         /** Limpa carrinho após finalizar o pedido. */
                         cartService.removeAllFromCarts();
                     })
@@ -295,11 +324,8 @@ export default {
                         ElMessage.error('Não foi possível registrar o pedido.');
                         console.error(error);
                     });
-            } else {
-                ElMessage.warning('Devem haver produtos no carrinho para realizar o pedido!');
             }
         },
-       
         consultarCEP() {
             const cep = this.endereco.cep;
 
@@ -406,6 +432,19 @@ export default {
             //     let total = 0;
             // }, 0);
             return 0;
+        },
+        loadUserAddresses() {
+            const config = { headers: { Authorization: AuthService.getToken() } };
+
+            // Substitua a URL abaixo pela URL real do seu endpoint de endereços
+            axios.get('http://localhost:8081/users/get-user-address', config)
+                .then((response) => {
+                  this.userAddresses = response.data; // Armazene os endereços na variável do componente
+                })
+                .catch((error) => {
+                  // Lide com erros de forma apropriada, por exemplo, exibindo uma mensagem de erro
+                  console.error('Erro ao carregar endereços:', error);
+            });
         },
     },
 }
@@ -617,7 +656,7 @@ export default {
 
             .card-item.subtotal {
                 display: flex;
-                justify-content: end;
+                 justify-content: flex-end;
                 align-items: baseline;
 
                 h4 {
@@ -631,7 +670,7 @@ export default {
 
             .card-item.frete {
                 display: flex;
-                justify-content: end;
+                 justify-content: flex-end;
                 align-items: baseline;
 
                 h4 {
@@ -669,5 +708,98 @@ export default {
         }
     }
 
+}
+
+// .radio-label {
+//   display: flex;
+//   align-items: center;
+//   margin-top: 30px;
+//   margin-bottom: 30px;
+//   cursor: pointer;
+//   font-size: 14px;
+//   line-height: 22px;
+// }
+
+// .radio-button {
+//   width: 20px;
+//   height: 20px;
+//   border: 2px solid #007BFF; /* Cor da borda do círculo */
+//   border-radius: 50%; /* Torna o elemento circular */
+//   margin-right: 10px;
+//   position: relative;
+// }
+
+// input[type="radio"] {
+//   display: none; /* Oculta o input padrão */
+// }
+
+// input[type="radio"]:checked + .radio-button::before {
+//    content: "X"; /* Insere um "X" no círculo quando selecionado */
+//    position: absolute;
+//    top: 50%;
+//    left: 50%;
+//    transform: translate(-50%, -50%);
+//    font-size: 14px;
+//    font-weight: bold;
+//   color: #007BFF; /* Cor do "X" quando selecionado */
+// }
+
+// .titulo-address {
+//     margin-bottom: 20px;
+// }
+
+.titulo-address {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+
+    .el-radio-group {
+        margin-left: 20px;
+        width: fit-content;
+        display: inline-block;
+    }
+    
+    .el-radio-button {
+        display: inline; /* Faz o botão de rádio ficar em linha com o texto */
+    }
+}
+
+body .el-radio-group {
+    display: inline-block;
+    flex-direction: column;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 22px;
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+.radio-button {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007BFF;
+    border-radius: 50%;
+    margin-right: 10px;
+    position: relative;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+input[type="radio"]:checked + .radio-button::before {
+    content: "X";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: #007BFF;
 }
 </style>
