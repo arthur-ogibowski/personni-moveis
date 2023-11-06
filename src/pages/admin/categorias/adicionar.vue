@@ -6,7 +6,6 @@
             <el-form-item label="Nome" required>
                 <el-input v-model="categoria.name"></el-input>
             </el-form-item>
-            <hr>
             <h2>Modelagem</h2>
             <el-form-item>
                 <el-switch v-model="categoria.allow_creation"></el-switch>
@@ -16,22 +15,26 @@
 
                 <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
                     <el-divider></el-divider>
-                    <el-form-item label="Seção">
-                        <el-input v-model="section.name" class="section-input"></el-input>
-
-                        <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;"
-                            :size="20" color="#A8A8A8">
-                            <Delete />
-                        </el-icon>
-                    </el-form-item>
-                    <el-form-item label="Ordem">
+                    <h1 v-if="section.name">{{  section.name }}</h1>
+                    <h1 v-else>SEÇÃO</h1>
+                    <div class="section-upper">
+                        <el-form-item label="Nome">
+                            <el-input v-model="section.name" class="section-input"></el-input>
+                        </el-form-item>
+                        <el-form-item label="Ordem">
                         <el-input-number 
                             :precision="0" 
                             :min="1"
                             :max="categoria.sectionCmps.length"
                             v-model="section.index">
                         </el-input-number>
-                    </el-form-item>
+                        </el-form-item>
+
+                        <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;"
+                            :size="20" color="#A8A8A8">
+                            <Delete />
+                        </el-icon>
+                    </div>
 
 
                     <div class="elements">
@@ -51,7 +54,20 @@
                                     <el-input v-model="element.name"></el-input>
                                 </el-form-item>
 
+                                <div class="element-index-mandatory">
 
+                                    <el-form-item label="Ordem">
+                                        <el-input-number 
+                                            size="small"
+                                            :precision="0" 
+                                            :min="1"
+                                            v-model="element.index">
+                                        </el-input-number>
+                                    </el-form-item>
+
+                                    <el-checkbox v-model="element.mandatory" label="Obrigatório" checked="true" size="large" />
+                                </div>
+                    
                                 <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
                                     <el-divider></el-divider>
                                     <el-icon v-on:click="deleteCascade(section, element, option)"
@@ -68,6 +84,7 @@
                                                     <el-input v-model="option.price" size="small">
                                                         <template #prepend>R$</template></el-input>
                                                 </el-form-item>
+
                                     </div>
                                         <el-form-item label="Imagem">
                                             <div>
@@ -119,7 +136,7 @@
 <script>
 import axios from 'axios';
 import AuthService from '@/store/authService.js';
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElLoading } from 'element-plus'
 import imgConverter from '@/store/imgConverter.js';
 
 export default {
@@ -175,6 +192,11 @@ export default {
 
         criarCategoria() {
             // const token = AuthService.getToken();
+            const loading = ElLoading.service({
+                lock: true,
+                text: 'Criando categoria',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
             axios.post('http://localhost:8081/category', this.categoria, {
                 //   headers: {
                 //     Authorization: `Bearer ${token}`, // Adiciona o token no cabeçalho
@@ -188,6 +210,7 @@ export default {
                             message: 'Categoria criada com sucesso.',
                             type: 'success',
                         })
+                        loading.close()
                         this.$router.push('/admin/categorias')
 
                     } else {
@@ -195,6 +218,7 @@ export default {
                             message: 'Erro ao criar a categoria.',
                             type: 'error',
                         })
+                        loading.close()
                     }
                 })
                 .catch((error) => {
@@ -202,20 +226,23 @@ export default {
                         message: 'Erro ao criar a categoria.',
                         type: 'error',
                     })
+                    loading.close()
                 })
         },
         newSection() {
             this.categoria.sectionCmps.push({
-                name: "Nova seção",
+                name: "",
                 imgUrl: "",
-                elementCmps: []
+                elementCmps: [],
+                index: this.categoria.sectionCmps.length + 1
             })
         },
 
         newElement(section) {
             section.elementCmps.push({
-                name: "Novo elemento",
+                name: "",
                 type: null,
+                index: section.elementCmps.length + 1,
                 optionCmps: []
             })
 
@@ -223,9 +250,9 @@ export default {
 
         newOption(element) {
             element.optionCmps.push({
-                name: "Nova opção",
+                name: "",
                 img: "",
-                price: 0,
+                price: "",
             })
 
         }
@@ -242,11 +269,28 @@ hr {
     border: 1px solid $admin-grey;
     margin: 30px 0;
 }
+.el-icon:hover{
+    color: red;
 
-.el-input.section-input {
-    width: 50%;
 }
+.el-input{
+    width: 300px;
+}
+.section-upper{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
+}
+.el-input.section-input {
+    width: 100%;
+}
+.element-index-mandatory {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
 .elements {
     display: flex;
     flex-direction: row;
@@ -261,8 +305,13 @@ hr {
 
     h2 {
         text-align: center;
-        color: $admin-grey;
+        color: $text-color;
         font-weight: 400;
+    }
+
+    .el-input{
+        width: 100%;
+    
     }
 }
 
@@ -275,9 +324,15 @@ hr {
   transition: var(--el-transition-duration-fast);
 }
 
-.avatar-uploader .el-upload:hover {
-  border-color: var(--el-color-primary);
+:deep(.avatar-uploader .el-upload:hover) {
+  border-color: $cta-color !important;
+
+    .el-icon {
+        color: $cta-color;
+    }
 }
+
+
 
 .el-icon.avatar-uploader-icon {
   font-size: 28px;
@@ -316,6 +371,7 @@ div.admin-container button.el-button{
 
     .el-icon {
         margin-right: 10px;
+        color: $cta-color;
     }
 }
 .divider-button{

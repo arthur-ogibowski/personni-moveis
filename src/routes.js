@@ -3,7 +3,10 @@ import NotFound from '@/pages/user/not-found.vue';
 
 import UserDashboard from '@/pages/user/perfil/dashboard.vue';
 import UserListarPedidos from '@/pages/user/perfil/pedidos.vue';
-import UserListarEnderecos from '@/pages/user/perfil/enderecos.vue';
+import UserConfigurations from '@/pages/user/perfil/configuration.vue';
+import UserAdresses from '@/pages/user/perfil/enderecos.vue';
+import AddUserAdress from '@/pages/user/perfil/addEndereco.vue';
+import EditUserAddress from '@/pages/user/perfil/editEndereco.vue';
 
 import ProdutosListar from '@/pages/user/produtos/listagem.vue';
 import ProdutosSingle from '@/pages/user/produtos/single.vue'
@@ -25,6 +28,7 @@ import AdminListarPedidos from '@/pages/admin/pedidos/listagem.vue';
 import AdminAdicionarCategoria from '@/pages/admin/categorias/adicionar.vue';
 import AdminListarUsuarios from '@/pages/admin/usuarios/listagem.vue';
 import AdminAdicionarUsuarios from '@/pages/admin/usuarios/adicionar.vue';
+import AdminEditarUsuario from '@/pages/admin/usuarios/editar.vue';
 
 
 import Login from '@/pages/login/login.vue';
@@ -39,7 +43,10 @@ export const routes = [
   { path: '/', component: Index },
   { path: '/perfil', component: UserDashboard},
   { path: '/perfil/pedidos', component: UserListarPedidos},
-  { path: '/perfil/enderecos', component: UserListarEnderecos},
+  { path: '/perfil/configuracoes', component: UserConfigurations},
+  { path: '/perfil/enderecos', component: UserAdresses},
+  { path: '/perfil/adicionar-endereco', component: AddUserAdress},
+  { path: '/perfil/editar-endereco/:addressId', component: EditUserAddress},
 
   { path: '/produtos', component: ProdutosListar },
   { path: '/produtos/:id', component: ProdutosSingle },
@@ -61,6 +68,7 @@ export const routes = [
   { path: '/admin/categorias/adicionar', component: AdminAdicionarCategoria },
   { path: '/admin/usuarios', component: AdminListarUsuarios },
   { path: '/admin/usuarios/adicionar', component: AdminAdicionarUsuarios },
+  { path: '/admin/usuarios/:id', component: AdminEditarUsuario },
 
 
   { path: '/:path(.*)', component: NotFound },

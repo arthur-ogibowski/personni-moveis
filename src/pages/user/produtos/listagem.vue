@@ -228,7 +228,7 @@ div.el-card{
         div.card-bottom-details{
           display: flex;
           justify-content: space-between;
-          align-items: end;
+          align-items: flex-end;
         }
 
       }

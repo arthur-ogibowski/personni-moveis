@@ -1,7 +1,7 @@
 //$primary-color: #C5C1C0;
 $primary-color: #FEFEFE;
 //$secondary-color: #0a1612;
-$secondary-color: #F0F0F0;
+$secondary-color: #f2f3f5;
 $secondary-darker: #E3E3E3;
 //$tertiary-color: #1a2930;
 //$tertiary-color: #113E21;
@@ -88,7 +88,7 @@ body {
     flex-direction: column;
 }
 body.admin-body{
-    background-color: #EFEFEF;
+    background-color: $secondary-color;
 }
 body.checkout-body, body.cmp-body{
     background-color: $primary-color;

@@ -38,7 +38,7 @@ export default {
 @import '@/assets/styles/scss/basics.scss';
 div.container{
   display: flex;
-  justify-content: start;
+   justify-content: flex-start;
   flex-direction: column;
   align-items: center;
   background-color: #CECECE;

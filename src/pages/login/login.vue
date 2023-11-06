@@ -71,7 +71,7 @@ export default {
             const usuario = jwtDecode(token);
             console.log('Informações do usuário:', usuario);
 
-            this.$router.push('/');
+            this.$router.push(this.$router.options.history.state.back || '/');
           } else {
             console.error('Erro ao fazer login. Código de status:', response.status);
           }
@@ -89,7 +89,7 @@ export default {
 
 div.container{
   display: flex;
-  justify-content: start;
+   justify-content: flex-start;
   flex-direction: column;
   align-items: center;
   background-color: #CECECE;

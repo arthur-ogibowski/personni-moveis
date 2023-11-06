@@ -22,7 +22,7 @@
             <div class="inner-section" v-if="currentSection == categoria.sectionCmps.indexOf(section) && section.name !== 'Revisar'">
               <div class="section-elements">
                 <div v-for="element in section.elementCmps" :key="element.id" class="ml-4 element-item">
-                  <h2>{{ element.name }}</h2>
+                  <h2>{{ element.name }}   <span v-if="!element.mandatory" style="font-size: 12px;">(Opcional)</span></h2>
                   <el-radio-group v-model="selected[element.id]">
                     <el-radio-button
                       v-for="option in element.optionCmps"
@@ -62,22 +62,43 @@
 
       <div class="revisar-section">
             <div v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">
+              <el-divider></el-divider>
+              <div class="revisar-section-section">
 
                 <h2>{{ optionInfo.section }}</h2>
-              <div class="revisar-section-list">
-                <div v-for="element in optionInfo.elements" :key="element" class="revisar-section-item">
-                  <div class="element-image" v-if="element.img">
-                        <el-image :src="element.img"/>
+              <div class="revisar-main-section">
+                <div v-for="element in optionInfo.elements" :key="element">
+                  <div v-if="element.index == 1" class="revisar-section-item main">
+                    <div class="element-image-main" v-if="element.img">
+                          <el-image :src="element.img"/>
+                    </div>
+                    <div class="element-image-main" v-else>
+                          <img src="../../../assets/img/personniLogo-Grey.png"/>
+                    </div>
+                    <div class="revisar-section-item-option">
+                      <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
+                      <h3 class="element-price">{{ element.price != 0 ? "R$ " +  element.price : "--" }}</h3>
+                    </div>
                   </div>
-                  <div class="element-image" v-else>
-                        <img src="../../../assets/img/personniLogo-Grey.png"/>
-                  </div>
-                  <div class="revisar-section-item-option">
-                    <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
-                    <h3 class="element-price">R$ {{ element.price }}</h3>
+                </div>
+                <div class="revisar-secondary-section">
+                  <div v-for="element in optionInfo.elements" :key="element">
+                    <div v-if="element.index > 1" class="revisar-section-item">
+                      <div class="element-image" v-if="element.img">
+                            <el-image :src="element.img"/>
+                      </div>
+                      <div class="element-image" v-else>
+                            <img src="../../../assets/img/personniLogo-Grey.png"/>
+                      </div>
+                      <div class="revisar-section-item-option">
+                        <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
+                        <h3 class="element-price">{{ element.price != 0 ? "R$ " + element.price : "--" }}</h3>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
+            </div>
           </div>
         </div>
         <div class="preco-final">
@@ -105,6 +126,7 @@ export default {
       currentSection: 0,
       selected: [], 
       selectedOptionsInfo: [], 
+      sectionAllSelected: false,
       products_cmp: {
         id: 0,
         value: 0,
@@ -131,13 +153,27 @@ export default {
       .then((response) => {
         if (response.status === 200) {
           this.categoria = response.data;
+
+          this.categoria.sectionCmps.sort((a, b) => a.index - b.index);
+
+          this.categoria.sectionCmps.forEach((section) => {
+            section.elementCmps.sort((a, b) => a.index - b.index);
+          });
+
+          // add index increment to every element
+          this.categoria.sectionCmps.forEach((section) => {
+            section.elementCmps.forEach((element) => {
+              element.optionCmps.forEach((option) => {
+                option.index = this.categoria.sectionCmps.indexOf(section) + this.categoria.sectionCmps.length + this.categoria.sectionCmps.indexOf(section.elementCmps) + this.categoria.sectionCmps.indexOf(section.elementCmps.indexOf(element)) + this.categoria.sectionCmps.indexOf(section.elementCmps.indexOf(element.optionCmps)) + this.categoria.sectionCmps.indexOf(section.elementCmps.indexOf(element.optionCmps.indexOf(option)));
+              });
+            });
+          });
+
           this.categoria.sectionCmps.push({
             name: "Revisar",
             elementCmps: [],
           });
-          setTimeout(() => {
-            loading.close()
-          }, 250)
+          loading.close()
         } else {
           console.error('Erro ao buscar dados da API:', response.statusText);
         }
@@ -245,6 +281,7 @@ export default {
               "imgUrl": "string",
               "type": "string",
               "sectionCmpId": 0,
+              "index": element.index,
               "optionProductCmpDto": {
                 "id": option.id,
                 "name": option.name,
@@ -269,6 +306,7 @@ export default {
               "imgUrl": "string",
               "type": "string",
               "sectionCmpId": 0,
+              "index": element.index,
               "optionProductCmpDto": {
                 "id": option.id,
                 "name": option.name,
@@ -295,9 +333,10 @@ export default {
         // push element to elements array
         const elementInfo = {
           element: element.name,
+          index: element.index,
           option: option.name,
           price: option.price,
-          img: option.img
+          img: option.img,
         };
 
         selectedOptionsInfo[selectedOptionsInfo.length - 1].elements.push(elementInfo);
@@ -444,6 +483,7 @@ h2{
               font-size: 14px;
               font-weight: 600;
               white-space: normal;
+              margin-bottom: 5px;
             }
             .option-price{
               font-size: 12px;
@@ -514,92 +554,157 @@ h2{
   }
 .revisar-section{
 
-
-h2{
-  font-size: 20px;
-}
-.revisar-section-list {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  border: 1px solid $admin-grey;
-  padding: 10px;
-  margin-bottom: 30px;
+  justify-content: center;
+  flex-direction: column;
+  h2{
+    font-size: 36px;
+    font-weight: 400;
+    width: 150px;
+    text-align: start;
+    margin: 0px 20px 0px 0px;
+  }
 
-
-  .revisar-section-item{
-    margin: 0 10px 0 0;
-    padding: 10px;
-    min-width: 150px;
-    width: 200px;
+  .revisar-section-section{
     display: flex;
-    justify-content: space-around;
-    flex-direction: column;
-    border: 1px solid $secondary-color;
+    flex-direction: row;
+    align-items: center;
+  }
+  .revisar-main-section {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    //border: 1px solid $admin-grey;
+    padding: 10px;
+    margin-bottom: 30px;
 
-    .element-option{
-      font-size: 14px;
-      font-weight: 400;
-      color: $cta-color;
-    }
-    .element-price{
-      font-size: 12px;
-      font-weight: 400;
-      min-width: 50px;
-      text-align: end;
-      color: $text-color;
-    }
+    .revisar-section-item{
+      margin: 0 10px 0 0;
+      padding: 0;
+      min-width: 80px;
+      width: 80px;
+      height: 80px;
+      display: flex;
+      justify-content: space-around;
+      flex-direction: column;
+      border: 1px solid $secondary-color;
 
-    .el-image{
-      width: 150px;
-      height: 150px; 
 
-      :deep(.el-image__error){
-        min-height: 150px;
+      .element-option{
+        font-size: 14px;
+        font-weight: 400;
+        color: $cta-color;
+      }
+      .element-price{
+        font-size: 12px;
+        font-weight: 800;
+        min-width: 50px;
+        text-align: end;
+        color: $text-color;
+      }
+
+      .el-image{
+        width: 178px;
+        height: 178px; 
+
+        .el-image__error{
+          min-height: 178px;
+          min-width: 178px;
+          
+        }
+      }
+
+      img {
+        width: 178px;
+      }
+
+      .element-image {
+        width: 178px;
+        height: 178px;
+        display: flex;
+        margin: 10px 0;
+        justify-content: center;
+        align-items: center;
+        align-self: center;
+      }
+
+      h4{
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size:  12px;
+        text-align: left;
+        color: $text-color;
+        font-weight: 400;
+      }
+      .el-text {
+        max-width: 50%;
+        word-break: normal;
+      }
+      p{
+        font-size: 12px;
+      }
+
+
+
+      .revisar-section-item-option{
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-left: 20px;
+        :deep(.el-text) {
+              align-self: end !important;
+        }
       }
     }
 
-    img {
-      width: 150px;
+    .main{
+      width: 340px;
+      height: 180px;
+      flex-direction: row;
+      padding: 0px 10px 0px 5px;
     }
+  }
 
-    .element-image {
-      width: 150px;
-      height: 150px;
+  .revisar-secondary-section {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    height: 180px;
+
+    .revisar-section-item{
+      padding: 0;
+      min-width: 250px;
+      margin: 5px;
+      height: 80px;
       display: flex;
-      margin: 10px 0;
-      justify-content: center;
-      align-items: center;
-      align-self: center;
+       justify-content: flex-start;
+      flex-direction: row;
+      border: 1px solid #f2f3f5;
+      align-content: center;
     }
 
-    h4{
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size:  14px;
-      text-align: left;
-      color: $admin-grey;
-      font-weight: 400;
-    }
-    .el-text {
-      max-width: 50%;
-      word-break: normal;
-    }
-    p{
-      font-size: 12px;
-    }
+    div.element-image, .el-image{
+      width: 80px !important;
+      height: 80px !important;
+      min-width: 80px !important; 
 
+      .el-image__error{
+        min-height: 80px !important;
+        min-width: 80px !important;
 
+      }
+    }
     .revisar-section-item-option{
       display: flex;
       justify-content: space-between;
-      align-items: end;
+      margin-left: 20px;
+      align-items: flex-end !important;
       :deep(.el-text) {
             align-self: end !important;
       }
     }
   }
-}
 }
 
 
@@ -638,7 +743,7 @@ div.el-radio-group{
 .preco-final {
   display: flex;
   align-items: baseline;
-  justify-content: end;
+   justify-content: flex-end;
 
   h2 {
     margin-left: 10px;

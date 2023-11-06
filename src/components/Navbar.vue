@@ -45,14 +45,23 @@ export default {
     },
     /** Retorna true para usuários logados com permissão de colab ou admin. */
     isUserSysColaborator() {
+      const token = AuthService.getToken();  // Obtém o token JWT
+      if (token) {
+        const usuario = jwtDecode(token);  // Decodifica o token para obter as informações do usuário
+        // Verifica se o perfil do usuário é "COLABORATOR" ou "ADMIN"
+        return usuario && (usuario.userRole === 'COLABORATOR' || usuario.userRole === 'ADMIN');
+      }
+      return false;  // Retorna false se não houver token ou se o perfil não for "COLABORATOR" ou "ADMIN"
       //return AuthService.isUserColaborator();
-      return true
+      // return true
     }
   },
 }
 </script>
 
 <style scoped lang="scss">
+
+
 .flex-grow {
   flex-grow: 1;
 }
@@ -66,4 +75,19 @@ export default {
   margin: 0 20px;
 }
 
+@media (max-width: 768px) {
+  .el-menu{
+    height: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding-bottom: 2rem;
+    padding-right: 0;
+  }
+  .cta{
+    margin: 0 10px;
+  }
+}
 </style>

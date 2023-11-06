@@ -1,9 +1,10 @@
 <template>
-    <div class="admin-container">
+    <div class=""></div>
+    <!--<div class="admin-container">
         <h1><router-link class="underline-router" to="/admin/produtos">Produtos</router-link> > Editar</h1>
         <el-form :model="product" label-width="*" label-position="top">
             <h2>Produto</h2>
-            <!-- Categoria -->
+
             <el-form-item label="Categoria">
                 <el-select
                     v-model="this.selectedCategory"
@@ -17,11 +18,13 @@
                         :value="category.id" />
                 </el-select>
             </el-form-item>
-            <!-- Nome -->
+
+            
             <el-form-item required label="Nome">
                 <el-input placeholder="Novo produto" v-model="product.name"></el-input>
             </el-form-item>
-            <!-- Preço -->
+
+            
             <el-form-item required label="Preço">
                 <el-input-number 
                     :precision="2" 
@@ -30,7 +33,8 @@
                     v-model="product.value">
                 </el-input-number>
             </el-form-item>
-            <!-- Estoque -->
+
+            
             <el-form-item required label="Estoque">
                 <el-input-number 
                     v-model="product.quantity"
@@ -39,7 +43,8 @@
                     controls-position="right">
                 </el-input-number>
             </el-form-item>
-            <!-- Descrição -->
+
+            
             <el-form-item required label="Descrição">
                 <el-input 
                     type="textarea" 
@@ -48,11 +53,13 @@
                     show-word-limit
                     v-model="product.description"></el-input>
             </el-form-item>
-            <!-- Disponível -->
+
+            
             <el-form-item required label="Produto esta disponível">
                 <el-switch active-text="Sim" inactive-text="Não" v-model="product.available"></el-switch>
             </el-form-item>
-            <!-- Detalhes do produto -->
+
+            
             <h2>Detalhes do produto</h2>
             <div class="elements">
                 <div class="element-item" v-for="detail in product.details" v-bind:key="detail">
@@ -82,7 +89,8 @@
                     <Plus />
                 </el-icon> Detalhe </el-button>
             </div>
-            <!-- Imagem principal -->
+
+            
             <el-form-item label="Imagem principal">
                 <div>
                     <el-upload
@@ -93,6 +101,7 @@
                         <el-button size="small" type="primary">Selecionar Imagem</el-button>
                     </el-upload>
                 </div>
+            </el-form-item>
 
                 <el-divider direction="vertical" />
 
@@ -166,7 +175,7 @@
             </el-form-item>
         </el-form>
         <h1>{{ this.product }}</h1>
-    </div>
+    </div>-->
 </template>
 
 <script>
@@ -426,15 +435,11 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/styles/scss/basics.scss";
 
-    padding: 0 20px 20px 20px;
-    width: 300px;
-    margin: 20px 20px 0 0;
-
     h2 {
         text-align: center;
         color: $admin-grey;
     }
-}
-}
+
+
 
 </style>

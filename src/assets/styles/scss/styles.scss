@@ -108,7 +108,7 @@ body{
         background-color: $secondary-color;
 
         h1 {
-            color: $admin-grey;
+            color: $text-color;
             font-family: lato-regular;
             font-size: 42px;
             font-style: normal;
@@ -157,6 +157,7 @@ body{
                     font-size: 14px;
                     height: 128px;
                     
+                    
 
                     &:hover{
                         background-color: transparent !important;
@@ -164,6 +165,10 @@ body{
                 }
                 tr:hover {
                     background-color: transparent !important;
+                }
+
+                td, tr, th{
+                    border-bottom: 0px solid transparent !important;
                 }
 
                 div.cell {
@@ -284,7 +289,7 @@ body{
         }
     }
     .el-divider__text{  
-        background-color: #EFEFEF;
+        background-color: $secondary-color;
         white-space: nowrap;
       }
     
@@ -300,6 +305,9 @@ body{
           text-transform: uppercase;
           letter-spacing: 0.5px;
           box-shadow: none;
+          display: flex;
+            justify-content: center;
+            align-items: center;
     
           &:hover{
             color: $cta-color;
@@ -343,6 +351,21 @@ body{
       }
       .el-table .descending .sort-caret.descending {
         border-top-color: $cta-color;
+      }
+      .el-checkbox__input.is-checked + .el-checkbox__label{
+        color: $cta-color;
+      }
+      .el-checkbox{
+        .is-checked{
+            color: $cta-color;
+            .el-checkbox__inner{
+                border-color: $cta-color;
+                background-color: $cta-color;
+            }
+        }
+      }
+      .el-checkbox__inner:hover{
+        border-color: $cta-color;
       }
 
 }
