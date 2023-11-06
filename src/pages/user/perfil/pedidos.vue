@@ -6,8 +6,8 @@
     <div class="perfil-content">
       <h1 class="page-title">Meus pedidos</h1>
       <el-table :data="pedidos" class="perfil-table" style="width: 100%">
-        <el-table-column prop="id" label="#" width="100" />
-        <el-table-column prop="data" label="Data" />
+        <el-table-column prop="orderId" label="#" width="100" />
+        <el-table-column prop="totalPrice" label="Valor Total" />
         <el-table-column prop="produtos" label="Produtos" />
         <el-table-column prop="pagamento" label="Método de pagamento" />
         <el-table-column prop="valor" label="Valor total" />

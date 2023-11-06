@@ -8,7 +8,7 @@
     </el-menu>
     <div class="container">
 
-        <h2>Escolha a categoria</h2>
+        <h2>Escolha a Categoria</h2>
 
         <div class="categorias-grid">
           <router-link :to="'/modelar/' + i.id" v-for="i in categorias" :key="i">

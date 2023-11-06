@@ -6,15 +6,8 @@
             <h2>Produto</h2>
 
             <el-form-item label="Categoria">
-                <el-select
-                    v-model="this.selectedCategory"
-                    filterable
-                    collapse-tags
-                    clearable
-                    placeholder="Selecione">
-                    <el-option v-for="category in this.fetchedCategories"
-                        :key="category.id"
-                        :label="category.name"
+                <el-select v-model="this.selectedCategory" filterable collapse-tags clearable placeholder="Selecione">
+                    <el-option v-for="category in this.fetchedCategories" :key="category.id" :label="category.name"
                         :value="category.id" />
                 </el-select>
             </el-form-item>
@@ -26,31 +19,20 @@
 
             
             <el-form-item required label="Preço">
-                <el-input-number 
-                    :precision="2" 
-                    :min="1"
-                    controls-position="right"
-                    v-model="product.value">
+                <el-input-number :precision="2" :min="1" controls-position="right" v-model="product.value">
                 </el-input-number>
             </el-form-item>
 
             
             <el-form-item required label="Estoque">
-                <el-input-number 
-                    v-model="product.quantity"
-                    :change="manageProdQuantity()"
-                    :min="0"
+                <el-input-number v-model="product.quantity" :change="manageProdQuantity()" :min="0"
                     controls-position="right">
                 </el-input-number>
             </el-form-item>
 
             
             <el-form-item required label="Descrição">
-                <el-input 
-                    type="textarea" 
-                    maxlength= "250"
-                    placeholder="Descrição..."
-                    show-word-limit
+                <el-input type="textarea" maxlength="250" placeholder="Descrição..." show-word-limit
                     v-model="product.description"></el-input>
             </el-form-item>
 
@@ -63,7 +45,11 @@
             <h2>Detalhes do produto</h2>
             <div class="elements">
                 <div class="element-item" v-for="detail in product.details" v-bind:key="detail">
-                    <el-icon v-on:click="removeItem(product.details, detail)" style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#FF0000"><CloseBold /></el-icon>
+                    <el-icon v-on:click="removeItem(product.details, detail)"
+                        style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20"
+                        color="#FF0000">
+                        <CloseBold />
+                    </el-icon>
                     <div class="element-card">
                         <h2>{{ detail.detailField.toUpperCase() }}</h2>
                         <el-row :gutter="20">
@@ -74,30 +60,22 @@
                             </el-col>
                             <el-col :span="12">
                                 <el-form-item label="Texto do detalhe">
-                                    <el-input 
-                                        type="textarea" 
-                                        maxlength= "250"
-                                        placeholder="Descrição..."
-                                        show-word-limit label="Conteúdo"
-                                        v-model="detail.fieldContent" size="small"></el-input>
+                                    <el-input type="textarea" maxlength="250" placeholder="Descrição..." show-word-limit
+                                        label="Conteúdo" v-model="detail.fieldContent" size="small"></el-input>
                                 </el-form-item>
                             </el-col>
                         </el-row>
                     </div>
                 </div>
                 <el-button type="primary" v-on:click="newDetail()"><el-icon>
-                    <Plus />
-                </el-icon> Detalhe </el-button>
+                        <Plus />
+                    </el-icon> Detalhe </el-button>
             </div>
 
             
             <el-form-item label="Imagem principal">
                 <div>
-                    <el-upload
-                        :show-file-list="true"
-                        :auto-upload="false"
-                        limit="1"
-                        @change="handleImageChange">
+                    <el-upload :show-file-list="true" :auto-upload="false" limit="1" @change="handleImageChange">
                         <el-button size="small" type="primary">Selecionar Imagem</el-button>
                     </el-upload>
                 </div>
@@ -117,7 +95,11 @@
                             <div class="element-item" v-for="section in product.sections" v-bind:key="section">
 
                                 <div class="element-card">
-                                    <el-icon v-on:click="removeItem(product.sections, section)" style="margin-right:-5px; float: right; margin-top: 10px; cursor: pointer;" :size="20" color="#A8A8A8"><CloseBold /></el-icon>
+                                    <el-icon v-on:click="removeItem(product.sections, section)"
+                                        style="margin-right:-5px; float: right; margin-top: 10px; cursor: pointer;"
+                                        :size="20" color="#A8A8A8">
+                                        <CloseBold />
+                                    </el-icon>
 
                                     <h2 v-if="section.name">{{ section.name.toUpperCase() }}</h2>
                                     <h2 v-else>SEÇÃO</h2>
@@ -127,51 +109,50 @@
                                     </el-form-item>
 
                                     <div class="option-item" v-for="option in section.options" v-bind:key="option">
-                                        <el-divider/>
+                                        <el-divider />
                                         <div class="inputs">
                                             <div class="basic-inputs">
-                                                    <el-form-item label="Opção">
-                                                        <el-input v-model="option.name" size="small"></el-input>
-                                                    </el-form-item>
-                                                    <el-form-item label="Preço">
-                                                        <el-input v-model="option.price" size="small">
-                                                            <template #prepend>R$</template></el-input>
-                                                    </el-form-item>
+                                                <el-form-item label="Opção">
+                                                    <el-input v-model="option.name" size="small"></el-input>
+                                                </el-form-item>
+                                                <el-form-item label="Preço">
+                                                    <el-input v-model="option.price" size="small">
+                                                        <template #prepend>R$</template></el-input>
+                                                </el-form-item>
                                             </div>
                                             <el-form-item label="Imagem">
                                                 <div>
                                                     <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
                                                         @change="handleOptionImageChange($event, option)">
                                                         <img v-if="option.mainImg" :src="option.mainImg" class="avatar" />
-                                                        <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
+                                                        <el-icon v-else class="avatar-uploader-icon">
+                                                            <Upload />
+                                                        </el-icon>
                                                     </el-upload>
                                                 </div>
                                             </el-form-item>
                                         </div>
                                     </div>
                                     <el-divider class="divider-button" v-on:click="newOption(section)">
-                                            <el-icon>
-                                                <Plus />
-                                            </el-icon> Opção
-                                        </el-divider>
+                                        <el-icon>
+                                            <Plus />
+                                        </el-icon> Opção
+                                    </el-divider>
 
                                 </div>
 
                             </div>
 
-                            
+
                             <el-divider class="divider-button" v-on:click="newSection()">
-                                    <el-icon>
-                                        <Plus />
-                                    </el-icon> Seção
-                                </el-divider>
+                                <el-icon>
+                                    <Plus />
+                                </el-icon> Seção
+                            </el-divider>
                         </div>
 
                     </div>
                 </div>
-            </div>
-            <el-form-item>
-                <el-button type="primary" @click="editProduct()">Salvar</el-button>
             </el-form-item>
         </el-form>
         <h1>{{ this.product }}</h1>
@@ -244,17 +225,17 @@ export default {
                 }).catch(error => {
                     console.error('Erro ao obter categorias: ', error);
                 });
-        
+
         },
         editProduct() {
             // Produto deve ter ao menos 1 em qtde para ser disponível.
-            if(this.product.quantity < 1 && this.product.available) {
+            if (this.product.quantity < 1 && this.product.available) {
                 ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos "1" em estoque');
                 return;
             }
 
             // Se id do produto na URl não é nulo, manda requisição para editar produto.
-            if(this.product.productId != null) {
+            if (this.product.productId != null) {
                 axios.put(`http://localhost:8081/products/${this.product.productId}`, this.product)
                     .then(response => {
                         ElMessage.success('Produto editado com sucesso!');
@@ -333,7 +314,7 @@ export default {
             this.removeItem(sections, sectionToBeRemoved);
         },
         removeOption(options, optionToBeRemoved) {
-            if(this.shouldMakeDeleteReq(options, optionToBeRemoved, optionToBeRemoved.optionId)) {
+            if (this.shouldMakeDeleteReq(options, optionToBeRemoved, optionToBeRemoved.optionId)) {
                 axios.delete(`http://localhost:8081/options/${optionToBeRemoved.optionId}`)
                     .then(response => {
                         // Se removido com sucesso não faz nada.
@@ -365,7 +346,7 @@ export default {
         },
         /** Se quantidade do produto é zero, torna indisponível. */
         manageProdQuantity() {
-            if(this.product.quantity < 1) {
+            if (this.product.quantity < 1) {
                 this.product.available = false;
             }
         },
@@ -373,7 +354,7 @@ export default {
             try {
                 // Adquire imagem como string base64.
                 this.product.mainImg = await imgConverter.fileToBase64String(file.raw);
-            } catch(error) {
+            } catch (error) {
                 ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
             }
         },
@@ -381,7 +362,7 @@ export default {
             try {
                 // Adquire imagem como string base64.
                 option.mainImg = await imgConverter.fileToBase64String(file.raw);
-            } catch(error) {
+            } catch (error) {
                 ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
             }
         },
@@ -389,7 +370,7 @@ export default {
             try {
                 // Adquire imagem como string base64.
                 this.product.secondaryImages.push(await imgConverter.fileToBase64String(file.raw));
-            } catch(error) {
+            } catch (error) {
                 ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
             }
         },
