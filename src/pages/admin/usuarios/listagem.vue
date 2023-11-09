@@ -6,11 +6,11 @@
     <el-table :data="usuarios" style="width: 100%;" class="admin-table">
         <el-table-column type="selection" width="50"/>
         <el-table-column prop="userId" label="ID" sortable width="80" />
-        <el-table-column prop="name" label="Nome" sortable width="250"/>
-        <el-table-column prop="email" label="Email" sortable width="250"/>
-        <el-table-column prop="cpf" sortable label="CPF" width="250"/>
-        <el-table-column prop="phoneNumber" sortable label="Telefone" width="250"/>
-        <el-table-column prop="profile" sortable label="Perfil" width="250">
+        <el-table-column prop="name" label="Nome" sortable width="*"/>
+        <el-table-column prop="email" label="Email" sortable width="*"/>
+        <el-table-column prop="cpf" sortable label="CPF" width="*"/>
+        <el-table-column prop="phoneNumber" sortable label="Telefone" width="*"/>
+        <el-table-column prop="profile" sortable label="Perfil" width="*">
 
         </el-table-column>
         <el-table-column label="Ações" prop="userId"> 

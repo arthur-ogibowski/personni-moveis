@@ -31,13 +31,11 @@
 
               <div class="filters-item">
                 <el-divider content-position="center">Preço</el-divider>
-                <el-radio-group v-model="priceFilter" size="large">
+                <el-radio-group @change="filterPrice" v-model="priceFilter" size="large">
                   <el-radio-button label="crescente">
                     Menor para maior 
                     <!-- Se filtro para ordenar pelo maior é selecionado -->
-                    <el-icon v-if="!priceFilter"><CaretTop /></el-icon>
-                    <!-- Se filtro para ordenar é selecionado de novo. -->
-                    <el-icon v-if="priceFilter" @click="removePriceFilter()"><Close /></el-icon>
+                    <el-icon><CaretTop /></el-icon>
                   </el-radio-button>
                   <el-radio-button label="decrescente">
                     Maior para Menor <el-icon><CaretBottom /></el-icon>
@@ -164,6 +162,13 @@ export default {
     removeSelectedCategory() {
       this.filterCategory = '';
     },
+    filterPrice() {
+      if (this.priceFilter == 'crescente') {
+        this.products.sort((a, b) => a.value - b.value);
+      } else if (this.priceFilter == 'decrescente') {
+        this.products.sort((a, b) => b.value - a.value);
+      }
+    },
     /** Remove filtro de preço após filtro ser selecionado. */
     removePriceFilter() {
       this.priceFilter = null;
@@ -194,8 +199,13 @@ div.catalogo-content{
 
   .filters-item{
     margin-bottom: 4rem;
+
+
   
   }
+}
+:deep(.el-radio-button__inner){
+  border: 1px solid $grey-border !important;
 }
 div.el-card{
     width: 250px;
@@ -216,9 +226,11 @@ div.el-card{
         h3{
           margin: 0;
           font-size: 1.5rem;
+          font-weight: 400;
         }
         h2{
           font-size: 2rem;
+          font-weight: 400;
         }
 
         span{

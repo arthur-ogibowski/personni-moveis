@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <userNavbar />
 
 
     <div class="perfil-content">
@@ -23,13 +22,10 @@
 <script>
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
-import userNavbar from '@/components/user/userNavbar.vue';
 import AuthService from '@/store/authService.js';
 
 export default {
-  components: {
-    userNavbar,
-  },
+
   data() {
     return {
       tableData: [], // Inicialmente vazio, será preenchido com os dados dos pedidos

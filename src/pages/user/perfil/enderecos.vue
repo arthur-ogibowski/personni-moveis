@@ -1,6 +1,5 @@
 <template>
   <div class="container">
-    <userNavbar />
     <div class="user-info">
       <h1 class="info-title">Seus Endereços</h1>
       <div v-for="address in addresses" :key="address.addressId" class="address-summary">
@@ -20,12 +19,8 @@
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
 import AuthService from '@/store/authService.js';
-import userNavbar from '@/components/user/userNavbar.vue';
 
 export default {
-  components: {
-    userNavbar,
-  },
   data() {
     return {
       addresses: [], // Lista de endereços do usuário

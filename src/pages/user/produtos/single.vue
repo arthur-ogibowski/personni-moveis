@@ -19,15 +19,15 @@
             <el-image style="width: 500px; height: 500px" :src="product.mainImg" :fit="fit" />
 
             <div class="info-box">
-                <h2 style="font-size: 4rem;">{{  product.name }}</h2>
+                <h2 style="font-size: 4rem; font-weight: 400;">{{  product.name }}</h2>
                 <el-text v-if="product.quantity > 0" class="mx-1" type="success" size="large">Disponível</el-text>
                 <el-text v-else class="mx-1" type="danger" size="large">Fora de estoque</el-text>
-                <h3 style="font-size: 2.5rem;">R${{ product.value }}</h3>
-                <p style="font-size: 1.6rem;">{{ product.description }}</p>
+                <h3 style="font-size: 2.5rem; font-weight: 400;">{{ formatPrice(product.value) }}</h3>
+                <p style="font-size: 1.6rem; ont-weight: 400;">{{ product.description }}</p>
                 <div class="info-box-action" v-if="product.quantity > 0">
                     <el-button class="cta" color="$cta-color" @click="addToCart">Adicionar ao carrinho</el-button>
-                    <el-divider>OU</el-divider>
-                    <router-link  :to="{path: '/produtos/' + product.productId + '/personalizar'}"><h1>Personalizar <el-icon><Right /></el-icon></h1></router-link>
+                    <el-divider v-if="product.editable">OU</el-divider>
+                    <router-link  v-if="product.editable" :to="{path: '/produtos/' + product.productId + '/personalizar'}"><h1>Personalizar <el-icon><Right /></el-icon></h1></router-link>
                 </div>
             </div>
 
@@ -40,8 +40,8 @@
             <h1>Descrição do Produto</h1>
 
             <el-table :data="product.details" style="width: 100%">
-              <el-table-column prop="detailField" width="180" />
-              <el-table-column prop="fieldContent" width="*" />
+              <el-table-column prop="fieldContent" width="180" />
+              <el-table-column prop="detailField" width="*" />
             </el-table>
 
         </div>
@@ -88,6 +88,10 @@ export default {
               message: 'Produto adicionado ao carrinho',
               type: 'success',
             })
+        },
+        formatPrice(){
+            return this.product.value.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+        
         }
     }
 }
@@ -101,7 +105,7 @@ export default {
 div.container {
 
     :deep(.el-divider__text){
-        background-color: #EFEFEF;
+        background-color: $primary-color;
     }
 
     p {
@@ -112,9 +116,10 @@ div.container {
         justify-content: space-between;
         align-items: flex-start;
         flex-direction: row;
+        margin-top: 50px;
 
         .el-image{
-            border: 1px solid #BABABA; 
+            border: 1px solid $grey-border; 
         }
         div.el-carousel{
             div.el-carousel__item{
@@ -126,13 +131,24 @@ div.container {
         }
         div.info-box{
             width: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
             padding: 2rem;
+            background-color: $primary-color;
+            border: 1px solid $grey-border;
 
             h2{
                 margin-bottom: 0;
+                margin-top: 0;
             }
             h3{
-                color: $cta-color !important;
+                color: $text-color !important;
+            }
+            .el-text{
+                display: inline-block;
+                width: 100%;
+                text-align: start;
             }
 
             div.info-box-action{

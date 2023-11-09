@@ -20,9 +20,10 @@
         <el-form :model="selected">
           <div class="section" v-for="section in categoria.sectionCmps" :key="section.id">
             <div class="inner-section" v-if="currentSection == categoria.sectionCmps.indexOf(section) && section.name !== 'Revisar'">
+              <h1>{{ section.name }}</h1>
               <div class="section-elements">
                 <div v-for="element in section.elementCmps" :key="element.id" class="ml-4 element-item">
-                  <h2>{{ element.name }}   <span v-if="!element.mandatory" style="font-size: 12px;">(Opcional)</span></h2>
+                  <h2>Escolher {{ element.name.toLowerCase() }}   <span v-if="!element.mandatory" style="font-size: 12px;">(Opcional)</span></h2>
                   <el-radio-group v-model="selected[element.id]">
                     <el-radio-button
                       v-for="option in element.optionCmps"
@@ -60,9 +61,11 @@
 
       <h1>Revisar modelagem</h1>
 
-      <div class="revisar-section">
+      <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
+        <el-tab-pane label="Visão em grid" name="first">
+          <div class="revisar-section">
             <div v-for="optionInfo in selectedOptionsInfo" :key="optionInfo">
-              <el-divider></el-divider>
+              <el-divider v-if="optionInfo != selectedOptionsInfo[0]"></el-divider>
               <div class="revisar-section-section">
 
                 <h2>{{ optionInfo.section }}</h2>
@@ -101,6 +104,56 @@
             </div>
           </div>
         </div>
+
+        </el-tab-pane>
+        <el-tab-pane label="Visão em tabela" name="second">
+         <!-- element plus table, loops through selectedOptionsInfo, has a rowspan of elements.length, while showing all secoes.elements-->
+          <el-table stripe="true" :data="tableData" style="width: 100%;" class="admin-table">
+            <el-table-column prop="section" label="Seção" sortable :width="columnWidth">
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.section }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="element" label="Elemento" sortable :width="columnWidth">
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.element }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="img" label="Imagem" sortable :width="columnWidth">
+              <template v-slot="scope">
+                <div class="nome">
+                  <div v-if="scope.row.image"  class="table-image">
+                    <el-image :src="scope.row.image"/>
+                  </div>
+                  <div v-else class="table-image">
+                    <img src="../../../assets/img/personniLogo-Grey.png"/>
+                  </div>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="option" label="Opção" sortable :width="columnWidth">
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.option }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="price" label="Preço" sortable :width="columnWidth">
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.price != 0 ? "R$ " + scope.row.price : "--" }}</p>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+
+        <el-button @click="imprimirTabela">Imprimir</el-button>
+        </el-tab-pane>
+      </el-tabs>
         <div class="preco-final">
           <h3>Preço final:</h3> <h2>R$ {{ products_cmp.value }}</h2>
         </div>
@@ -113,6 +166,7 @@
     
   </div>
 </template>
+
 <script>
 import axios from 'axios';
 import { ElLoading } from 'element-plus'
@@ -125,8 +179,11 @@ export default {
       testImage: "@assets/img/cadeira1.png",
       currentSection: 0,
       selected: [], 
+      tableData: [],
       selectedOptionsInfo: [], 
       sectionAllSelected: false,
+      activeName: 'first',
+      columnWidth:"*",
       products_cmp: {
         id: 0,
         value: 0,
@@ -145,8 +202,8 @@ export default {
   async created() {
     const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
-            background: 'rgba(0, 0, 0, 0.7)'
+            text: 'Carregando modelagem...',
+            background: '#ffffff'
       });
     const id = this.$route.params.id;
     axios.get(`http://localhost:8081/category/` + id)
@@ -187,6 +244,19 @@ export default {
   },
   computed: {
     isLastSection() {
+      // make tableData
+      this.tableData = [];
+      this.selectedOptionsInfo.forEach((section) => {
+        section.elements.forEach((element) => {
+          this.tableData.push({
+            image: element.img,
+            section: section.section,
+            element: element.element,
+            option: element.option,
+            price: element.price,
+          });
+        });
+      });
       return this.currentSection === this.categoria.sectionCmps.length -1;
     },
   },
@@ -355,7 +425,12 @@ export default {
 
       this.selectedOptionsInfo = selectedOptionsInfo;
       }
-    }
+    },
+    imprimirTabela() {
+      this.columnWidth = "150"
+      window.print();
+      this.columnWidth = "*"
+    },
 
 
   },
@@ -493,6 +568,7 @@ h2{
       div.actions{
         display: flex;
         justify-content: space-between;
+        margin-top: 20px;
       }
     }
     
@@ -557,7 +633,7 @@ h2{
     font-weight: 400;
     width: 150px;
     text-align: start;
-    margin: 0px 20px 0px 0px;
+    margin: 0;
   }
 
   .revisar-section-section{
@@ -572,7 +648,6 @@ h2{
     justify-content: center;
     //border: 1px solid $admin-grey;
     padding: 10px;
-    margin-bottom: 30px;
 
     .revisar-section-item{
       margin: 0 10px 0 0;
@@ -583,13 +658,13 @@ h2{
       display: flex;
       justify-content: space-around;
       flex-direction: column;
-      border: 1px solid $secondary-color;
+      outline: 1.5px solid $admin-grey-lighter;
 
 
       .element-option{
         font-size: 14px;
         font-weight: 400;
-        color: $cta-color;
+        color: var(--el-color-success);
       }
       .element-price{
         font-size: 12px;
@@ -600,23 +675,23 @@ h2{
       }
 
       .el-image{
-        width: 178px;
-        height: 178px; 
+        width: 180px;
+        height: 180px; 
 
         .el-image__error{
-          min-height: 178px;
-          min-width: 178px;
+          min-height: 180px;
+          min-width: 180px;
           
         }
       }
 
       img {
-        width: 178px;
+        width: 180px;
       }
 
       .element-image {
-        width: 178px;
-        height: 178px;
+        width: 180px;
+        height: 180px;
         display: flex;
         margin: 10px 0;
         justify-content: center;
@@ -647,6 +722,7 @@ h2{
         justify-content: space-between;
         align-items: flex-end;
         margin-left: 20px;
+        width: 100%;
         :deep(.el-text) {
               align-self: end !important;
         }
@@ -654,7 +730,7 @@ h2{
     }
 
     .main{
-      width: 340px;
+      width: 380px;
       height: 180px;
       flex-direction: row;
       padding: 0px 10px 0px 5px;
@@ -675,7 +751,7 @@ h2{
       display: flex;
        justify-content: flex-start;
       flex-direction: row;
-      border: 1px solid #f2f3f5;
+      outline: 1.5px solid $admin-grey-lighter;
       align-content: center;
     }
 
@@ -694,6 +770,7 @@ h2{
       display: flex;
       justify-content: space-between;
       margin-left: 20px;
+      margin-right: 10px;
       align-items: flex-end !important;
       :deep(.el-text) {
             align-self: end !important;
@@ -754,5 +831,12 @@ div.el-radio-group{
 }
 :deep(.el-step__head.is-success) {
   height: 24px;
+}
+
+.el-table{
+
+  .el-image, img{
+  width: 100px;
+  }
 }
 </style>

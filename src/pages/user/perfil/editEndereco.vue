@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-      <userNavbar />
       <div class="user-info">
         <h1 class="info-title">Editar Endereço</h1>
         <div class="info-box">
@@ -40,12 +39,8 @@
   import axios from 'axios';
   import { ElMessage } from 'element-plus';
   import AuthService from '@/store/authService.js';
-  import userNavbar from '@/components/user/userNavbar.vue';
   
   export default {
-    components: {
-      userNavbar,
-    },
     data() {
       return {
         editedAddress: {

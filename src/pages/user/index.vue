@@ -142,7 +142,7 @@ div.content {
       h2{
         font-size: 3rem;
         color: $primary-color;
-        font-family: shadows-into-light;
+        font-family: edu-tas;
         margin-top  : 0;
       }
 
@@ -181,14 +181,14 @@ div.content {
       font-weight: 700;
       color: inherit;     
       text-align: center; 
-      font-family: shadows-into-light;
+      font-family: edu-tas;
       color: $cta-color;
       margin: 6rem 0 3rem 0;
     }
 
 
     h3 {
-      font-family: shadows-into-light;
+      font-family: edu-tas;
       font-size: 3rem;
       margin: 0;
     }
@@ -243,7 +243,7 @@ div.content {
       font-weight: 700;
       color: inherit;     
       text-align: center; 
-      font-family: shadows-into-light;
+      font-family: edu-tas;
       color: $cta-color;
       margin: 6rem 0 3rem 0;
     }
@@ -286,7 +286,7 @@ div.content {
       h3{
         font-size: 5rem;
         color: $secondary-color;
-        font-family: shadows-into-light;
+        font-family: edu-tas;
       }
     }
   }

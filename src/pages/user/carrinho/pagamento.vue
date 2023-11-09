@@ -21,9 +21,9 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
             <div class="endereco" v-if="currentStep == 0">
                 <h1>Endereço de entrega</h1>
-                <h2 class="titulo-address">Escolha um endereço cadastrado</h2>
                 <el-radio-group v-model="addressChoice">
-                    <el-radio label="existingAddress">Escolher endereço cadastrado</el-radio>
+                    <el-radio border size="large" label="existingAddress">Escolher endereço cadastrado</el-radio>
+                    <el-radio border size="large" label="newAddress" @change="clearSelectedAddress">Cadastrar novo endereço</el-radio>
                 </el-radio-group>
                 <div v-if="addressChoice === 'existingAddress'">
                     
@@ -35,12 +35,6 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                         </label>
                     </div>
                 </div>
-
-                <h2 class="titulo-address">Cadastre um endereço</h2>
-
-                <el-radio-group v-model="addressChoice">
-                    <el-radio label="newAddress" @change="clearSelectedAddress">Cadastrar novo endereço</el-radio>
-                </el-radio-group>
 
       <el-form :model="endereco" label-position="top" v-if="addressChoice === 'newAddress'">
         <el-col :span="10">
@@ -88,11 +82,12 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                 <h1>Forma de pagamento</h1>
 
                 <el-radio-group v-model="metodoPagamento">
-                    <el-radio label="2" size="large" border>PIX</el-radio>
-                    <el-radio label="1" size="large" border :default="true">Cartão de crédito</el-radio>
+                    <el-radio label="card" size="large" border disabled>Cartão de crédito</el-radio>
+                    <el-radio label="card" size="large" border disabled>Cartão de débito</el-radio>
+                    <el-radio label="pix" size="large" border>PIX</el-radio>
                 </el-radio-group>
 
-                <el-form :model="endereco" v-if="metodoPagamento == 1">
+                <el-form :model="endereco" v-if="metodoPagamento == 'card'">
                     <el-form-item label="Nome no cartão">
                         <el-input v-model="cartao.nomeCartao"></el-input>
                     </el-form-item>
@@ -192,13 +187,14 @@ import AuthService from '@/store/authService';
 import cartService from '@/store/cartService.js';
 import axios from 'axios';
 import { ElLoading, ElMessage } from 'element-plus';
+import { ref } from 'vue';
 
 export default {
     data() {
         return {
             QrCode: null,
             currentStep: 0,
-            metodoPagamento: 1,
+            metodoPagamento: "pix",
             selected: [],
             loading: false,
             cepLoading: false,

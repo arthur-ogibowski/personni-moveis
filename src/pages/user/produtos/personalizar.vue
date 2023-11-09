@@ -6,10 +6,12 @@
             <el-breadcrumb-item>Personalizar</el-breadcrumb-item>
         </el-breadcrumb>
 
+        <h1>Personalizar {{ product.name }}</h1>    
         <div class="content">
             <div class="dropdown-list">
                 <div class="dropdown-outer" v-for="section in product.sections" :key="section">
-                    <el-divider>{{ section.name }}</el-divider>
+                    <el-collapse accordion>
+                    <el-collapse-item :title="section.name" name="1">
                     <div class="dropdown-content">
                         <el-radio-group v-model="selected[section.sectionId]">
                             <el-radio-button v-for="option in section.options" :key="option.optionId" @change="resumoCmp"
@@ -19,6 +21,8 @@
                             </el-radio-button>
                         </el-radio-group>
                     </div>
+                    </el-collapse-item>
+                    </el-collapse>
                 </div>
             </div>
             <div class="product-image">
@@ -34,12 +38,13 @@
                             <el-text type="info" class="nome">{{ optionInfo.option }}</el-text>
                             <h2 class="preco">{{ optionInfo.price != 0 ? "R$" + formatPrice(optionInfo.price) : "--" }}</h2>
                         </div>
+                        <el-divider/>
                     </div>
 
                 </div>
 
-                <h2 class="total">Total: {{ calcularTotal() != 0 ? "R$" + formatPrice(calcularTotal()) : "--" }}</h2>
-                <el-button class="cta" color="$cta-color" @click="addToCart">Adicionar ao carrinho</el-button>
+                <h2 class="total"><span>Total:</span> {{ calcularTotal() != 0 ? "R$" + formatPrice(calcularTotal()) : "--" }}</h2>
+                <el-button class="cta" color="$cta-color" size="small" @click="addToCart">Adicionar ao carrinho</el-button>
             </div>
         </div>
     </div>
@@ -114,6 +119,7 @@ export default {
                     total += section.options.find(option => option.optionId == selected).price;
                 }
             }
+            total += this.product.value;
             return total;
         },
         selecionarItem(item) {
@@ -156,20 +162,58 @@ export default {
 <style scoped lang="scss">
 @import '@/assets/styles/scss/basics.scss';
 
+h1{
+    margin-bottom: 0;
+}
 div.content {
     display: flex;
     justify-content: space-between;
-    margin-top: 50px;
+    margin-top: 10px;
 
     div.dropdown-list {
         div.dropdown-outer {
 
             margin-bottom: 4rem;
 
+            div.el-collapse{
+                background-color: $primary-color;
+                width: 250px;
+                border: 1px solid $grey-border;
+                transition: 0.2s all ease-in-out;
+
+                :deep(.el-collapse-item__header){
+                    background-color: transparent;
+                    border: none;
+                    color: $text-color;
+                    font-size: 1.6rem;
+                    font-weight: 400;
+                    padding: 2rem;
+                    transition: 0.2s all ease-in-out;
+                }
+                :deep(.el-collapse-item__wrap){
+                    background-color: transparent;
+                    padding: 0;
+                    border: none !important;
+                }
+                :deep(.el-collapse-item__content){
+                    background-color: #EEE;
+                    padding: 10px 0;
+                }
+                :deep(.el-collapse-item:last-child) {
+                    margin-bottom: 0;
+                }
+                &:hover{
+                    border-color: $cta-color;
+                    
+                    :deep(.el-collapse-item__header){
+                        color: $cta-color;
+                    }
+                }
+            }
+
             div.dropdown-header {
                 width: 250px;
                 height: fit-content;
-                border: 2px solid $user-grey;
                 text-align: center;
 
                 h2 {
@@ -182,12 +226,29 @@ div.content {
             label.el-radio-button,
             :deep(span.el-radio-button__inner) {
                 width: 250px;
+                background-color: transparent;
+                transition: 0.2s ease-in-out;
+                padding: 0;
+                justify-content: space-evenly;
 
                 .el-image{
                     width: 50px;
                     height: 50px;
                     margin-right: 10px;
                 }
+
+                &.is-active{
+                    background-color: #18362d;
+                }
+
+            }
+
+            label.el-radio-button:hover{
+                    background-color: $tertiary-darker;
+
+                    :deep(.el-radio-button__inner){
+                    color: #fff;
+                    }
             }
 
 
@@ -195,7 +256,7 @@ div.content {
             div.dropdown-item {
                 width: 250px;
                 height: fit-content;
-                border: 2px solid $user-grey;
+                border: 1px solid $user-grey;
                 border-top: none;
                 text-align: center;
 
@@ -240,10 +301,11 @@ div.content {
 
     div.resumo {
 
-        border: 1px solid $user-grey;
+        border: 1px solid $grey-border;
         padding: 2rem 3rem;
         display: flex;
         flex-direction: column;
+        background-color: $primary-color;
 
         h1 {
             color: $text-color;
@@ -285,6 +347,15 @@ div.content {
 
         .total {
             margin-top: auto;
+            font-weight: 400;
+            font-size: 2rem;
+            text-align: end;
+
+            span{
+                font-size: 1.6rem;
+                margin-right: 0.6rem;
+                color: var(--el-color-info);
+            }
         }
 
         .cta {

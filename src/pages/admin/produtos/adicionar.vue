@@ -29,6 +29,7 @@
                     <!-- Descrição -->
                     <el-form-item label="Descrição">
                         <el-input 
+                            :maxlength="250"
                             type="textarea" 
                             placeholder="Descrição..."
                             v-model="product.description"></el-input>

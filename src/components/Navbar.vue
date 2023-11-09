@@ -12,7 +12,7 @@
     <el-menu-item v-if="isUserSysColaborator()"><router-link to="/admin">Admin</router-link></el-menu-item>
     <el-menu-item><router-link to="/produtos">Catálogo</router-link></el-menu-item>
     <el-menu-item><router-link to="/perfil">Meu perfil</router-link></el-menu-item>
-    <el-menu-item><router-link to="/carrinho">Carrinho {{ cartItemsCounter }}</router-link></el-menu-item>
+    <el-menu-item><router-link to="/carrinho">Carrinho <span v-if="cartItemsCounter > 0">({{ cartItemsCounter }})</span></router-link></el-menu-item>
     <router-link to="/modelar"><el-button class="cta" color="$cta-color">Começar à modelar</el-button></router-link>
   </el-menu>
 </template>

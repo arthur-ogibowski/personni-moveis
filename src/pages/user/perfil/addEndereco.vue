@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-      <userNavbar />
       <div class="user-info">
         <h1 class="info-title">Adicionar Novo Endereço</h1>
         <form @submit.prevent="addAddress" class="address-form">
@@ -44,11 +43,9 @@
   import axios from 'axios';
   import { ElMessage } from 'element-plus';
   import AuthService from '@/store/authService.js';
-  import userNavbar from '@/components/user/userNavbar.vue';
   
   export default {
     components: {
-      userNavbar,
     },
     data() {
       return {

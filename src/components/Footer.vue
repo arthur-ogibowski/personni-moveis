@@ -16,10 +16,13 @@ div.footer{
     height: 100px;
     background-color: $tertiary-color;
     margin-top: 20px;
-
     display: flex;
-        justify-content: center;
-        align-items: center;
+    justify-content: center;
+    align-items: center;
+                
+    h1{
+        color: $admin-grey;
+    }
 }
 
 @media (max-width: 768px) {

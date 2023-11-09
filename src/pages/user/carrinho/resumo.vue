@@ -240,9 +240,9 @@ export default {
 
         .el-card {
             background-color: $primary-color;
-            border: 0px;
             :deep(.el-card__body) {
               display: flex;
+              border: 1px solid $grey-border;
               flex-direction: column;
               align-items: baseline;
               padding: 3rem;
@@ -369,7 +369,7 @@ div.carrinho-content{
     .carrinho-item{
         width: 55vw;
         margin: 10px 0;
-        border: none !important;
+        border: 1px solid $grey-border;
 
         :deep(.el-card__body){
             display: flex;

@@ -108,7 +108,7 @@ div.categoria-item{
   h3{
     font-size: 5rem;
     color: $tertiary-color;
-    font-family: shadows-into-light;
+    font-family: edu-tas;
     transition: all 0.3s ease-in-out;
   }
 }

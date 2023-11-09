@@ -1,6 +1,5 @@
 <template>
     <div class="container">
-      <userNavbar />
       <div class="user-info">
         <h1 class="info-title">Suas configurações de conta</h1>
         <!-- <h1 class="section-title">Seus dados:</h1> -->
@@ -37,12 +36,8 @@
   import axios from 'axios';
   import { ElMessage } from 'element-plus';
   import AuthService from '@/store/authService.js';
-  import userNavbar from '@/components/user/userNavbar.vue';
   
   export default {
-    components: {
-      userNavbar,
-    },
     data() {
       return {
         user: {
