@@ -150,7 +150,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                         </h3>
                     </div>
 
-                    <img v-if="QrCode != null" :src="'data:image/png;base64,' + QrCode">
+                    <img v-if="QrCode != null" :src=QrCode>
 
 
 
@@ -290,29 +290,39 @@ export default {
         /** Faz pedidos e retorna qrcode pix. */
         makeOrder() {
             const config = { headers: { Authorization: AuthService.getToken() } }
-            // Configura objeto order para processar pedido no back.
-           const ordersReq = [];
-            cartService.getCartItems().forEach(prod => ordersReq.push(
-                {
-                    requestProduct: {
-                        product: prod, 
+            const getReqProduct = [];
+            const getReqCmp = [];
+            // Insere produtos no array de prods.
+            if (cartService.getCartItems().length > 0) {
+                cartService.getCartItems().forEach(prod => getReqProduct.push(
+                    {
+                        product: prod,
                         amount: prod.amount
-                    },
-                    // requestCmp = {
-                    //     productCmp: null,
-                    //     amount: null
-                    // }
-                }
-            ));
+                    }
+                ));
+            }
+            // Insere cmps no array de cmps.
+            if (cartService.getCmpItems().length > 0) {
+                cartService.getCmpItems().forEach(cmp => getReqCmp.push(
+                    {
+                        productCmp: cmp,
+                        amount: cmp.amount
+                    }
+                ));
+            }
+            // Monta dto para processamento do pedido no back.
+            const ordersReq = {
+                requestProduct: getReqProduct,
+                requestCmp: getReqCmp
+            }
             // Faz requisição enviando pedidos.
-            if(cartService.getCartItems() != null || cartService.getCartItems().length > 0) {
-                axios.post('http://localhost:8081/orders/create-order', config, ordersReq)
+            if ((cartService.getCartItems() != null || cartService.getCartItems().length > 0)
+                && (cartService.getCmpItems() != null || cartService.getCmpItems().length > 0)) {
+                axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
                     .then(response => {
                         ElMessage.success('Pedido registrado com sucesso.');
                         // Seta pix em tela.
-                        const dataUrl = response.data;
-                        const base64String = dataUrl.split('base64,')[1]; // Remove "data:image/png;base64,"
-                        this.QrCode = base64String;
+                        this.QrCode = response.data;
                         /** Limpa carrinho após finalizar o pedido. */
                         cartService.removeAllFromCarts();
                     })
@@ -320,6 +330,8 @@ export default {
                         ElMessage.error('Não foi possível registrar o pedido.');
                         console.error(error);
                     });
+            } else {
+                ElMessage.warning('Devem haver produtos no carrinho para realizar o pedido!');
             }
         },
         consultarCEP() {
