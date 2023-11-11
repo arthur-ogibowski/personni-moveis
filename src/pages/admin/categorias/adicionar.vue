@@ -8,12 +8,12 @@
             </el-form-item>
             <h2>Modelagem</h2>
             <el-form-item>
-                <el-switch v-model="categoria.allow_creation"></el-switch>
+                <el-switch v-model="categoria.allow_creation" active-text="Sim" inactive-text="Não" ></el-switch>
             </el-form-item>
 
             <el-collapse accordion class="criar-content" v-if="categoria.allow_creation">
                 <div v-for="section in categoria.sectionCmps" v-bind:key="section">
-                <el-collapse-item :title="section.name ? section.name + ' - ' + section.elementCmps.length + (section.elementCmps.length != 1 ? ' elementos' : ' elemento') : 'Nova seção'" class="section-item">
+                <el-collapse-item :title="section.name ? section.name + ' - ' + section.elementCmps.length + (section.elementCmps.length != 1 ? ' elementos' : ' elemento') : 'Nova seção' + ' - ' + section.elementCmps.length + (section.elementCmps.length != 1 ? ' elementos' : ' elemento')" class="section-item">
                     <div class="section-inner">
                     <h2>Detalhes da seção</h2>
                     <div class="section-upper">
@@ -41,7 +41,7 @@
                         <h2>Elementos</h2>
                         <el-collapse accordion>
                         <div v-for="element in section.elementCmps" v-bind:key="element">
-                        <el-collapse-item class="element-item" :title="element.name ? element.name + ' - ' + element.optionCmps.length + (element.optionCmps.length != 1 ? ' opções' : ' opção') : 'Novo elemento'" >
+                        <el-collapse-item class="element-item" :title="element.name ? element.name + ' - ' + element.optionCmps.length + (element.optionCmps.length != 1 ? ' opções' : ' opção') : 'Novo elemento' + ' - ' + element.optionCmps.length + (element.optionCmps.length != 1 ? ' opções' : ' opção')" >
 
                             <div class="element-card">
                                 <div class="element-main">
@@ -113,7 +113,7 @@
                         </el-collapse-item>
                     </div>
                         </el-collapse>
-                        <el-button class="cta" type="primary" v-on:click="newElement(section)"><el-icon>
+                        <el-button class="element-button" type="primary" v-on:click="newElement(section)"><el-icon>
                                 <Plus />
                             </el-icon> Elemento </el-button>
                     </div>
@@ -327,6 +327,31 @@ div.section-item{
     }
     
 }
+.element-button {
+  width: auto;
+  height: 48px;
+  background: transparent;
+  border: 1px solid $admin-grey;
+  color: $admin-grey;
+  font-size: 20px;
+  margin: 0 20px;
+
+    &:hover {
+        color: $cta-color;
+        background: transparent;
+        border-color: $cta-color;
+    }
+    &:active, &:focus{
+        background: transparent;
+        border-color: $admin-grey;
+        color: $admin-grey;
+    }
+
+    i{
+        margin-right: 5px;
+    }
+    
+}
 .el-icon:hover{
     color: red;
 
@@ -383,7 +408,6 @@ div.section-item{
 .element-card {
     display: flex;
     flex-direction: row;
-    margin: 0px 20px 20px 0;
 
     .el-input{
         width: 100%;
@@ -414,15 +438,30 @@ div.section-item{
         }
 
         .el-button{
-            height: 190px;
-            border: 1px solid $cta-color;
-            color: $cta-color;
+            height: 180px;
+            border: 1px solid $admin-grey;
+            color: $admin-grey;
             background: transparent;
             margin: 5px;
             
             > span{
                 display: flex;
                 flex-direction: column !important;
+            }
+
+            &:hover {
+                color: $cta-color;
+                background: transparent;
+                border-color: $cta-color;
+            }
+            &:active, &:focus{
+                background: transparent;
+                border-color: $admin-grey;
+                color: $admin-grey;
+            }
+        
+            i{
+                margin-right: 5px;
             }
         }
     }
