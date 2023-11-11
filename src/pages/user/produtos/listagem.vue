@@ -2,7 +2,7 @@
     <div class="container">
 
       <div class="catalogo-top">
-            <h1>Catálogo</h1>
+            <h1 class="page-title">Catálogo</h1>
 
             <el-input v-model="productSearchInput" placeholder="Procurar produto">
               <template #prefix>

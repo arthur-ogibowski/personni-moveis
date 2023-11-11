@@ -108,6 +108,7 @@ div.content {
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  padding-bottom: 5%;
 
   .cta{
         text-transform: uppercase;
@@ -142,8 +143,9 @@ div.content {
       h2{
         font-size: 3rem;
         color: $primary-color;
-        font-family: edu-tas;
+        font-family: josefin;
         margin-top  : 0;
+        font-weight: 300;
       }
 
       p {
@@ -178,17 +180,17 @@ div.content {
 
     h2 {
       font-size: 4rem;
-      font-weight: 700;
+      font-weight: 300;
       color: inherit;     
       text-align: center; 
-      font-family: edu-tas;
+      font-family: josefin;
       color: $cta-color;
       margin: 6rem 0 3rem 0;
     }
 
 
     h3 {
-      font-family: edu-tas;
+      font-family: josefin;
       font-size: 3rem;
       margin: 0;
     }
@@ -240,10 +242,10 @@ div.content {
 
     h2 {
       font-size: 4rem;
-      font-weight: 700;
+      font-weight: 300;
       color: inherit;     
       text-align: center; 
-      font-family: edu-tas;
+      font-family: josefin;
       color: $cta-color;
       margin: 6rem 0 3rem 0;
     }
@@ -286,7 +288,8 @@ div.content {
       h3{
         font-size: 5rem;
         color: $secondary-color;
-        font-family: edu-tas;
+        font-family: josefin;
+        font-weight: 400;
       }
     }
   }

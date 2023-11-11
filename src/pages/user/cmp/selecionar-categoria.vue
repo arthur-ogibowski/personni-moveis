@@ -59,9 +59,10 @@ export default {
   justify-content: space-between;
   h1 {
   font-size: 32px;
-  font-weight: 400;
+  font-weight: 300;
   color: $text-color;
   margin-right: 5%;
+  margin-bottom: 0;
 }
 }
 
@@ -108,8 +109,9 @@ div.categoria-item{
   h3{
     font-size: 5rem;
     color: $tertiary-color;
-    font-family: edu-tas;
+    font-family: josefin;
     transition: all 0.3s ease-in-out;
+    font-weight: 400;
   }
 }
 </style>
