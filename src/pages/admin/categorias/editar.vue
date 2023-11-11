@@ -65,10 +65,8 @@
                       <div>
                         <el-upload :show-file-list="true" :auto-upload="false" limit="1"
                           @change="handleImageChange($event, option)">
-                          <el-button size="small" type="primary">Selecionar Imagem</el-button>
-                          <div style="width: 50px; height: 50px;">
-                            <el-image :src="option.img" />
-                          </div>
+                          <el-button accept="./image" size="small" type="primary">Selecionar Imagem</el-button>
+                          <img :src="option.img" style="width: 50px; height: 50px;">
                         </el-upload>
                       </div>
                     </el-form-item>

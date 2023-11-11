@@ -96,6 +96,12 @@ export default {
           console.error('Error:', error);
         });
     },
+
+    handleLogout(){  
+      // Limpar o localStorage
+      clearLocalStorage();
+    },
+
     formatPhoneNumber(phoneNumber) {
       if (!phoneNumber) return '';
       return `+55 (${phoneNumber.substring(0, 2)}) ${phoneNumber.substring(2, 7)}-${phoneNumber.substring(7)}`;
@@ -105,6 +111,13 @@ export default {
       return `${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9)}`;
     },
   },
+
+}
+
+// Função para limpar o localStorage
+function clearLocalStorage() {
+  localStorage.clear();
+  console.log('localStorage limpo.');
 }
 </script>
 
