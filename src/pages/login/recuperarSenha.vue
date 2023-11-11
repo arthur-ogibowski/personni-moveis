@@ -99,7 +99,7 @@ div.dialog{
 h1{
     color: $primary-color;
     text-align: center;
-    font-family: edu-tas;
+    font-family: josefin;
     font-size: 4rem;
     font-weight: 400;   
 }

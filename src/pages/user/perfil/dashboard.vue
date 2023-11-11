@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h1 class="perfil-title">Minha Conta</h1>
+    <h1 class="page-title">Minha Conta</h1>
     <el-tabs class="profile-links" v-model="activeName" @tab-click="handleClick">
 
       <el-tab-pane label="Geral" name="dashboard">

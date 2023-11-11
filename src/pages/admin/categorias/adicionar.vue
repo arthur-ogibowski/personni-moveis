@@ -11,15 +11,14 @@
                 <el-switch v-model="categoria.allow_creation"></el-switch>
             </el-form-item>
 
-            <div class="criar-content" v-if="categoria.allow_creation">
-
-                <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
-                    <el-divider></el-divider>
-                    <h1 v-if="section.name">{{  section.name }}</h1>
-                    <h1 v-else>SEÇÃO</h1>
+            <el-collapse accordion class="criar-content" v-if="categoria.allow_creation">
+                <div v-for="section in categoria.sectionCmps" v-bind:key="section">
+                <el-collapse-item :title="section.name ? section.name + ' - ' + section.elementCmps.length + (section.elementCmps.length != 1 ? ' elementos' : ' elemento') : 'Nova seção'" class="section-item">
+                    <div class="section-inner">
+                    <h2>Detalhes da seção</h2>
                     <div class="section-upper">
                         <el-form-item label="Nome">
-                            <el-input v-model="section.name" class="section-input"></el-input>
+                            <el-input v-model="section.name" size="large" class="section-input"></el-input>
                         </el-form-item>
                         <el-form-item label="Ordem">
                         <el-input-number 
@@ -35,20 +34,22 @@
                             <Delete />
                         </el-icon>
                     </div>
+                </div>
 
 
                     <div class="elements">
-                        <div class="element-item" v-for="element in section.elementCmps" v-bind:key="element">
-
+                        <h2>Elementos</h2>
+                        <el-collapse accordion>
+                        <div v-for="element in section.elementCmps" v-bind:key="element">
+                        <el-collapse-item class="element-item" :title="element.name ? element.name + ' - ' + element.optionCmps.length + (element.optionCmps.length != 1 ? ' opções' : ' opção') : 'Novo elemento'" >
 
                             <div class="element-card">
+                                <div class="element-main">
                                 <el-icon v-on:click="deleteCascade(section, element, null)"
-                                    style="margin-left: 8px; float: right; margin-top: 8px; cursor: pointer;" :size="20"
+                                    style="margin-left: 8px; float: right; cursor: pointer;" :size="20"
                                     color="#A8A8A8">
                                     <Delete />
                                 </el-icon>
-                                <h2 v-if="element.name">{{ element.name.toUpperCase() }}</h2>
-                                <h2 v-else>ELEMENTO</h2>
 
                                 <el-form-item label="Nome">
                                     <el-input v-model="element.name"></el-input>
@@ -67,9 +68,9 @@
 
                                     <el-checkbox v-model="element.mandatory" label="Obrigatório" checked="true" size="large" />
                                 </div>
-                    
+                            </div>
+                            <div class="element-options">
                                 <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
-                                    <el-divider></el-divider>
                                     <el-icon v-on:click="deleteCascade(section, element, option)"
                                         style="margin-left: 8px; float: right; cursor: pointer;"
                                         :size="20" color="#A8A8A8">
@@ -100,30 +101,33 @@
 
                                 </div>
 
-                                <el-divider class="divider-button" v-on:click="newOption(element)">
+
+                                <el-button class="option-button" v-on:click="newOption(element)">
                                     <el-icon>
                                         <Plus />
                                     </el-icon> Opção
-                                </el-divider>
-
+                                </el-button>
                             </div>
 
-                        </div>
+                            </div>
+                        </el-collapse-item>
+                    </div>
+                        </el-collapse>
                         <el-button class="cta" type="primary" v-on:click="newElement(section)"><el-icon>
                                 <Plus />
                             </el-icon> Elemento </el-button>
                     </div>
 
 
-                </div>
-
-                <el-divider class="divider-button" v-on:click="newSection">
+                </el-collapse-item>
+            </div>
+                <el-button class="section-button" v-on:click="newSection">
                                     <el-icon>
                                         <Plus />
                                     </el-icon> Seção
-                                </el-divider>
+                                </el-button>
 
-            </div>
+            </el-collapse>
 
 
             <el-form-item>
@@ -269,6 +273,60 @@ hr {
     border: 1px solid $admin-grey;
     margin: 30px 0;
 }
+
+.criar-content{
+    border: 0;
+}
+
+div.section-item{
+    background: $primary-color;
+    border: 1px solid $grey-border;
+    margin-bottom: 20px;
+
+    :deep(.el-collapse-item__header){
+        font-size: 24px;
+        border-bottom: 0;
+        padding: 36px 20px;
+    }
+
+    h2{
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    :deep(.el-collapse-item__wrap){
+        border-bottom: 0;
+        background-color: #f6f6f6;
+    }
+
+    .section-inner{
+        padding: 20px;
+    }
+}
+.section-button {
+  width: 100%;
+  height: 72px;
+  background: transparent;
+  border: 1px solid $admin-grey;
+  color: $admin-grey;
+  font-size: 20px;
+
+    &:hover {
+        color: $cta-color;
+        background: transparent;
+        border-color: $cta-color;
+    }
+    &:active, &:focus{
+        background: transparent;
+        border-color: $admin-grey;
+        color: $admin-grey;
+    }
+
+    i{
+        margin-right: 5px;
+    }
+    
+}
 .el-icon:hover{
     color: red;
 
@@ -287,31 +345,86 @@ hr {
 }
 .element-index-mandatory {
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
 }
 .elements {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     flex-wrap: wrap;
+
+    :deep(.el-collapse){
+        border-top: 0;
+    }
+
+    .element-item{
+        margin: 20px;
+        border: 1px solid $grey-border;
+
+        :deep(.el-collapse-item__header){
+            font-size: 20px;
+            border-bottom: 0;
+            padding: 20px;
+        }
+
+        :deep(.el-collapse-item__content){
+            background: #eee;
+            padding: 20px;
+        }
+    }
+
+    h2{
+        margin-left: 20px;
+    }
 }
 
-.element-card {
-    border: 1px solid $admin-grey;
-    padding: 0 20px 20px 20px;
-    width: 400px;
-    margin: 0px 20px 20px 0;
 
-    h2 {
-        text-align: center;
-        color: $text-color;
-        font-weight: 400;
-    }
+.element-card {
+    display: flex;
+    flex-direction: row;
+    margin: 0px 20px 20px 0;
 
     .el-input{
         width: 100%;
     
+    }
+
+    .element-options{
+
+        padding: 10px;
+        width: 100%;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        margin-left: 20px;
+        height: 100% ;
+
+
+        .option-item{
+            border: 1px solid $admin-grey;
+            height: 100%;
+            width: 35%;
+            padding: 10px;
+            margin: 5px;
+
+            .el-form-item{
+                margin-bottom: 25px;
+            }
+        }
+
+        .el-button{
+            height: 190px;
+            border: 1px solid $cta-color;
+            color: $cta-color;
+            background: transparent;
+            margin: 5px;
+            
+            > span{
+                display: flex;
+                flex-direction: column !important;
+            }
+        }
     }
 }
 

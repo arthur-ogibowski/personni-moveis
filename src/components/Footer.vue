@@ -22,6 +22,7 @@ div.footer{
                 
     h1{
         color: $admin-grey;
+        font-weight: 300;
     }
 }
 

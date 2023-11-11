@@ -80,9 +80,9 @@ summary,
 
 
 @font-face { font-family: lato-regular;  src: url('../../fonts/Lato/Lato-Regular.ttf'); } 
-@font-face { font-family: edu-tas;  src: url('../../fonts/Shadows_Into_Light/ShadowsIntoLight-regular.ttf'); }
+@font-face { font-family: shadows-into-light;  src: url('../../fonts/Shadows_Into_Light/ShadowsIntoLight-regular.ttf'); }
 @font-face { font-family: playfair-display;  src: url('../../fonts/Playfair_Display/PlayfairDisplay-Regular.ttf'); }
-@font-face { font-family: edu-tas; src: url('../../fonts/edu_TAS_Beginner/static/EduTASBeginner-Regular.ttf'); }
+@font-face { font-family: josefin; src: url('../../fonts/Josefin_Sans/JosefinSans-VariableFont_wght.ttf'); }
 
 body {
     background-color: $tertiary-color;
@@ -100,7 +100,7 @@ body.checkout-body, body.cmp-body{
 
 h1{
     color: $text-color;
-    font-family: edu-tas;
+    font-family: josefin;
     font-size: 4rem;
     margin-top: 0;
 }

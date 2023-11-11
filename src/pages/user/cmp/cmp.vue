@@ -454,7 +454,7 @@ export default {
   padding-top: 0;
   h1{
   font-size: 32px;
-  font-weight: 400;
+  font-weight: 300;
   color: $text-color;
   margin-top: 5%;
 }
@@ -492,9 +492,10 @@ h2{
   justify-content: space-between;
   h1 {
   font-size: 32px;
-  font-weight: 400;
+  font-weight: 300;
   color: $text-color;
   margin-right: 5%;
+  margin-bottom: 0;
 }
 }
 
@@ -517,7 +518,7 @@ h2{
       h1{
         font-size: 8rem;
         text-align: center;
-        font-weight: 400;
+        font-weight: 300;
       }
       .section-elements{
         display: flex;
@@ -630,10 +631,11 @@ h2{
   flex-direction: column;
   h2{
     font-size: 36px;
-    font-weight: 400;
     width: 150px;
     text-align: start;
     margin: 0;
+    font-weight: 300;
+    font-family: josefin;
   }
 
   .revisar-section-section{
@@ -668,7 +670,7 @@ h2{
       }
       .element-price{
         font-size: 12px;
-        font-weight: 800;
+        font-weight: 400;
         min-width: 50px;
         text-align: end;
         color: $text-color;
