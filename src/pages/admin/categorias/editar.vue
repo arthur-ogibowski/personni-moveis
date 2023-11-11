@@ -111,7 +111,7 @@
   
 <script>
 import axios from 'axios';
-import { ElMessage } from 'element-plus';
+import { ElLoading, ElMessage } from 'element-plus';
 import imgConverter from '@/store/imgConverter.js';
 export default {
   data() {
@@ -216,24 +216,30 @@ export default {
     },
 
     salvarCategoria() {
+      const loading = ElLoading.service({
+                lock: true,
+                text: 'Criando categoria',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
       axios.put(`http://localhost:8081/category/${this.$route.params.id}`, this.categoria)
         .then((response) => {
           if (response.status === 204) {
-            // A resposta da API indica que o recurso foi criado com sucesso.
-            // Você pode realizar ações adicionais aqui, se necessário.
-            ElMessage.success('Categoria salva com Sucesso!')
-            setTimeout(() => {
-              window.location.reload()
-            }, 2000);
+            ElMessage({
+                            message: 'Categoria editada com sucesso.',
+                            type: 'success',
+                        })
+                        loading.close()
+                        this.$router.push(`/admin/categorias`)
           } else {
             console.error('Erro ao criar recurso:', response.statusText);
           }
         })
         .catch((error) => {
           ElMessage({
-            message: 'Erro ao criar a categoria.',
-            type: 'error',
-          })
+                            message: 'Erro ao criar a categoria.',
+                            type: 'error',
+                        })
+                        loading.close()
         })
     },
     newSection() {
