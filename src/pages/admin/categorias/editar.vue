@@ -3,107 +3,142 @@
     <h1><router-link class="underline-router" to="/admin/categorias">Categorias</router-link> > Editar</h1>
     <el-form :model="categoria" label-width="*" label-position="top">
       <h2>Detalhes da categoria</h2>
-      <el-form-item label="Nome">
+      <el-form-item label="Nome" required>
         <el-input v-model="categoria.name"></el-input>
       </el-form-item>
-
-      <hr>
-
-
-      <h2>Modelagem</h2>
-      <el-form-item label="Possibilitar modelagem">
-        <el-switch v-model="categoria.allow_creation"></el-switch>
+      <h2>Permitir modelagem</h2>
+      <el-form-item>
+        <el-switch v-model="categoria.allow_creation" active-text="Sim" inactive-text="Não"></el-switch>
       </el-form-item>
 
-      <div class="criar-content" v-if="categoria.allow_creation">
+      <el-collapse accordion class="criar-content" v-if="categoria.allow_creation" v-model="currentOpenSection">
+        <div v-for="section in categoria.sectionCmps" v-bind:key="section">
+          <el-collapse-item class="section-item" :name="section.sectionID">
+            <template #title>
+              <h1> {{ section.name ? section.name : 'Nova seção' }} </h1>
+              <p v-if="section?.elementCmps?.length ?? 0">
+                - {{ section.elementCmps.length }} {{ section.elementCmps.length !== 1 ? 'elementos' : 'elemento' }}
+              </p>
 
-        <div class="section-item" v-for="section in categoria.sectionCmps" v-bind:key="section">
-          <el-form-item label="Seção">
-            <el-input v-model="section.name" class="section-input"></el-input>
-            <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;" :size="20"
-              color="#A8A8A8">
-              <CloseBold />
-            </el-icon>
-          </el-form-item>
-
-
-          <div class="elements">
-            <div class="element-item" v-for="element in section.elementCmps" v-bind:key="element">
-
-
-              <div class="element-card">
-                <el-icon v-on:click="deleteCascade(section, element, null)"
-                  style="margin-left: 8px; float: right; margin-top: 8px; cursor: pointer;" :size="20" color="#A8A8A8">
-                  <CloseBold />
-                </el-icon>
-                <h2>{{ element.name.toUpperCase() }}</h2>
-
+              <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;"
+                :size="20" color="#A8A8A8">
+                <Delete />
+              </el-icon>
+            </template>
+            <div class="section-inner">
+              <h2>Detalhes da seção</h2>
+              <div class="section-upper">
                 <el-form-item label="Nome">
-                  <el-input v-model="element.name"></el-input>
-
+                  <el-input v-model="section.name" size="large" class="section-input"></el-input>
+                </el-form-item>
+                <el-form-item label="Ordem">
+                  <el-input-number :precision="0" :min="1" :max="categoria.sectionCmps.length" v-model="section.index">
+                  </el-input-number>
                 </el-form-item>
 
 
-
-                <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
-                  <el-icon v-on:click="deleteCascade(section, element, option)"
-                    style="margin-left: 8px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#A8A8A8">
-                    <CloseBold />
-                  </el-icon>
-                  <el-row :gutter="20">
-                    <el-col :span="12">
-                      <el-form-item label="Opção">
-                        <el-input v-model="option.name" size="small"></el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-col :span="12">
-                      <el-form-item label="Preço">
-                        <el-input v-model="option.price" size="small"></el-input>
-                      </el-form-item>
-                    </el-col>
-                    <el-form-item label="Imagem principal">
-                      <div>
-                        <el-upload :show-file-list="true" :auto-upload="false" limit="1"
-                          @change="handleImageChange($event, option)">
-                          <el-button accept="./image" size="small" type="primary">Selecionar Imagem</el-button>
-                          <img :src="option.img" style="width: 50px; height: 50px;">
-                        </el-upload>
-                      </div>
-                    </el-form-item>
-                  </el-row>
-
-
-                </div>
-
-                <el-button type="primary" v-on:click="newOption(element)"><el-icon>
-                    <Plus />
-                  </el-icon> Opção</el-button>
-
               </div>
-
             </div>
-            <el-button type="primary" v-on:click="newElement(section)"><el-icon>
-                <Plus />
-              </el-icon> Elemento </el-button>
-          </div>
 
 
+            <div class="elements">
+              <h2>Elementos</h2>
+              <el-collapse accordion v-model="currentOpenElement">
+                <div v-for="element in section.elementCmps" v-bind:key="element">
+                  <el-collapse-item class="element-item" :name="element.elementID">
+                    <template #title>
+                      <h1> {{ element.name ? element.name : 'Novo elemento' }} </h1>
+                      <p v-if="element && element.optionCmps && element.optionCmps.length">
+                        - {{ element.optionCmps.length }} {{ element.optionCmps.length !== 1 ? 'opções' : 'opção' }}
+                      </p>
 
-          <hr>
+                      <el-icon v-on:click="deleteCascade(section, element, null)"
+                        style="margin-left: 8px; float: right; cursor: pointer;" :size="20" color="#A8A8A8">
+                        <Delete />
+                      </el-icon>
+                    </template>
 
+                    <div class="element-card">
+                      <div class="element-main">
+
+                        <el-form-item label="Nome">
+                          <el-input v-model="element.name"></el-input>
+                        </el-form-item>
+
+                        <div class="element-index-mandatory">
+
+                          <el-form-item label="Ordem">
+                            <el-input-number size="small" :precision="0" :min="1" v-model="element.index">
+                            </el-input-number>
+                          </el-form-item>
+
+                          <el-checkbox v-model="element.mandatory" label="Obrigatório" checked="true" size="large" />
+                        </div>
+                      </div>
+                      <div class="element-options">
+                        <div class="option-item" v-for="option in element.optionCmps" v-bind:key="option">
+                          <el-icon v-on:click="deleteCascade(section, element, option)"
+                            style="margin-left: 8px; float: right; cursor: pointer;" :size="20" color="#A8A8A8">
+                            <Delete />
+                          </el-icon>
+                          <div class="inputs">
+                            <div class="basic-inputs">
+                              <el-form-item label="Opção">
+                                <el-input v-model="option.name" size="small"></el-input>
+                              </el-form-item>
+                              <el-form-item label="Preço">
+                                <el-input v-model="option.price" size="small">
+                                  <template #prepend>R$</template></el-input>
+                              </el-form-item>
+
+                            </div>
+                            <el-form-item label="Imagem">
+                              <div>
+                                <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
+                                  @change="handleImageChange($event, option)">
+                                  <img v-if="option.img" :src="option.img" class="avatar" />
+                                  <el-icon v-else class="avatar-uploader-icon">
+                                    <Upload />
+                                  </el-icon>
+                                </el-upload>
+                              </div>
+                            </el-form-item>
+                          </div>
+
+
+                        </div>
+
+
+                        <el-button class="option-button" v-on:click="newOption(element)">
+                          <el-icon>
+                            <Plus />
+                          </el-icon> Opção
+                        </el-button>
+                      </div>
+
+                    </div>
+                  </el-collapse-item>
+                </div>
+              </el-collapse>
+              <el-button class="element-button" type="primary" v-on:click="newElement(section)"><el-icon>
+                  <Plus />
+                </el-icon> Elemento </el-button>
+            </div>
+
+
+          </el-collapse-item>
         </div>
-
-
-
-        <el-button type="primary" v-on:click="newSection"><el-icon>
+        <el-button class="section-button" v-on:click="newSection">
+          <el-icon>
             <Plus />
-          </el-icon> Seção</el-button>
+          </el-icon> Seção
+        </el-button>
 
-      </div>
+      </el-collapse>
 
 
       <el-form-item>
-        <el-button type="primary" @click="salvarCategoria">Salvar</el-button>
+        <el-button class="cta" type="primary" @click="salvarCategoria" :disabled="!categoria.name">Salvar</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -119,6 +154,9 @@ export default {
       novaSecao: false,
       novoElemento: false,
       novaOpcao: false,
+      selected: [],
+      currentOpenSection: 0,
+      currentOpenElement: 0,
 
       categoria: {
         id: 0,
@@ -146,6 +184,11 @@ export default {
       });
   },
   methods: {
+
+    handleRemove(option) {
+      option.img = "";
+    },
+
     deleteCascade(Seccao, Elemento, Option) {
       // Encontre a categoria
       const categoria = this.categoria;
@@ -229,7 +272,7 @@ export default {
               type: 'success',
             })
             loading.close()
-            this.$router.push(`/admin/categorias `)
+            this.$router.push(`/admin/categorias/${this.$route.params.id}`)
           } else {
             console.error('Erro ao criar recurso:', response.statusText);
           }
@@ -252,9 +295,16 @@ export default {
         imgUrl: "",
         categoryId: this.categoria.id,
         elementCmpDtos: [],
+        index: this.categoria.sectionCmps.length + 1,
+        sectionID: this.categoria.sectionCmps.length + 1
       })
+
       this.novaSecao = true
       this.novoElemento = false
+
+      setTimeout(() => {
+        this.currentOpenSection = this.categoria.sectionCmps.length
+      }, 100)
     },
 
     newElement(section) {
@@ -266,11 +316,15 @@ export default {
         name: "Novo elemento",
         type: null,
         sectionCmpId: section.id,
-        optionCmpDtos: []
+        optionCmpDtos: [],
+        elementID: section.sectionID + "." + (section.elementCmps.length + 1)
       })
       this.novoElemento = true
       this.novaOpcao = false
 
+      setTimeout(() => {
+        this.currentOpenElement = section.sectionID + "." + (section.elementCmps.length)
+      }, 100)
     },
 
     newOption(element) {
@@ -299,25 +353,299 @@ hr {
   margin: 30px 0;
 }
 
+.criar-content {
+  border: 0;
+}
+
+div.section-item {
+  background: $primary-color;
+  border: 1px solid $grey-border;
+  margin-bottom: 20px;
+
+  :deep(.el-collapse-item__header) {
+    border-bottom: 0;
+    padding: 36px 20px;
+
+    h1 {
+      font-size: 24px;
+      margin: 0;
+    }
+
+    p {
+      font-size: 16px;
+      color: $admin-grey;
+      margin: 0;
+      margin-left: 5px;
+    }
+  }
+
+  h2 {
+    font-size: 16px;
+    margin-bottom: 20px;
+  }
+
+  :deep(.el-collapse-item__wrap) {
+    border-bottom: 0;
+    background-color: #f6f6f6;
+  }
+
+  .section-inner {
+    padding: 20px;
+  }
+
+
+}
+
+.section-button {
+  width: 100%;
+  height: 72px;
+  background: transparent;
+  border: 1px solid $admin-grey;
+  color: $admin-grey;
+  font-size: 20px;
+
+  &:hover {
+    color: $cta-color;
+    background: transparent;
+    border-color: $cta-color;
+  }
+
+  &:active,
+  &:focus {
+    background: transparent;
+    border-color: $admin-grey;
+    color: $admin-grey;
+  }
+
+  i {
+    margin-right: 5px;
+  }
+
+}
+
+.element-button {
+  width: auto;
+  height: 48px;
+  background: transparent;
+  border: 1px solid $admin-grey;
+  color: $admin-grey;
+  font-size: 20px;
+  margin: 0 20px;
+
+  &:hover {
+    color: $cta-color;
+    background: transparent;
+    border-color: $cta-color;
+  }
+
+  &:active,
+  &:focus {
+    background: transparent;
+    border-color: $admin-grey;
+    color: $admin-grey;
+  }
+
+  i {
+    margin-right: 5px;
+  }
+
+}
+
+.el-icon:hover {
+  color: red;
+
+}
+
+.el-input {
+  width: 300px;
+}
+
+.section-upper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+}
+
 .el-input.section-input {
-  width: 50%;
+  width: 100%;
+}
+
+.element-index-mandatory {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
 }
 
 .elements {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
-}
 
-.element-card {
-  border: 2px solid $admin-grey;
-  padding: 0 20px 20px 20px;
-  width: 300px;
-  margin: 20px 20px 0 0;
+  :deep(.el-collapse) {
+    border-top: 0;
+  }
+
+  .element-item {
+    margin: 20px;
+    border: 1px solid $user-grey;
+
+    :deep(.el-collapse-item__header) {
+      font-size: 20px;
+      border-bottom: 0;
+      padding: 20px;
+    }
+
+    :deep(.el-collapse-item__content) {
+      background: #eee;
+      padding: 20px;
+    }
+  }
 
   h2 {
-    text-align: center;
-    color: $admin-grey;
+    margin-left: 20px;
   }
+}
+
+
+.element-card {
+  display: flex;
+  flex-direction: row;
+
+  .el-input {
+    width: 100%;
+
+  }
+
+  .element-options {
+
+    padding: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    margin-left: 20px;
+    height: 100%;
+
+
+    .option-item {
+      border: 1px solid $admin-grey;
+      height: 100%;
+      width: 35%;
+      padding: 10px 20px;
+      margin: 5px;
+
+
+      .el-form-item {
+        margin-bottom: 25px;
+      }
+    }
+
+    .el-button {
+      height: 180px;
+      border: 1px solid $admin-grey;
+      color: $admin-grey;
+      background: transparent;
+      margin: 5px;
+
+      >span {
+        display: flex;
+        flex-direction: column !important;
+      }
+
+      &:hover {
+        color: $cta-color;
+        background: transparent;
+        border-color: $cta-color;
+      }
+
+      &:active,
+      &:focus {
+        background: transparent;
+        border-color: $admin-grey;
+        color: $admin-grey;
+      }
+
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+}
+
+.avatar-uploader {
+  height: 0;
+}
+
+
+:deep(.avatar-uploader .el-upload) {
+  border: 1px dashed $user-grey;
+  border-radius: 6px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: var(--el-transition-duration-fast);
+}
+
+:deep(.avatar-uploader .el-upload:hover) {
+  border-color: $cta-color !important;
+
+  .el-icon {
+    color: $cta-color;
+  }
+}
+
+
+
+.el-icon.avatar-uploader-icon {
+  font-size: 28px;
+  color: #8c939d;
+  width: 100px;
+  height: 100px;
+  text-align: center;
+}
+
+.avatar-uploader .avatar {
+  width: 100px;
+  height: 100px;
+  display: block;
+  min-width: 100px;
+  min-height: 100px;
+}
+
+:deep(ul.el-upload-list) {
+  display: none;
+}
+
+.inputs {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+.basic-inputs {
+  padding-right: 20px;
+}
+
+div.admin-container button.el-button {
+  margin-top: 0;
+}
+
+:deep(.el-divider__text.is-center) {
+  display: flex;
+  align-items: center;
+  color: $cta-color;
+
+  .el-icon {
+    margin-right: 10px;
+    color: $cta-color;
+  }
+}
+
+.divider-button {
+  border-top: 1px solid $cta-color;
+  cursor: pointer;
+  height: 10px;
 }
 </style>

@@ -518,7 +518,9 @@ div.section-item{
     }
 }
 
-
+.avatar-uploader{
+    height: 0;
+}
 
 .el-icon.avatar-uploader-icon {
   font-size: 28px;
@@ -526,6 +528,7 @@ div.section-item{
   width: 100px;
   height: 100px;
   text-align: center;
+ 
 }
 
 .avatar-uploader .avatar {
@@ -534,6 +537,7 @@ div.section-item{
   display: block;
   min-width: 100px;
   min-height: 100px;
+
 }
 
 :deep(ul.el-upload-list){
