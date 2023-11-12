@@ -44,9 +44,15 @@
             <div class="dashboard-pedidos">
               <h2> Meus Pedidos </h2>
               <el-table :data="pedidosDash" style="width: 100%">
-                <el-table-column prop="date" label="Date" width="180" />
-                <el-table-column prop="name" label="Name" width="180" />
-                <el-table-column prop="address" label="Address" />
+                <el-table-column prop="orderId" label="Id" width="180" />
+                <el-table-column prop="date" label="Date" width="180"/>
+                <el-table-column prop="status" label="Status" width="180">
+                  <template #default="{ row }">
+                  <!-- Mockando o campo status com um texto padrão -->
+                    <span>{{ row.status || 'Ativo' }}</span>
+                  </template>
+                </el-table-column>
+                <el-table-column prop="totalPrice" label="Preço Total" width="180" />
               </el-table>
               <el-button class="cta" type="primary" @click="activeName = 'pedidos'">Ver todos</el-button>
             </div>
@@ -56,8 +62,98 @@
       </el-tab-pane>
 
       <el-tab-pane label="Pedidos" name="pedidos"></el-tab-pane>
-      <el-tab-pane label="Configurações" name="configuracoes"></el-tab-pane>
-      <el-tab-pane label="Endereços" name="enderecos"></el-tab-pane>
+      <el-tab-pane label="Configurações" name="configuracoes">
+        <div>
+            <div class="user-info">
+              <h1 class="info-title">Suas configurações de conta</h1>
+              <!-- <h1 class="section-title">Seus dados:</h1> -->
+              <div class="info-box">
+                <h2 class="info-item title">Nome: </h2>
+                <el-input v-model="editUser.name"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Email: </h2>
+                <el-input v-model="editUser.email"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">CPF: </h2>
+                <el-input v-model="editUser.cpf"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Telefone: </h2>
+                <el-input v-model="editUser.phoneNumber"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Senha Atual: </h2>
+                <el-input v-model="editUser.currentPassword"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Nova Senha: </h2>
+                <el-input v-model="editUser.newPassword"></el-input>
+              </div>
+              <el-button type="primary" @click="saveUser">Salvar</el-button>
+            </div>
+          </div>
+      </el-tab-pane>
+      <el-tab-pane label="Endereços" name="enderecos">
+        <div class="container">
+        <userNavbar />
+          <div class="user-info">
+            <h1 class="info-title">Seus Endereços</h1>
+            <div v-if="!showAddAddressForm && !showUserConfigs">
+              <div v-for="address in addresses" :key="address.addressId" class="address-summary">
+                <h2>{{ address.addressNickname }}</h2>
+                <p>{{ address.street }}, {{ address.number }}, {{ address.district }}, {{ address.city }}, {{ address.state }}, {{ address.cep }}</p>
+                <el-button @click="editAddress(address)">Editar</el-button>
+                <el-button @click="deleteAddress(address)">Excluir</el-button>
+              </div>
+              <router-link to="/perfil/adicionar-endereco">
+                <el-button type="primary" @click="showAddAddressForm = true">Adicionar Novo Endereço</el-button>
+              </router-link>
+            </div>
+          </div>
+
+          <div v-if="showAddAddressForm && !showUserConfigs">
+            <div class="user-info">
+              <h1 class="info-title">Adicionar Novo Endereço</h1>
+              <form @submit.prevent="addAddress" class="address-form">
+                <div class="form-group">
+                  <label for="addressNickname" class="title">Apelido do Endereço:</label>
+                  <el-input v-model="newAddress.addressNickname" required />
+                </div>
+                <div class="form-group">
+                  <label for="street" class="title">Rua:</label>
+                  <el-input v-model="newAddress.street" required />
+                </div>
+                <div class="form-group">
+                  <label for="number" class="title">Número:</label>
+                  <el-input v-model="newAddress.number" required />
+                </div>
+                <div class="form-group">
+                  <label for="district" class="title">Bairro:</label>
+                  <el-input v-model="newAddress.district" required />
+                </div>
+                <div class="form-group">
+                  <label for="city" class="title">Cidade:</label>
+                  <el-input v-model="newAddress.city" required />
+                </div>
+                <div class="form-group">
+                  <label for="state" class="title">Estado:</label>
+                  <el-input v-model="newAddress.state" required />
+                </div>
+                <div class="form-group">
+                  <label for="CEP" class="title">CEP:</label>
+                  <el-input v-model="newAddress.cep" required />
+                </div>
+                <div class="form-group">
+                  <el-button type="primary" native-type="submit">Adicionar Endereço</el-button>
+                </div>
+              </form>
+            </div>
+          </div>
+          
+        </div>
+      </el-tab-pane>
     </el-tabs>
   </div>
 </template>
@@ -70,16 +166,39 @@ import { ElMessage } from 'element-plus';
 export default {
     data() {
       return {
-        user: {
+        user: {},
+        enderecosDash:[],
+        pedidosDash: [],
+        activeName: 'dashboard',
+        showAddAddressForm: false,
+        showEditAddressForm: false,
+        showUserConfigs: false,
+        newAddress: {
+          addressNickname: '',
+          street: '',
+          number: '',
+          district: '',
+          city: '',
+          state: '',
+          cep: '',
         },
-        enderecosDash:[
-        ],
-        activeName: 'dashboard'
+        editUser: {
+          name: "",
+          email: "",
+          phoneNumber: "",
+          cpf: "",
+          currentPassword: "",
+          newPassword: ""
+        },
       };
     },
     created() {
       AuthService.shouldRedirectToLogin(this.$router);
-      //this.getUserInfo();
+      this.getUserInfo();
+      this.loadAddresses();
+      this.updateUserInfo();
+      this.getPedidos();
+      // this.getAddressToEdit();
     },
     methods: {
     getUserInfo() {
@@ -97,9 +216,116 @@ export default {
         });
     },
 
-    handleLogout(){  
-      // Limpar o localStorage
-      clearLocalStorage();
+    getPedidos() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+
+      axios.get('http://localhost:8081/orders/client-orders', config) 
+        .then((response) => {
+          console.log(response);
+          this.pedidosDash = response.data;
+        })
+        .catch((error) => {
+          ElMessage.error('Erro ao carregar pedidos.');
+          console.error('Erro:', error);
+        });
+    },
+
+    loadAddresses() {
+      // Faça uma solicitação ao servidor para carregar a lista de endereços do usuário
+      const config = { headers: { Authorization: AuthService.getToken() } };
+
+      axios.get('http://localhost:8081/users/get-user-address', config)
+        .then((response) => {
+          this.enderecosDash = response.data;
+          this.addresses = response.data;
+        })
+        .catch((error) => {
+          ElMessage.error('Erro ao carregar endereços.');
+          console.error('Erro:', error);
+        });
+    },
+
+    // handleLogout(){  
+    //   // Limpar o localStorage
+    //   clearLocalStorage();
+    // },
+    handleLogout() {
+      this.$confirm('Tem certeza que deseja sair?', 'Confirmação', {
+        confirmButtonText: 'Sim',
+        cancelButtonText: 'Cancelar',
+        type: 'warning'
+      }).then(() => {
+        // Usuário confirmou a saída, então faz o logout
+        AuthService.clearToken();
+        clearLocalStorage();
+        this.$router.push({ path: '/login' });
+      }).catch(() => {
+        // Usuário cancelou a saída, não faz nada
+      });
+    },
+
+    addAddress() {
+        const config = { headers: { Authorization: AuthService.getToken() } };
+  
+        axios
+          .post('http://localhost:8081/users/create-new-address', this.newAddress, config)
+          .then((response) => {
+            ElMessage.success('Endereço adicionado com sucesso.');
+            this.$router.push('/perfil/enderecos');
+          })
+          .catch((error) => {
+            ElMessage.error('Erro ao adicionar endereço.');
+            console.error('Erro:', error);
+          });
+      },
+
+      updateUserInfo() {
+        const config = { headers: { Authorization: AuthService.getToken() } };
+  
+        axios.get('http://localhost:8081/users/user-info', config)
+          .then((response) => {
+            this.user = response.data;
+          })
+          .catch((error) => {
+            ElMessage.error('Erro ao carregar os dados do usuário.');
+            console.error('Erro:', error);
+          });
+      },
+      saveUser() {
+        const config = { headers: { Authorization: AuthService.getToken() } };
+  
+        axios.put('http://localhost:8081/users/update-user', this.user, config)
+          .then((response) => {
+            if (response.status === 204) {
+              ElMessage.success('Dados do usuário atualizados com sucesso!');
+              this.$router.push('/perfil');
+            } else {
+              console.error('Erro ao atualizar os dados do usuário:', response.statusText);
+            }
+          })
+          .catch((error) => {
+            ElMessage({
+              message: 'Erro ao atualizar os dados do usuário.',
+              type: 'error',
+            });
+            console.error('Erro:', error);
+          });
+      },
+
+      deleteAddress(address) {
+      // Implementar lógica de exclusão de endereço
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.delete(`http://localhost:8081/users/delete-user-address/${address.addressId}`, config)
+      .then(response => {
+        this.addresses = response.data;
+        ElMessage.success('Endereço deletado com Sucesso!')  
+      setTimeout(() => {
+            window.location.reload()
+      }, 2000);
+    })
+    .catch(error => {
+      ElMessage.error('Erro ao deletar Usuário');
+    });
     },
 
     formatPhoneNumber(phoneNumber) {
