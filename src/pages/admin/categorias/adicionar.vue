@@ -6,14 +6,18 @@
             <el-form-item label="Nome" required>
                 <el-input v-model="categoria.name"></el-input>
             </el-form-item>
-            <h2>Modelagem</h2>
+            <h2>Permitir modelagem</h2>
             <el-form-item>
                 <el-switch v-model="categoria.allow_creation" active-text="Sim" inactive-text="Não" ></el-switch>
             </el-form-item>
 
-            <el-collapse accordion class="criar-content" v-if="categoria.allow_creation">
+            <el-collapse accordion class="criar-content" v-if="categoria.allow_creation" v-model="currentOpenSection">
                 <div v-for="section in categoria.sectionCmps" v-bind:key="section">
-                <el-collapse-item :title="section.name ? section.name + ' - ' + section.elementCmps.length + (section.elementCmps.length != 1 ? ' elementos' : ' elemento') : 'Nova seção' + ' - ' + section.elementCmps.length + (section.elementCmps.length != 1 ? ' elementos' : ' elemento')" class="section-item">
+                <el-collapse-item class="section-item" :name="section.sectionID">
+                    <template #title>
+                        <h1> {{ section.name ? section.name : 'Nova seção' }} </h1>
+                        <p v-if="section.elementCmps.length"> - {{ section.elementCmps.length }} {{ section.elementCmps.length != 1 ? 'elementos' : 'elemento' }} </p>
+                    </template>
                     <div class="section-inner">
                     <h2>Detalhes da seção</h2>
                     <div class="section-upper">
@@ -39,9 +43,13 @@
 
                     <div class="elements">
                         <h2>Elementos</h2>
-                        <el-collapse accordion>
+                        <el-collapse accordion v-model="currentOpenElement">
                         <div v-for="element in section.elementCmps" v-bind:key="element">
-                        <el-collapse-item class="element-item" :title="element.name ? element.name + ' - ' + element.optionCmps.length + (element.optionCmps.length != 1 ? ' opções' : ' opção') : 'Novo elemento' + ' - ' + element.optionCmps.length + (element.optionCmps.length != 1 ? ' opções' : ' opção')" >
+                        <el-collapse-item class="element-item" :name="element.elementID">
+                            <template #title>
+                                <h1> {{ element.name ? element.name : 'Novo elemento' }} </h1>
+                                <p v-if="element.optionCmps.length"> - {{ element.optionCmps.length }} {{ element.optionCmps.length != 1 ? 'opções' : 'opção' }} </p>
+                            </template>
 
                             <div class="element-card">
                                 <div class="element-main">
@@ -146,8 +154,9 @@ import imgConverter from '@/store/imgConverter.js';
 export default {
     data() {
         return {
-            currentSection: 1,
             selected: [],
+            currentOpenSection: 0,
+            currentOpenElement: 0,
             categoria: {
                 id: 0,
                 name: "",
@@ -238,8 +247,14 @@ export default {
                 name: "",
                 imgUrl: "",
                 elementCmps: [],
-                index: this.categoria.sectionCmps.length + 1
+                index: this.categoria.sectionCmps.length + 1,
+                sectionID: this.categoria.sectionCmps.length + 1
             })
+
+            setTimeout(() => {
+                this.currentOpenSection = this.categoria.sectionCmps.length
+            }, 100)
+            
         },
 
         newElement(section) {
@@ -247,9 +262,14 @@ export default {
                 name: "",
                 type: null,
                 index: section.elementCmps.length + 1,
-                optionCmps: []
+                optionCmps: [],
+                // make id incrementally unique to all this.categoria.sectionCmps
+                elementID: section.sectionID + "." + (section.elementCmps.length + 1)
+                
             })
-
+            setTimeout(() => {
+                this.currentOpenElement = section.sectionID + "." + (section.elementCmps.length)
+            }, 100)
         },
 
         newOption(element) {
@@ -284,9 +304,19 @@ div.section-item{
     margin-bottom: 20px;
 
     :deep(.el-collapse-item__header){
-        font-size: 24px;
         border-bottom: 0;
         padding: 36px 20px;
+
+        h1{
+            font-size: 24px;
+            margin: 0;
+        }
+        p{
+            font-size: 16px;
+            color: $admin-grey;
+            margin: 0;
+            margin-left: 5px;
+        }
     }
 
     h2{
@@ -302,6 +332,8 @@ div.section-item{
     .section-inner{
         padding: 20px;
     }
+
+
 }
 .section-button {
   width: 100%;
@@ -385,7 +417,7 @@ div.section-item{
 
     .element-item{
         margin: 20px;
-        border: 1px solid $grey-border;
+        border: 1px solid $user-grey;
 
         :deep(.el-collapse-item__header){
             font-size: 20px;
@@ -429,8 +461,9 @@ div.section-item{
             border: 1px solid $admin-grey;
             height: 100%;
             width: 35%;
-            padding: 10px;
+            padding: 10px 20px;
             margin: 5px;
+
 
             .el-form-item{
                 margin-bottom: 25px;
@@ -468,7 +501,7 @@ div.section-item{
 }
 
 :deep(.avatar-uploader .el-upload) {
-  border: 1px dashed var(--el-border-color);
+  border: 1px dashed $user-grey;
   border-radius: 6px;
   cursor: pointer;
   position: relative;
@@ -511,7 +544,7 @@ div.section-item{
   justify-content: space-around;
 }
 .basic-inputs {
-  padding-right: 40px;
+  padding-right: 20px;
 }
 div.admin-container button.el-button{
     margin-top: 0;
