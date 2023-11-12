@@ -217,29 +217,29 @@ export default {
 
     salvarCategoria() {
       const loading = ElLoading.service({
-                lock: true,
-                text: 'Criando categoria',
-                background: 'rgba(0, 0, 0, 0.7)'
-            });
+        lock: true,
+        text: 'Criando categoria',
+        background: 'rgba(0, 0, 0, 0.7)'
+      });
       axios.put(`http://localhost:8081/category/${this.$route.params.id}`, this.categoria)
         .then((response) => {
           if (response.status === 204) {
             ElMessage({
-                            message: 'Categoria editada com sucesso.',
-                            type: 'success',
-                        })
-                        loading.close()
-                        this.$router.push(`/admin/categorias`)
+              message: 'Categoria editada com sucesso.',
+              type: 'success',
+            })
+            loading.close()
+            this.$router.push(`/admin/categorias `)
           } else {
             console.error('Erro ao criar recurso:', response.statusText);
           }
         })
         .catch((error) => {
           ElMessage({
-                            message: 'Erro ao criar a categoria.',
-                            type: 'error',
-                        })
-                        loading.close()
+            message: 'Erro ao criar a categoria.',
+            type: 'error',
+          })
+          loading.close()
         })
     },
     newSection() {
