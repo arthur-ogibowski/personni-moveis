@@ -17,6 +17,10 @@
                     <template #title>
                         <h1> {{ section.name ? section.name : 'Nova seção' }} </h1>
                         <p v-if="section.elementCmps.length"> - {{ section.elementCmps.length }} {{ section.elementCmps.length != 1 ? 'elementos' : 'elemento' }} </p>
+                        <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;"
+                            :size="20" color="#A8A8A8">
+                            <Delete />
+                        </el-icon>
                     </template>
                     <div class="section-inner">
                     <h2>Detalhes da seção</h2>
@@ -33,10 +37,7 @@
                         </el-input-number>
                         </el-form-item>
 
-                        <el-icon v-on:click="deleteCascade(section, null, null)" style="margin-left: 8px; cursor: pointer;"
-                            :size="20" color="#A8A8A8">
-                            <Delete />
-                        </el-icon>
+                     
                     </div>
                 </div>
 
@@ -49,16 +50,16 @@
                             <template #title>
                                 <h1> {{ element.name ? element.name : 'Novo elemento' }} </h1>
                                 <p v-if="element.optionCmps.length"> - {{ element.optionCmps.length }} {{ element.optionCmps.length != 1 ? 'opções' : 'opção' }} </p>
-                            </template>
-
-                            <div class="element-card">
-                                <div class="element-main">
                                 <el-icon v-on:click="deleteCascade(section, element, null)"
                                     style="margin-left: 8px; float: right; cursor: pointer;" :size="20"
                                     color="#A8A8A8">
                                     <Delete />
                                 </el-icon>
+                            </template>
 
+                            <div class="element-card">
+                                <div class="element-main">
+                    
                                 <el-form-item label="Nome">
                                     <el-input v-model="element.name"></el-input>
                                 </el-form-item>
