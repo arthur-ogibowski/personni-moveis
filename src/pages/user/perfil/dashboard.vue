@@ -284,7 +284,7 @@ export default {
   
         axios.get('http://localhost:8081/users/user-info', config)
           .then((response) => {
-            this.user = response.data;
+            this.editUser = response.data;
           })
           .catch((error) => {
             ElMessage.error('Erro ao carregar os dados do usuário.');
