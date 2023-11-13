@@ -102,7 +102,7 @@
   };
   </script>
   
-  <style>
+  <style scoped>
   .user-info {
     background-color: #f9f9f9;
     padding: 20px;

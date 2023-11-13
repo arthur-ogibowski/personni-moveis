@@ -107,6 +107,8 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                     </div>
                 </el-form>
 
+                
+
                 <div class="actions">
                     <el-button type="info" plain @click="previousStep"><el-icon>
                             <ArrowLeftBold />
@@ -118,9 +120,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
             </div>
 
-            <div class="side-info" v-if="currentStep !== 3">
-
-                <h1 v-if="currentStep == 2">Finalizar pedido</h1>
+            <div class="side-info" v-if="currentStep !== 3 && currentStep !== 2">
 
                 <el-card class="box-card" shadow="never">
                     <div class="card-header card-item">
@@ -150,22 +150,110 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                         </h3>
                     </div>
 
-                    <img v-if="QrCode != null" :src=QrCode>
-
-
 
                 </el-card>
 
-                <div class="actions" v-if="currentStep == 2">
+            </div>
+
+            <div class="finalizar" v-if="currentStep == 2">
+                <h1>Finalizar pedido</h1>
+
+                <div class="finalizar-content">
+                    <div class="finalizar-left">
+                        <div class="user-info">
+                            <el-card class="box-card" shadow="never">
+                                <div class="card-header card-item">
+                                    <h2><el-icon>
+                                            <LocationFilled />
+                                        </el-icon> Endereço de entrega</h2>
+                                </div>
+                                <div class="card-item">
+                                    <h4>Aguinaldo Lucas</h4>
+                                    <h4>Rua Saldanha Marinho 123</h4>
+                                    <h4>80410-151</h4>
+                                    <h4>Centro</h4>
+                                    <h4>Curitiba, PR</h4>
+                                    <h4>Brasil</h4>
+                                
+                                </div>
+                            </el-card>
+                        
+                        </div>
+                    
+                        <div class="pagamento-info">
+                            <el-card class="box-card" shadow="never">
+                                <div class="card-header card-item">
+                                    <h2><el-icon>
+                                            <WalletFilled />
+                                        </el-icon> Forma de pagamento</h2>
+                                </div>
+                                <div class="card-item">
+                                    <img src="../../../assets/img/logoPix.png" style="width: 100%; max-width: 200px; margin-bottom: 20px;/">
+
+                                </div>
+                            </el-card>
+                        </div>
+                    
+                        <div class="frete">
+                            <el-card class="box-card" shadow="never">
+                                <div class="card-header card-item">
+                                    <h2><el-icon>
+                                            <Promotion />
+                                        </el-icon> Frete</h2>
+                                </div>
+                                <div class="card-item">
+                                    <h3>R$ 15,00</h3>
+                                    <h4>Entrega em até 3 dias úteis</h4>
+                                </div>
+                            </el-card>
+                        </div>
+
+                    </div>
+
+                    <div class="finalizar-right">
+                        <el-card class="box-card" shadow="never">
+                            <div class="card-header card-item">
+                                <h2><el-icon>
+                                        <GoodsFilled />
+                                    </el-icon> Resumo do pedido</h2>
+                            </div>
+                            <div class="card-item" v-for="product in products" :key="product">
+                                <div class="card-item-inner">
+                                    <div class="card-item-about">
+                                        <h3>{{ product.amount }} x {{ product.name }}</h3>
+                                        <el-text type="info" size="small">{{ product.description }}</el-text>
+                                    </div>
+                                    <div class="card-item-price">
+                                        <h4>R$ {{ formatPrice(product.value) }}</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-item frete">
+                                <el-text type="info" size="small">Frete: </el-text>
+                                <h4> {{ calcularFrete() != 0 ? "R$" + formatPrice(calcularFrete()) : "--" }}
+                                </h4>
+                            </div>
+                            <div class="card-item subtotal">
+                                <el-text type="info" size="medium">Total ({{ totalAmount() }} itens): </el-text>
+                                <h3> {{ totalPrice() != 0 ? "R$" + formatPrice(totalPrice()) : "--" }}
+                                </h3>
+                            </div>
+                        
+                        </el-card>
+                        <div class="actions">
                     <el-button type="info" plain @click="previousStep"><el-icon>
                             <ArrowLeftBold />
                         </el-icon> Voltar</el-button>
-                    <el-button type="success" @click="makeOrder()" size="large">Confirmar</el-button>
+                    <el-button type="success" @click="makeOrder()" size="large">Confirmar pedido</el-button>
+                </div>
+
+                    </div>
                 </div>
             </div>
 
             <div class="final-step" v-if="currentStep == 3">
                 <h1>Pedido concluído</h1>
+                <img v-if="QrCode != null" :src=QrCode>
                 <div class="mega-icon">
                     <el-icon color="#67c23a">
                         <SuccessFilled />
@@ -369,7 +457,7 @@ export default {
         },
 
         calcularFrete() {
-            let frete = 0;
+            let frete = "15,00";
             /*if (this.products && this.products.length > 0) {
                 frete += this.products.length * 10;
             }*/
@@ -377,7 +465,7 @@ export default {
         },
 
         formatPrice(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            return x.toString().toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
         },
 
         nextStep() {
@@ -593,7 +681,88 @@ export default {
         justify-content: space-between;
         align-items: center;
 
-        .box-card {
+        .actions {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+
+            button {
+                width: 100%;
+                margin: 10px 0;
+            }
+        }
+    }
+
+}
+
+
+.titulo-address {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+
+    .el-radio-group {
+        margin-left: 20px;
+        width: fit-content;
+        display: inline-block;
+    }
+    
+    .el-radio-button {
+        display: inline; /* Faz o botão de rádio ficar em linha com o texto */
+    }
+}
+
+body .el-radio-group {
+    display: inline-block;
+    flex-direction: column;
+}
+
+.radio-label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 22px;
+    margin-top: 5px;
+    margin-bottom: 30px;
+}
+
+.radio-button {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #007BFF;
+    border-radius: 50%;
+    margin-right: 10px;
+    position: relative;
+}
+
+input[type="radio"] {
+    display: none;
+}
+
+input[type="radio"]:checked + .radio-button::before {
+    content: "X";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 14px;
+    font-weight: bold;
+    color: #007BFF;
+}
+
+.finalizar-content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .finalizar-left, .finalizar-right{
+    flex-basis: 45%;
+  }
+}
+.box-card {
             width: 100%;
             margin-bottom: 20px;
         }
@@ -701,113 +870,4 @@ export default {
                 }
             }
         }
-
-        .actions {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-
-            button {
-                width: 100%;
-                margin: 10px 0;
-            }
-        }
-    }
-
-}
-
-// .radio-label {
-//   display: flex;
-//   align-items: center;
-//   margin-top: 30px;
-//   margin-bottom: 30px;
-//   cursor: pointer;
-//   font-size: 14px;
-//   line-height: 22px;
-// }
-
-// .radio-button {
-//   width: 20px;
-//   height: 20px;
-//   border: 2px solid #007BFF; /* Cor da borda do círculo */
-//   border-radius: 50%; /* Torna o elemento circular */
-//   margin-right: 10px;
-//   position: relative;
-// }
-
-// input[type="radio"] {
-//   display: none; /* Oculta o input padrão */
-// }
-
-// input[type="radio"]:checked + .radio-button::before {
-//    content: "X"; /* Insere um "X" no círculo quando selecionado */
-//    position: absolute;
-//    top: 50%;
-//    left: 50%;
-//    transform: translate(-50%, -50%);
-//    font-size: 14px;
-//    font-weight: bold;
-//   color: #007BFF; /* Cor do "X" quando selecionado */
-// }
-
-// .titulo-address {
-//     margin-bottom: 20px;
-// }
-
-.titulo-address {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-
-    .el-radio-group {
-        margin-left: 20px;
-        width: fit-content;
-        display: inline-block;
-    }
-    
-    .el-radio-button {
-        display: inline; /* Faz o botão de rádio ficar em linha com o texto */
-    }
-}
-
-body .el-radio-group {
-    display: inline-block;
-    flex-direction: column;
-}
-
-.radio-label {
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-    font-size: 14px;
-    line-height: 22px;
-    margin-top: 5px;
-    margin-bottom: 30px;
-}
-
-.radio-button {
-    width: 20px;
-    height: 20px;
-    border: 2px solid #007BFF;
-    border-radius: 50%;
-    margin-right: 10px;
-    position: relative;
-}
-
-input[type="radio"] {
-    display: none;
-}
-
-input[type="radio"]:checked + .radio-button::before {
-    content: "X";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    font-size: 14px;
-    font-weight: bold;
-    color: #007BFF;
-}
 </style>

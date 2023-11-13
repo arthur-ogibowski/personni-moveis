@@ -261,7 +261,7 @@ export default {
     salvarCategoria() {
       const loading = ElLoading.service({
         lock: true,
-        text: 'Criando categoria',
+        text: 'Salvando...',
         background: 'rgba(0, 0, 0, 0.7)'
       });
       axios.put(`http://localhost:8081/category/${this.$route.params.id}`, this.categoria)
