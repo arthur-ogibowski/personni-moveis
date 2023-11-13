@@ -153,6 +153,11 @@
                                                     </el-upload>
                                                 </div>
                                             </el-form-item>
+                                            <el-icon v-on:click="deleteCascade(section, option)"
+                                                style="margin-left: 8px; float: right; cursor: pointer;" :size="20"
+                                                color="#A8A8A8">
+                                                <Delete />
+                                            </el-icon>
                                         </div>
                                     </div>
                                     <el-divider class="divider-button" v-on:click="newOption(section)">
@@ -340,6 +345,12 @@ export default {
             // Encontra índice do item a ser removido e faz splice removendo.
             const index = itemList.indexOf(itemToBeRemoved);
             itemList.splice(index, 1);
+        },
+        deleteCascade(Seccao, Option) {
+            const product = this.product;
+            // remote option from section
+            const index = Seccao.options.indexOf(Option);
+            Seccao.options.splice(index, 1);
         },
     }
 }

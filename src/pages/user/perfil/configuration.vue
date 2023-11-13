@@ -91,7 +91,7 @@
   };
   </script>
   
-  <style>
+  <style scoped>
   .user-edit-container {
     padding: 20px;
     background-color: #f9f9f9;
