@@ -457,7 +457,7 @@ export default {
         },
 
         calcularFrete() {
-            let frete = "15,00";
+            let frete = "15";
             /*if (this.products && this.products.length > 0) {
                 frete += this.products.length * 10;
             }*/
@@ -489,7 +489,8 @@ export default {
             }
 
             this.productsCmp.value = total;
-            return total;
+            total += parseInt(this.calcularFrete())
+            return this.formatPrice(total);
         },
         // Calculo dos produtos e personalizações.
         totalProducts() {
@@ -793,6 +794,7 @@ input[type="radio"]:checked + .radio-button::before {
                 font-size: 14px;
                 font-weight: 400;
                 margin-top: 0px;
+                margin-bottom: 5px;
             }
 
             div.card-header.card-item {
