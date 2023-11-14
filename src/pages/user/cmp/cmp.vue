@@ -37,6 +37,7 @@
                       <div class="option-image-placeholder" v-else>
                         <img src="../../../assets/img/personniLogo-Grey.png"/>
                       </div>
+                      <el-icon class="option-dialog-button" @click="optionDialog(option)"><InfoFilled /></el-icon>
                       <div class="option-info">
                        <div class="option-name">{{ option.name }}</div>
                        <div class="option-price">{{ option.price != 0 ? "R$ " + option.price : "--" }}</div>
@@ -45,6 +46,29 @@
                   </el-radio-group>
                 </div>
               </div>
+
+
+              <el-dialog
+                v-model="dialogVisible"
+                :title="currentOption.name"
+                width="40%"
+                :before-close="handleClose"
+              >
+                <div class="dialog-content">
+                  <div class="dialog-image" v-if="currentOption.img != ''">
+                        <el-image :src="currentOption.img"/>
+                  </div>
+                  <div class="dialog-image-placeholder" v-else>
+                    <img src="../../../assets/img/personniLogo-Grey.png"/>
+                  </div>
+                  <h3> {{ currentOption.description }} </h3>
+                </div>
+                <template #footer>
+                  <span class="dialog-footer">
+                    <h2>R$ {{ currentOption.price }}</h2>
+                  </span>
+                </template>
+              </el-dialog>
               <div class="actions">
                 <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="currentSection !== 0"><el-icon><CaretLeft /></el-icon> Voltar</el-button>
                 <el-button class="cta" color="$cta-color" style="visibility: hidden;" type="primary" @click="previousSection" v-else></el-button>
@@ -197,6 +221,13 @@ export default {
         allow_creation: false,
         sectionCmps: [],
       },
+      dialogVisible: false,
+      currentOption: {
+        name: "",
+        price: "",
+        description: "",
+        img: ""
+      },
     };
   },
   async created() {
@@ -302,6 +333,13 @@ export default {
       window.scrollTo({
         top: 0,
       });
+    },
+    optionDialog(option) {
+      this.dialogVisible = true
+      this.currentOption.name = option.name
+      this.currentOption.price = option.price
+      this.currentOption.description = "    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." 
+      this.currentOption.img = option.img
     },
     encontrarElementoESeçãoPorOpção(optionIds) {
       const correspondencias = [];
@@ -839,6 +877,32 @@ div.el-radio-group{
 
   .el-image, img{
   width: 100px;
+  }
+}
+.option-dialog-button{
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 5;
+}
+.dialog-content {
+  display: flex;
+  flex-direction: row;
+
+  .el-image{
+    width: 160px;
+    height: 160px;
+    margin-right: 20px;
+  }
+  img{
+    width: 100%;
+    height: 160px;
+    margin-right: 20px;
+  }
+
+  h3{
+    font-weight: 400;
+    font-size: 14px;
   }
 }
 </style>

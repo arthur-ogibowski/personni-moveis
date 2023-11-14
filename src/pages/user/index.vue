@@ -178,6 +178,11 @@ div.content {
       margin-top: 2rem;
       //background-color: #fff;
 
+    .block.text-center{
+      display: flex;
+      justify-content: center;
+    }
+
     h2 {
       font-size: 4rem;
       font-weight: 300;

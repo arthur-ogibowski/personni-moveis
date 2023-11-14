@@ -109,22 +109,27 @@
                 <el-divider direction="vertical" />
 
                 <div class="right-content">
-                    <h2>Personalização</h2>
+                    <h2>Permitir personalização</h2>
                     <el-form-item>
-                        <el-switch v-model="product.editable"></el-switch>
+                        <el-switch v-model="product.editable" active-text="Sim" inactive-text="Não"></el-switch>
                     </el-form-item>
 
                     <div class="criar-content" v-if="product.editable">
 
                         <div class="elements">
-                            <div class="element-item" v-for="section in product.sections" v-bind:key="section">
+                            <el-collapse accordion v-model="currentOpenSection">
+                            <div v-for="section in product.sections" v-bind:key="section">
+                                <el-collapse-item class="element-item" :name="section.sectionID">
+                                    <template #title>
+                                    <h1> {{ section.name ? section.name : 'Nova seção' }} </h1>
+                                    <p v-if="section.options.length"> - {{ section.options.length }} {{ section.options.length != 1 ? 'opções' : 'opção' }} </p>
+                                    <el-icon v-on:click="removeItem(product.sections, section)" style="margin-left: 8px; cursor: pointer;"
+                                        :size="20" color="#A8A8A8">
+                                        <Delete />
+                                    </el-icon>
+                                </template>
 
-
-                                <div class="element-card">
-                                    <el-icon v-on:click="removeItem(product.sections, section)" style="margin-right:-5px; float: right; margin-top: 10px; cursor: pointer;" :size="20" color="#A8A8A8"><CloseBold /></el-icon>
-
-                                    <h2 v-if="section.name">{{ section.name.toUpperCase() }}</h2>
-                                    <h2 v-else>SEÇÃO</h2>
+                                <div>
 
                                     <el-form-item label="Nome">
                                         <el-input v-model="section.name"></el-input>
@@ -160,22 +165,25 @@
                                             </el-icon>
                                         </div>
                                     </div>
-                                    <el-divider class="divider-button" v-on:click="newOption(section)">
+                                    <el-button class="option-button" v-on:click="newOption(section)">
                                             <el-icon>
                                                 <Plus />
                                             </el-icon> Opção
-                                        </el-divider>
+                                        </el-button>
 
                                 </div>
+                                </el-collapse-item>
 
                             </div>
 
                             
-                            <el-divider class="divider-button" v-on:click="newSection()">
+                            <el-button class="section-button" v-on:click="newSection()">
                                     <el-icon>
                                         <Plus />
                                     </el-icon> Seção
-                                </el-divider>
+                                </el-button>
+
+                            </el-collapse>
                         </div>
 
                     </div>
@@ -216,6 +224,7 @@ export default {
             fetchedMaterials: [],
             selectedCategory: null,
             selectedMaterial: null,
+            currentOpenSection: ""
         };
     },
 
@@ -317,10 +326,15 @@ export default {
          */
         newSection() {
             this.product.sections.push({
-                name: "Nova seção",
+                name: "",
                 mainImg: "",
-                options: []
+                options: [],
+                sectionID: this.product.sections.length + 1 
             })
+
+            setTimeout(() => {
+                this.currentOpenSection = this.product.sections.length
+            }, 100)
         },
         /**
          * Adiciona a opção na seção.
@@ -330,7 +344,7 @@ export default {
             section.options.push({
                 name: '',
                 mainImg: '',
-                price: 0
+                price: 0,
             });
         },
         /**Insere novo detalhe do produto */
@@ -481,9 +495,86 @@ div.element-card{
 
 div.element-item{
     width: 100%;
+    margin-bottom: 15px;
+    border: 1px solid $grey-border;
+
+    :deep(.el-collapse-item__header){
+        border-bottom: 0;
+
+        h1{
+            font-size: 20px;
+            margin: 0;
+            padding-left: 10px;
+        }
+        p{
+            font-size: 14px;
+            color: $admin-grey;
+            margin: 0;
+            margin-left: 5px;
+        }
+    }
+    :deep(.el-collapse-item__content) {
+        padding: 20px;
+        background: #f6f6f6;
+    }
 }
 
 .basic-inputs {
   padding-right: 15%;
+}
+
+.el-collapse{
+    width: 100%;
+}
+
+.section-button {
+  width: 100%;
+  height: 48px;
+  background: transparent;
+  border: 1px solid $admin-grey;
+  color: $admin-grey;
+  font-size: 20px;
+
+    &:hover {
+        color: $cta-color;
+        background: transparent;
+        border-color: $cta-color;
+    }
+    &:active, &:focus{
+        background: transparent;
+        border-color: $admin-grey;
+        color: $admin-grey;
+    }
+
+    i{
+        margin-right: 5px;
+    }
+    
+}
+.option-button {
+  width: auto;
+  height: 20px;
+  background: transparent;
+  border: 1px solid $admin-grey;
+  color: $admin-grey;
+  font-size: 14px;
+  margin: 0;
+  width: 100%;
+
+    &:hover {
+        color: $cta-color;
+        background: transparent;
+        border-color: $cta-color;
+    }
+    &:active, &:focus{
+        background: transparent;
+        border-color: $admin-grey;
+        color: $admin-grey;
+    }
+
+    i{
+        margin-right: 5px;
+    }
+    
 }
 </style>
