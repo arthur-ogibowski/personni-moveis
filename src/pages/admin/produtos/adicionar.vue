@@ -49,7 +49,7 @@
                         </div>
                     </el-form-item>
                     <!-- Imagens secundárias -->
-                    <el-form-item label="Imagens secundárias">
+                    <!-- <el-form-item label="Imagens secundárias">
                         <div>
                             <el-upload class="avatar-uploader" :auto-upload="false" list-type="picture-card" v-model:file-list="product.secondaryImages"
                                                             @change="handleSecondaryImagesChange">
@@ -57,7 +57,7 @@
                                                             <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
                                                         </el-upload>
                         </div>
-                    </el-form-item>
+                    </el-form-item> -->
                     <!-- Categoria -->
                     <el-form-item label="Categoria">
                         <el-select
@@ -254,6 +254,11 @@ export default {
         },
         /** Faz requisição para criar produto. */
         createProduct() {
+            // Se categoria foi atribuida, adquire id e seta na requisição como parâmetro opcional, senão mostra exceção.
+            if (this.selectedCategory == null) {
+                ElMessage.error('Para ser cadastrado, o produto deve ter uma categoria selecionada!');
+                return;
+            }
             // Produto deve ter ao menos 1 em qtde para ser disponível.
             const loading = ElLoading.service({
                 lock: true,
@@ -278,11 +283,7 @@ export default {
                 });
             }
 
-            // Se nehuma imagem foi selecionada, coloca imagem default - a fazer....
-            //imgConverter.isSettingDefaultImage();
-
-            // Se categoria foi atribuida, adquire id e seta na requisição como parâmetro opcional.
-            const config = { params: { categoryId: this.selectedCategory ? this.selectedCategory : null } }
+            const config = { params: { categoryId: this.selectedCategory } }
             // Fazendo requisição para criação do produto e seus subitens, redireciona para página de listagem.
             axios.post('http://localhost:8081/products/save-full-product', this.product, config)
                 .then((response) => {
