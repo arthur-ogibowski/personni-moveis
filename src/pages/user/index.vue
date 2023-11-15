@@ -37,11 +37,11 @@
       <div class="categorias" v-if="categorias.length > 0">
         <h2> Categorias </h2>
         <div class="categorias-grid">
-          <router-link to="/produtos" v-for="i in categorias.slice(0, 4)" :key="i">
-            <div class="categoria-item">
+          <div v-for="i in categorias" :key="i">
+            <div @click="$router.push({ path: '/produtos', query: { category: i.id } })" class="categoria-item">
               <h3> {{ i.name }} </h3>
             </div>
-          </router-link>
+          </div>
         </div>
         
         <div class="sobre-catalogo">

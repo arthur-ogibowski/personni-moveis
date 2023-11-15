@@ -17,31 +17,56 @@
             <div class="catalogo-content">
               <div class="filters">
                 <div class="filters-item">
-                <el-divider content-position="center">Categorias</el-divider>
-                <el-radio-group v-model="filterCategory" size="large">
-                  <el-radio-button
-                    v-for="category in categories"
-                    :key="category.id"
-                    :label="category.id"
-                    :value="category.id">
-                    {{ category.name }}
-                  </el-radio-button>
-                </el-radio-group>
-              </div>
+                  <el-divider content-position="center">Categorias</el-divider>
+                  <el-radio-group v-model="filterCategory" size="large">
+                    <el-radio-button
+                      v-for="category in categories"
+                      :key="category.id"
+                      :label="category.id"
+                      :value="category.id">
+                      {{ category.name }}
+                    </el-radio-button>
+                  </el-radio-group>
+                </div>
 
               <div class="filters-item">
-                <el-divider content-position="center">Preço</el-divider>
-                <el-radio-group @change="filterPrice" v-model="priceFilter" size="large">
-                  <el-radio-button label="crescente">
-                    Menor para maior 
-                    <!-- Se filtro para ordenar pelo maior é selecionado -->
-                    <el-icon><CaretTop /></el-icon>
-                  </el-radio-button>
-                  <el-radio-button label="decrescente">
-                    Maior para Menor <el-icon><CaretBottom /></el-icon>
-                  </el-radio-button>
-                </el-radio-group>
-              </div>
+                  <el-divider content-position="center">Preço</el-divider>
+                  <el-radio-group @change="filterPrice" v-model="priceFilter" size="large">
+                    <el-radio-button label="crescente">
+                      Menor para maior 
+                      <!-- Se filtro para ordenar pelo maior é selecionado -->
+                      <el-icon><CaretTop /></el-icon>
+                    </el-radio-button>
+                    <el-radio-button label="decrescente">
+                      Maior para Menor <el-icon><CaretBottom /></el-icon>
+                    </el-radio-button>
+                  </el-radio-group>
+                </div>
+
+                <div class="filters-item">
+                  <el-divider content-position="center">Disponibilidade</el-divider>
+                  <el-radio-group @change="filterPrice" v-model="stockFilter" size="large">
+                    <el-radio-button label="disponivel">
+                      Disponível
+                    </el-radio-button>
+                    <el-radio-button label="fora">
+                      Fora de estoque
+                    </el-radio-button>
+                  </el-radio-group>
+                </div>
+
+                <div class="filters-item">
+                  <el-divider content-position="center">Personalizável</el-divider>
+                  <el-radio-group @change="filterPrice" v-model="persoFilter" size="large">
+                    <el-radio-button label="sim">
+                      Sim
+                    </el-radio-button>
+                    <el-radio-button label="nao">
+                      Não
+                    </el-radio-button>
+                  </el-radio-group>
+                </div>
+              
               
             </div>
 
@@ -107,11 +132,25 @@ export default {
     axios.get('http://localhost:8081/category')
       .then(response => {
         this.categories = response.data;
+
       })
       .catch(error => {
         console.error('Erro ao obter dados da API:', error);
     });
-    axios.get('http://localhost:8081/products')
+    if (this.$route.query.category) {
+      axios.get("http://localhost:8081/category/products-in-category/" + this.$route.query.category)
+        .then(response => {
+          this.product = [];
+          response.data.forEach(product => this.products.push(product));
+          this.$forceUpdate();
+        })
+        setTimeout(() => {
+          loading.close()
+        }, 250)
+      
+    }
+    else{
+      axios.get('http://localhost:8081/products')
       .then(response => {
         this.products = response.data;
         setTimeout(() => {
@@ -121,6 +160,7 @@ export default {
       .catch(error => {
         console.error('Erro ao obter dados da API:', error);
     });
+    }
   },
   methods: {
     filtrarPorCategoria(categoryId) {

@@ -1,22 +1,17 @@
 <template>
     <div class="container">
         <el-breadcrumb separator="/">
-          <el-breadcrumb-item :to="{ path: '/produtos' }">Produtos</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/produtos' }">Catálogo</el-breadcrumb-item>
           <el-breadcrumb-item>{{ product.name }}</el-breadcrumb-item>
         </el-breadcrumb>
 
 
         <div class="main-single">
-            <el-carousel
-              direction="vertical"
-              type="card"
-              :autoplay="false"
-            >
-              <el-carousel-item v-for="item in 4" :key="item" class>
-                <el-image style="width: 100px; height: 100px" :src="product.imgUrl" :fit="fit" />
+            <el-carousel :interval="5000" arrow="always" :autoplay="false">
+              <el-carousel-item v-for="item in 4" :key="item">
+                <el-image style="width: 500px; height: 500px" :src="product.mainImg" :fit="fit" />
               </el-carousel-item>
             </el-carousel>
-            <el-image style="width: 500px; height: 500px" :src="product.mainImg" :fit="fit" />
 
             <div class="info-box">
                 <h2 style="font-size: 4rem; font-weight: 400;">{{  product.name }}</h2>
@@ -37,7 +32,7 @@
         <el-divider></el-divider>
 
         <div class="about-single">
-            <h1>Descrição do Produto</h1>
+            <h1>Detalhes do Produto</h1>
 
             <el-table :data="product.details" style="width: 100%">
               <el-table-column prop="fieldContent" width="180" />
@@ -178,19 +173,32 @@ div.container {
             margin-top: 2rem;
             :deep(.el-table__row), :deep(.el-table__cell)  {
                 background-color: transparent;
-                //border-bottom: 1px solid #A6A6A6;
+                border-bottom: 0;
                 padding: 2rem;
             }
             :deep(.el-table__header-wrapper){
                 display: none;
             }
-            :deep(.el-table_1_column_1){
+            :deep(tr.el-table__row > td:first-child){
                 border-right: 1px solid #A6A6A6;
             }
         }
 
+        h1{
+            font-weight: 300;
+        }
+
         
     }
+}
+
+
+:deep(div.el-carousel__item){
+    width: 500px !important;
+    height: 500px !important;
+}
+:deep(.el-carousel__container){
+    height: 500px;
 }
 
 </style>

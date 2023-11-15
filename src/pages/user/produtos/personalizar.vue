@@ -10,8 +10,8 @@
         <div class="content">
             <div class="dropdown-list">
                 <div class="dropdown-outer" v-for="section in product.sections" :key="section">
-                    <el-collapse accordion>
-                    <el-collapse-item :title="section.name" name="1">
+                    <el-collapse accordion v-model="currentSection">
+                    <el-collapse-item :title="section.name" :name="section.sectionId">
                     <div class="dropdown-content">
                         <el-radio-group v-model="selected[section.sectionId]">
                             <el-radio-button v-for="option in section.options" :key="option.optionId" @change="resumoCmp"
@@ -62,8 +62,9 @@ export default {
             selectedOptionsInfo: [],
             selected: [],
             product: {
-                section: []
+                sections: []
             },
+            currentSection: ""
         }
     },
     methods: {
@@ -132,6 +133,11 @@ export default {
         },
 
         addToCart() {
+            const loading = ElLoading.service({
+                lock: true,
+                text: 'Carregando...',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
             cartService.addToCart(this.product, this.selectedOptionsInfo);
             ElMessage({
               message: 'Produto adicionado ao carrinho',
@@ -142,7 +148,7 @@ export default {
     async created() {
         const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Carregando personalização...',
             background: 'rgba(0, 0, 0, 0.7)'
         });
         axios.get('http://localhost:8081/products/' + this.$route.params.id)
@@ -163,7 +169,7 @@ export default {
 @import '@/assets/styles/scss/basics.scss';
 
 h1{
-    margin-bottom: 0;
+    font-weight: 300;
 }
 div.content {
     display: flex;
@@ -173,7 +179,7 @@ div.content {
     div.dropdown-list {
         div.dropdown-outer {
 
-            margin-bottom: 4rem;
+            margin-bottom: 2rem;
 
             div.el-collapse{
                 background-color: $primary-color;
@@ -222,14 +228,18 @@ div.content {
 
             }
 
+            :deep(.el-radio-button){
+                padding: 0 20px !important;
+            }
+
             // secoes esquerda
             label.el-radio-button,
             :deep(span.el-radio-button__inner) {
-                width: 250px;
+                width: 100%;
                 background-color: transparent;
                 transition: 0.2s ease-in-out;
                 padding: 0;
-                justify-content: space-evenly;
+                justify-content: space-between;
 
                 .el-image{
                     width: 50px;
@@ -311,6 +321,7 @@ div.content {
             color: $text-color;
             font-size: 3.5rem;
             margin-bottom: 0rem;
+            font-weight: 300;
             text-align: center;
         }
 

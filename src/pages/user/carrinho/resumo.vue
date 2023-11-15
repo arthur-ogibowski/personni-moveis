@@ -28,7 +28,7 @@
                             <h2> R${{ product.value }} </h2>
                         </div>
                         <div class="deletar">
-                            <el-icon @click="removeOneProduct(product)"><Delete /></el-icon>
+                            <el-icon @click="removeOneProduct(product)"><DeleteFilled /></el-icon>
                         </div>
                     </el-card>
                 </div>
@@ -53,7 +53,7 @@
                             <h2> R${{ cmp.value }} </h2>
                         </div>
                         <div class="deletar">
-                            <el-icon @click="removeOneCmp(cmp)"><Delete /></el-icon>
+                            <el-icon @click="removeOneCmp(cmp)"><DeleteFilled /></el-icon>
                         </div>
                     </el-card>
                 </div>
@@ -75,7 +75,7 @@
                         </h4>
                     </div>
                     <div class="card-item subtotal">
-                        <!-- <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3> R$ {{ formatPrice(calcularTotal()) }}</h3> -->
+                        <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3> R$ {{ formatPrice(calcularTotal()) }}</h3>
                     </div>
 
                     <router-link to="/checkout"><el-button class="cta" color="$cta-color">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
@@ -126,12 +126,15 @@ export default {
         // Produto.
         calcularTotal() {
             this.totalProducts = cartService.totalCartValue();
+            return this.totalProducts;
         },
         totalProductOptions() {
-            //this.cartProducts = cartService.productCartValue();
+            this.cartProducts = cartService.productCartValue();
+            return this.cartProducts;
         },
         totalcmpOptions() {
-            //this.cmpProducts = cartService.cmpCartValue();
+            this.cmpProducts = cartService.cmpCartValue();
+            return this.cmpProducts;
         },
         getCartProductsFromLocalStorage() {
             this.cartProducts = cartService.getCartItems();
@@ -360,6 +363,8 @@ export default {
                 margin: 10px 0;
             }
         }
+
+    
     }
 }
 
@@ -396,6 +401,20 @@ div.carrinho-content{
 
             p{
                 color: $user-grey;
+            }
+        }
+
+        div.deletar{
+            cursor: pointer;
+
+            &:hover{
+                color: red;
+            }
+
+            .el-icon, svg{
+                color: $user-grey;
+                height: 1.6rem !important;
+                width: 1.6rem !important;
             }
         }
     }
