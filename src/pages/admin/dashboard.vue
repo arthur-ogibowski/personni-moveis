@@ -37,6 +37,7 @@
                 </div>
             </el-card>
         </div>
+        <LineChart :chartData="testData" />
     </div>
   
 </template>
@@ -44,6 +45,10 @@
 <script>
 import axios from 'axios';
 import { ElLoading } from 'element-plus';
+import { LineChart } from 'vue-chart-3';
+import { Chart, registerables } from "chart.js";
+
+Chart.register(...registerables);
 
 export default {
     data() {
@@ -52,8 +57,20 @@ export default {
             produtos: [],
             usuarios: [],
             pedidos: [],
+            testData: [
+                {
+                    label: "Produtos",
+                    datasets: [
+                        {
+                            data: "",
+                            backgroundColor: '#FF9900',
+                        },
+                    ],
+                }
+            ],
         }
     },
+    components: { LineChart },
     methods: {
     },
     created() {

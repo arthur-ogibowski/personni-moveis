@@ -88,6 +88,10 @@ methods: {
 
 <style lang="scss"  scoped>
 @import "@/assets/styles/scss/basics.scss";
+
+.el-menu{
+  border-right: 0;
+}
 .el-menu-vertical {
   width: 200px;
   height: 100vh;
