@@ -757,6 +757,10 @@ input[type="radio"]:checked + .radio-button::before {
     color: #007BFF;
 }
 
+.finalizar{
+    width: 100%;
+}
+
 .finalizar-content {
   display: flex;
   flex-direction: row;
