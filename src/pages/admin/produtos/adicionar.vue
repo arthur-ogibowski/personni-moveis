@@ -259,29 +259,16 @@ export default {
                 ElMessage.error('Para ser cadastrado, o produto deve ter uma categoria selecionada!');
                 return;
             }
+            if(this.product.quantity < 1 && this.product.available) {
+                ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos 1 em estoque');
+                return;
+            }
             // Produto deve ter ao menos 1 em qtde para ser disponível.
             const loading = ElLoading.service({
                 lock: true,
                 text: 'Criando produto',
                 background: 'rgba(0, 0, 0, 0.7)'
             });
-            if(this.product.quantity < 1 && this.product.available) {
-                ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos 1 em estoque');
-                return;
-            }
-            // Setando valores das tags como atributo no produto.
-            if (this.selectedTags != null && this.selectedTags.length > 0) {
-                this.selectedTags.forEach(id => {
-                    // Checa se valor é int (é id e já existe).
-                    if (Number.isInteger(id)) {
-                        this.product.tags.push({ tagId: id });
-                    }
-                    // Senão é adição de nova tag. Atributo enviado como tagName sem id criará tag no BD.
-                    else {
-                        this.product.tags.push({ tagName: id });
-                    }
-                });
-            }
 
             const config = { params: { categoryId: this.selectedCategory } }
             // Fazendo requisição para criação do produto e seus subitens, redireciona para página de listagem.

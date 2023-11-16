@@ -165,7 +165,7 @@ export default {
     },
     /** Total dos cmps. */
     cmpCartValue() {
-        console.log(this.getCmpItems().reduce((total, cmp) => total + (cmp.value + this.cmpOptionsPrice(cmp)) * cmp.amount, 0));
+        
     },
     totalcmpOptions(cmp) {
         let totalOptionPrice = 0;

@@ -44,8 +44,7 @@
             <div class="dashboard-pedidos">
               <h2> Meus Pedidos </h2>
               <el-table :data="pedidosDash" style="width: 100%">
-                <el-table-column prop="orderId" label="Id" width="180" />
-                <el-table-column prop="date" label="Date" width="180"/>
+                <el-table-column prop="date" label="Data" width="180"/>
                 <el-table-column prop="status" label="Status" width="180">
                   <template #default="{ row }">
                   <!-- Mockando o campo status com um texto padrão -->
@@ -207,11 +206,9 @@ export default {
       axios.get('http://localhost:8081/users/user-info', config)
         .then((response) => {
           this.user = response.data;
-          ElMessage.success('User loaded successfully!');
           this.$emit('user-loaded', this.user.name); // Emitir o nome do usuário para a Navbar
         })
         .catch((error) => {
-          ElMessage.error('Error loading user.');
           console.error('Error:', error);
         });
     },
@@ -221,11 +218,25 @@ export default {
 
       axios.get('http://localhost:8081/orders/client-orders', config) 
         .then((response) => {
-          console.log(response);
+          // Transforma datas para formato dia/mes/ano.
+          response.data = response.data.map(order => {
+            const dataArray = order.date;
+            const data = new Date(dataArray[0], dataArray[1] - 1, dataArray[2]);
+            
+            const day = data.getDate();
+            const month = data.getMonth() + 1; // Meses em JavaScript são indexados de 0 a 11
+            const year = data.getFullYear();
+            
+            // Atribuir a string formatada de volta a order.date
+            order.date = `${day}/${month}/${year}`;
+            
+            return order;
+          });
+
+          // Fazendo set dos valores na lista de pedidos em tela.
           this.pedidosDash = response.data;
         })
         .catch((error) => {
-          ElMessage.error('Erro ao carregar pedidos.');
           console.error('Erro:', error);
         });
     },
@@ -240,7 +251,6 @@ export default {
           this.addresses = response.data;
         })
         .catch((error) => {
-          ElMessage.error('Erro ao carregar endereços.');
           console.error('Erro:', error);
         });
     },
@@ -287,14 +297,13 @@ export default {
             this.editUser = response.data;
           })
           .catch((error) => {
-            ElMessage.error('Erro ao carregar os dados do usuário.');
             console.error('Erro:', error);
           });
       },
       saveUser() {
         const config = { headers: { Authorization: AuthService.getToken() } };
   
-        axios.put('http://localhost:8081/users/update-user', this.user, config)
+        axios.put('http://localhost:8081/users/update-user', this.editUser, config)
           .then((response) => {
             if (response.status === 204) {
               ElMessage.success('Dados do usuário atualizados com sucesso!');
