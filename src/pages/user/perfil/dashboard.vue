@@ -98,27 +98,29 @@
         <div class="container">
         <userNavbar />
           <div class="user-info">
-            <h1 class="info-title">Seus Endereços</h1>
             <div v-if="!showAddAddressForm && !showUserConfigs">
+              <h1 class="info-title">Seus Endereços</h1>
               <div v-for="address in addresses" :key="address.addressId" class="address-summary">
                 <h2>{{ address.addressNickname }}</h2>
-                <p>{{ address.street }}, {{ address.number }}, {{ address.district }}, {{ address.city }}, {{ address.state }}, {{ address.cep }}</p>
+                <p class="dados-endereco">{{ address.street }}, {{ address.number }}, {{ address.district }}, {{ address.city }}, {{ address.state }}, {{ address.cep }}</p>
                 <el-button @click="editAddress(address)">Editar</el-button>
                 <el-button @click="deleteAddress(address)">Excluir</el-button>
               </div>
-              <router-link to="/perfil/adicionar-endereco">
                 <el-button type="primary" @click="showAddAddressForm = true">Adicionar Novo Endereço</el-button>
-              </router-link>
             </div>
-          </div>
+          <!-- </div> -->
 
-          <div v-if="showAddAddressForm && !showUserConfigs">
-            <div class="user-info">
+            <div v-if="showAddAddressForm && !showUserConfigs">
               <h1 class="info-title">Adicionar Novo Endereço</h1>
               <form @submit.prevent="addAddress" class="address-form">
                 <div class="form-group">
                   <label for="addressNickname" class="title">Apelido do Endereço:</label>
                   <el-input v-model="newAddress.addressNickname" required />
+                </div>
+                <div class="form-group">
+                  <label for="CEP" class="title">CEP:</label>
+                  <el-input placeholder="#####-###" @blur="consultarCEP"
+                  v-mask="'#####-###'" maxlength="9" v-model="newAddress.cep" required />
                 </div>
                 <div class="form-group">
                   <label for="street" class="title">Rua:</label>
@@ -141,14 +143,12 @@
                   <el-input v-model="newAddress.state" required />
                 </div>
                 <div class="form-group">
-                  <label for="CEP" class="title">CEP:</label>
-                  <el-input v-model="newAddress.cep" required />
-                </div>
-                <div class="form-group">
                   <el-button type="primary" native-type="submit">Adicionar Endereço</el-button>
+                  <el-button @click="showAddAddressForm = false">Voltar</el-button>
                 </div>
               </form>
             </div>
+
           </div>
           
         </div>
@@ -345,6 +345,40 @@ export default {
       if (!cpf) return '';
       return `${cpf.substring(0, 3)}.${cpf.substring(3, 6)}.${cpf.substring(6, 9)}-${cpf.substring(9)}`;
     },
+
+    consultarCEP() {
+            const cep = this.newAddress.cep;
+
+            // Verifique se o CEP foi fornecido antes de fazer a solicitação
+            if (cep) {
+                this.cepLoading = true;
+                axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+                    .then((response) => {
+                        const data = response.data;
+
+                        if (!data.erro) {
+                            // Preencha os campos com os dados retornados pela API
+                            this.newAddress.street = data.logradouro;
+                            this.newAddress.district = data.bairro;
+                            this.newAddress.city = data.localidade;
+                            this.newAddress.state = data.uf;
+                            this.cepExists = true;
+                            setTimeout(() => {
+                                this.cepLoading = false;
+                            }, 400)
+
+                            // Preencha outros campos, se necessário
+                        } else {
+                            // Trate o caso em que o CEP não foi encontrado
+                            // Exiba uma mensagem de erro ou limpe os campos, por exemplo
+                        }
+                    })
+                    .catch((error) => {
+                        // Trate erros na solicitação, se necessário
+                        ElMessage.error('CEP não encontrado.');
+                    });
+            }
+        },
   },
 
 }
@@ -456,5 +490,13 @@ h2{
   cursor: pointer;
   display: inline-block;
   width: 100%;
+}
+
+.dados-endereco {
+  font-size: 16px;
+}
+
+.form-group {
+  margin-bottom: 16px;
 }
 </style>
