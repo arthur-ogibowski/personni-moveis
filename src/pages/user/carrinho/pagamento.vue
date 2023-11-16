@@ -347,7 +347,7 @@ export default {
         
         const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Carregando..',
             background: 'rgba(0, 0, 0, 0.7)'
         });
         // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
@@ -666,6 +666,9 @@ export default {
     .revisao {
         flex-basis: 45%;
         margin: 0 10px;
+    }
+    .forma-pagamento{
+        width: 100%;
     }
 
     .actions {

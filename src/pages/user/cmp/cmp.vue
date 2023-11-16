@@ -309,7 +309,7 @@ export default {
       this.currentSection += 1;
       const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Carregando próxima seção...',
             background: 'rgba(0, 0, 0, 0.7)'
       });
       setTimeout(() => {
@@ -321,7 +321,7 @@ export default {
       this.currentSection -= 1;
       const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Carregando seção anterior...',
             background: 'rgba(0, 0, 0, 0.7)'
       });
       setTimeout(() => {
