@@ -212,7 +212,10 @@ export default {
                 available: true,
                 sections: [],
                 details: [],
-                secondaryImages: [],
+                secondaryImages: {
+                    img: [],
+                    productImgId: 0,
+                },
                 material: '',
                 tags: []
             },
@@ -248,7 +251,7 @@ export default {
                 const imageArray = await Promise.all(fileList.map(async file => await imgConverter.fileToBase64String(file.raw)));
 
                 // Adiciona as novas imagens ao array existente
-                this.secondaryImagesArray = [...this.secondaryImagesArray, ...imageArray];
+                this.secondaryImagesArray = imageArray
             } catch (error) {
                 ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
             }
@@ -287,7 +290,7 @@ export default {
 
             const config = { params: { categoryId: this.selectedCategory } }
 
-            this.product.secondaryImages = this.secondaryImagesArray;
+            this.product.secondaryImages.img = this.secondaryImagesArray;
             // Fazendo requisição para criação do produto e seus subitens, redireciona para página de listagem.
             axios.post('http://localhost:8081/products/save-full-product', this.product, config)
                 .then((response) => {
