@@ -43,7 +43,7 @@
                     <!-- Imagens secundárias -->
                     <el-form-item label="Imagens secundárias">
                         <div>
-                            <el-upload class="avatar-uploader" :auto-upload="false" :limit="999"
+                            <el-upload class="avatar-uploader" multiple :auto-upload="false" :limit="999"
                                 @change="handleSecondaryImagesChange">
                                 <div v-for="(image, index) in secondaryImagesArray" :key="index" class="avatar-container">
                                     <img :src="image" class="avatar" />
@@ -212,7 +212,7 @@ export default {
                 available: true,
                 sections: [],
                 details: [],
-                secondaryImages: null,
+                secondaryImages: [],
                 material: '',
                 tags: []
             },
@@ -242,12 +242,18 @@ export default {
     },
 
     methods: {
-        handleSecondaryImagesChange(file, fileList) {
-            // Converta as imagens para o formato base64 ou outra representação desejada
-            const imageArray = fileList.map(file => URL.createObjectURL(file.raw));
-            // Atualize o array de imagens secundárias
-            this.secondaryImagesArray = imageArray;
+        async handleSecondaryImagesChange(file, fileList) {
+            try {
+                // Adquire imagem como string base64.
+                const imageArray = await Promise.all(fileList.map(async file => await imgConverter.fileToBase64String(file.raw)));
+
+                // Adiciona as novas imagens ao array existente
+                this.secondaryImagesArray = [...this.secondaryImagesArray, ...imageArray];
+            } catch (error) {
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+            }
         },
+
         /** Faz requisição para adquirir todas categorias. Produto só deve ter UMA CATEGORIA. */
         getCategories() {
             axios.get('http://localhost:8081/category')
@@ -267,8 +273,8 @@ export default {
             }
 
             this.product.value = this.product.value.replace(/\./g, '').replace(',', '.');
-            if(this.product.quantity < 1 && this.product.available) {
-                
+            if (this.product.quantity < 1 && this.product.available) {
+
                 ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos 1 em estoque');
                 return;
             }
@@ -280,6 +286,8 @@ export default {
             });
 
             const config = { params: { categoryId: this.selectedCategory } }
+
+            this.product.secondaryImages = this.secondaryImagesArray;
             // Fazendo requisição para criação do produto e seus subitens, redireciona para página de listagem.
             axios.post('http://localhost:8081/products/save-full-product', this.product, config)
                 .then((response) => {
