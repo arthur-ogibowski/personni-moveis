@@ -89,6 +89,11 @@
                                     <div class="basic-inputs">
                                                 <el-form-item label="Opção">
                                                     <el-input v-model="option.name" size="small"></el-input>
+                                                    
+                                                </el-form-item>
+                                                <el-form-item label="Descrição">
+                                                    <el-input v-model="option.descriptions" size="small"></el-input>
+                                                    
                                                 </el-form-item>
                                                 <el-form-item label="Preço">
                                                     <el-input v-model="option.price" size="small">
@@ -277,6 +282,7 @@ export default {
             element.optionCmps.push({
                 name: "",
                 img: "",
+                descriptions: "",
                 price: "",
             })
 
