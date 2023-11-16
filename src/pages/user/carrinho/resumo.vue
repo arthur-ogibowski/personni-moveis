@@ -25,7 +25,7 @@
                         </div>
                         <div class="preco">
                             <p>Preço</p>
-                            <h2> R${{ product.value }} </h2>
+                            <h2>{{ formatPrice(product.value) }} </h2>
                         </div>
                         <div class="deletar">
                             <el-icon @click="removeOneProduct(product)"><DeleteFilled /></el-icon>
@@ -50,7 +50,7 @@
                         </div>
                         <div class="preco">
                             <p>Preço</p>
-                            <h2> R${{ cmp.value }} </h2>
+                            <h2>{{ formatPrice(cmp.value) }} </h2>
                         </div>
                         <div class="deletar">
                             <el-icon @click="removeOneCmp(cmp)"><DeleteFilled /></el-icon>
@@ -75,7 +75,7 @@
                         </h4>
                     </div>
                     <div class="card-item subtotal">
-                        <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3> R$ {{ formatPrice(calcularTotal()) }}</h3>
+                        <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3>{{ formatPrice(calcularTotal()) }}</h3>
                     </div>
 
                     <router-link to="/checkout"><el-button class="cta" color="$cta-color">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
@@ -110,7 +110,7 @@ export default {
     created() {
         const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Carregando carrinho...',
             background: 'rgba(0, 0, 0, 0.7)'
       });
         // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
@@ -165,7 +165,9 @@ export default {
             return frete;
         },
         formatPrice(x) {
-            return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+            // to BRL
+            return x.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+        
         },
         removeOneProduct(product) {
             cartService.removeFromCart(product);

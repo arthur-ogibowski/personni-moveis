@@ -76,7 +76,7 @@ export default {
     created() {
         const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Carregando dados do usuário...',
             background: 'rgba(0, 0, 0, 0.7)'
       });
         axios.get('http://localhost:8081/category')

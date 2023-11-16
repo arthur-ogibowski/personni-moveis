@@ -7,11 +7,19 @@
 
 
         <div class="main-single">
-            <el-carousel :interval="5000" arrow="always" :autoplay="false">
-              <el-carousel-item v-for="item in 4" :key="item">
-                <el-image style="width: 500px; height: 500px" :src="product.mainImg" :fit="fit" />
-              </el-carousel-item>
-            </el-carousel>
+            <div class="image-container">
+                <el-carousel :interval="5000" arrow="always" :autoplay="false">
+                  <el-carousel-item v-for="item in 4" :key="item">
+                    <el-image style="width: 500px; height: 500px" :src="product.mainImg" :fit="fit" />
+                  </el-carousel-item>
+                </el-carousel>
+
+                <div class="secondary-image-list">
+                    <div class="secondary-image-item" v-for="product in 6" :key="product">
+                        <el-image style="width: 100px; height: 100px" :src="product.mainImg" :fit="fit" />
+                    </div>
+                </div>
+            </div>
 
             <div class="info-box">
                 <h2 style="font-size: 4rem; font-weight: 400;">{{  product.name }}</h2>
@@ -53,13 +61,13 @@ import { ElMessage } from 'element-plus'
 export default {
     data(){
         return{
-            product: '',
+            product: {},
         }
     },
     async created() {
         const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Carregando produto...',
             background: 'rgba(0, 0, 0, 0.7)'
         });
         const id = this.$route.params.id;
@@ -108,22 +116,42 @@ div.container {
     }
     div.main-single{
         display: flex;
-        justify-content: space-between;
+        justify-content: space-evenly;
         align-items: flex-start;
         flex-direction: row;
         margin-top: 50px;
 
-        .el-image{
-            border: 1px solid $grey-border; 
+        .secondary-image-list {
+          display: flex;
+          flex-direction: row;
+          margin-top: 10px;
+          flex-wrap: wrap;
+          width: 500px;
+
+            .secondary-image-item {
+               border: 1px solid $grey-border;
+               margin: 5px 10px;
+            }
         }
+
         div.el-carousel{
+            width: 500px;
+            height: 500px;
+            border: 1px solid $grey-border;
+
+
+        :deep(.el-carousel__container){
+            height: 500px;
+        }
+
             div.el-carousel__item{
-                width: 100px;
-                height: 100px;
+                width: 500px;
+                height: 500px;
                 background: black;
                 //transform: none ; 
             }
         }
+
         div.info-box{
             width: 600px;
             display: flex;
@@ -192,13 +220,5 @@ div.container {
     }
 }
 
-
-:deep(div.el-carousel__item){
-    width: 500px !important;
-    height: 500px !important;
-}
-:deep(.el-carousel__container){
-    height: 500px;
-}
 
 </style>
