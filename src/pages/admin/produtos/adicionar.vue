@@ -42,15 +42,16 @@
                     </el-form-item>
                     <!-- Imagens secundárias -->
                     <el-form-item label="Imagens secundárias">
-                        <div>
-                            <el-upload class="avatar-uploader" multiple :auto-upload="false" :limit="999"
+                        <div class="secondary-image-list">
+                            <el-upload class="avatar-uploader secondary-image-uploader" multiple :auto-upload="false" :limit="999"
                                 @change="handleSecondaryImagesChange">
+                                <el-icon v-if="secondaryImagesArray.length < 999" class="avatar-uploader-icon">
+                                    <Upload />
+                                </el-icon>
+                            </el-upload>
                                 <div v-for="(image, index) in secondaryImagesArray" :key="index" class="avatar-container">
                                     <img :src="image" class="avatar" />
                                 </div>
-                                <el-button v-if="secondaryImagesArray.length < 999" size="small"
-                                    icon="el-icon-plus"></el-button>
-                            </el-upload>
                         </div>
                     </el-form-item>
 
@@ -275,7 +276,9 @@ export default {
                 return;
             }
 
-            this.product.value = this.product.value.replace(/\./g, '').replace(',', '.');
+            if (this.product.value != '') {
+                this.product.value = this.product.value.replace(/\./g, '').replace(',', '.');
+            }
             if (this.product.quantity < 1 && this.product.available) {
 
                 ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos 1 em estoque');
@@ -589,5 +592,15 @@ div.element-item {
         margin-right: 5px;
     }
 
+}
+
+.secondary-image-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    img{
+        width: 102px;
+        height: 102px;
+    }
 }
 </style>

@@ -121,6 +121,8 @@ export default {
         filterCategory: '',
         productSearchInput: '',
         priceFilter: null,
+        stockFilter: null,
+        persoFilter: null,
       }
     },
   async created() {
@@ -208,6 +210,20 @@ export default {
       } else if (this.priceFilter == 'decrescente') {
         this.products.sort((a, b) => b.value - a.value);
       }
+    },
+    filterStock(){
+      if (this.stockFilter == 'disponivel') {
+        this.products = this.products.filter(product => product.quantity > 0);
+      } else if (this.stockFilter == 'fora') {
+        this.products = this.products.filter(product => product.quantity == 0);
+      }  
+    },
+    filterPerso(){
+      if (this.persoFilter == 'sim') {
+        this.products = this.products.filter(product => product.editable == true);
+      } else if (this.persoFilter == 'nao') {
+        this.products = this.products.filter(product => product.editable == false);
+      }  
     },
     /** Remove filtro de preço após filtro ser selecionado. */
     removePriceFilter() {

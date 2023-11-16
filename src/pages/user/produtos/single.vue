@@ -8,15 +8,19 @@
 
         <div class="main-single">
             <div class="image-container">
-                <el-carousel :interval="5000" arrow="always" :autoplay="false">
-                  <el-carousel-item v-for="item in 4" :key="item">
-                    <el-image style="width: 500px; height: 500px" :src="product.mainImg" :fit="fit" />
+                <el-carousel :interval="5000" arrow="always" :autoplay="false" ref="carousel" >
+                  <el-carousel-item v-for="image in images" :key="image" :name="parseInt(image.productImgId)">
+                    <el-image style="width: 500px; height: 500px; cursor: pointer;" :src="image.img" :fit="fit" @click="showImageZoom = true; dialogImage = image.img" />
                   </el-carousel-item>
                 </el-carousel>
 
-                <div class="secondary-image-list">
-                    <div class="secondary-image-item" v-for="product in 6" :key="product">
-                        <el-image style="width: 100px; height: 100px" :src="product.mainImg" :fit="fit" />
+                <el-dialog v-model="showImageZoom" width="50%" center>
+                  <el-image :src="dialogImage" alt="Zoomed Image" style="width: 750px; height: 750px;" />
+                </el-dialog>
+
+                <div class="secondary-image-list" v-if="images.length > 1">
+                    <div class="secondary-image-item" v-for="image in images" :key="image">
+                        <el-image style="width: 100px; height: 100px; cursor: pointer;" :src="image.img" :fit="fit" @click="changeImage(parseInt(image.productImgId))"/>
                     </div>
                 </div>
             </div>
@@ -62,6 +66,9 @@ export default {
     data(){
         return{
             product: {},
+            images: [],
+            showImageZoom: false,
+            dialogImage: '',
         }
     },
     async created() {
@@ -75,6 +82,12 @@ export default {
             axios.get(`http://localhost:8081/products/${this.$route.params.id}`)
                 .then(response => {
                     this.product = response.data
+                    this.images.push({productImgId: 1, img: this.product.mainImg})
+                    this.product.secondaryImages.forEach(element => {
+                        this.images.push({productImgId: this.images.length + 1, img: element.img})
+                    });
+                    console.log(this.images)
+                    
                 setTimeout(() => {
                     loading.close()
                 }, 250)
@@ -95,7 +108,12 @@ export default {
         formatPrice(){
             return this.product.value.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
         
+        },
+        changeImage(id){
+            console.log(id)
+            this.$refs.carousel.setActiveItem(parseInt(id) - 1);
         }
+
     }
 }
 </script>
@@ -131,6 +149,8 @@ div.container {
             .secondary-image-item {
                border: 1px solid $grey-border;
                margin: 5px 10px;
+               width: 102px;
+                height: 102px;
             }
         }
 
@@ -139,10 +159,14 @@ div.container {
             height: 500px;
             border: 1px solid $grey-border;
 
+            :deep(.el-carousel__button){
+                display: none;
+            }
 
-        :deep(.el-carousel__container){
-            height: 500px;
-        }
+
+            :deep(.el-carousel__container){
+                height: 500px;
+            }
 
             div.el-carousel__item{
                 width: 500px;
