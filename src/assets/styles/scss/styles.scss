@@ -131,6 +131,7 @@ body{
         div.admin-table{
         
             background-color: transparent !important;
+
             
             
             thead {
@@ -148,9 +149,6 @@ body{
                     padding: 0;
                 }
 
-                th.is_leaf{
-                    border: 0 !important;
-                }
                 
             }
 
@@ -379,6 +377,10 @@ body{
       }
       .el-tabs__item:hover{
         color: $cta-color;
+      }
+
+      .el-table td.el-table__cell, .el-table th.el-table__cell.is-leaf {
+        border-bottom: 0 !important;
       }
 
 }

@@ -126,7 +126,7 @@ export default {
   async created() {
     const loading = ElLoading.service({
           lock: true,
-          text: 'Carregando',
+          text: 'Carregando catálogo...',
           background: 'rgba(0, 0, 0, 0.7)'
     });
     axios.get('http://localhost:8081/category')
@@ -166,7 +166,7 @@ export default {
     filtrarPorCategoria(categoryId) {
       const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Filtrando...',
             background: 'rgba(0, 0, 0, 0.7)'
       });
       axios.get("http://localhost:8081/category/products-in-category/" + categoryId)

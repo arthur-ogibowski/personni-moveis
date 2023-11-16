@@ -42,7 +42,7 @@
       <el-table-column prop="value" sortable label="Preço" width="100">
         <template v-slot="scope">
           <div class="preco">
-            <h3>R$ {{ formatPrice(scope.row.value) }}</h3>
+            <h3>{{ formatPrice(scope.row.value) }}</h3>
           </div>
         </template>
       </el-table-column>
@@ -103,10 +103,8 @@ export default {
       })
     },
     formatPrice(x) {
-      if (x.toString().match(/\.\d{2}$/)) {
-        x = x.toString().replace(/\./g, ',');
-      }
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      // to BRL
+      return x.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
     },
     /** Faz redirecionamento para tela de edição do produto. */
     redirectToEditProduct(scope) {
@@ -143,7 +141,7 @@ export default {
     getProducts() {
       const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Carregando produtos...',
             background: 'rgba(0, 0, 0, 0.7)'
       });
       axios.get('http://localhost:8081/products')

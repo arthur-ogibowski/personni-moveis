@@ -232,7 +232,7 @@ export default {
         // Carrega dados necessários ao entrar na tela.
         const loading = ElLoading.service({
             lock: true,
-            text: 'Carregando',
+            text: 'Carregando..',
             background: 'rgba(0, 0, 0, 0.7)'
         });
         this.getCategories();
@@ -255,10 +255,11 @@ export default {
         /** Faz requisição para criar produto. */
         createProduct() {
             // Se categoria foi atribuida, adquire id e seta na requisição como parâmetro opcional, senão mostra exceção.
-            if (this.selectedCategory == null) {
+            if (this.selectedCategory == '' || this.selectedCategory == null) {
                 ElMessage.error('Para ser cadastrado, o produto deve ter uma categoria selecionada!');
                 return;
             }
+            this.product.value = this.product.value.replace(/\./g, '').replace(',', '.');
             // Produto deve ter ao menos 1 em qtde para ser disponível.
             const loading = ElLoading.service({
                 lock: true,
