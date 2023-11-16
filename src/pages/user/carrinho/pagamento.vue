@@ -377,7 +377,10 @@ export default {
         },
         /** Faz pedidos e retorna qrcode pix. */
         makeOrder() {
-            const config = { headers: { Authorization: AuthService.getToken() } }
+            const config = { 
+                headers: { Authorization: AuthService.getToken() },
+                params: { shipmentFee: Number(this.calcularFrete()) }
+            }
             const getReqProduct = [];
             const getReqCmp = [];
             // Insere produtos no array de prods.
