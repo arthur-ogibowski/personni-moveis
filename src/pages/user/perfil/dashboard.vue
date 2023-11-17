@@ -84,7 +84,7 @@
               </div>
               <div class="info-box">
                 <h2 class="info-item title">Senha Atual: </h2>
-                <el-input v-model="editUser.currentPassword"></el-input>
+                <el-input type="password" v-model="editUser.currentPassword"></el-input>
               </div>
               <div class="info-box">
                 <h2 class="info-item title">Nova Senha: </h2>

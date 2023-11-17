@@ -29,6 +29,7 @@ import AdminAdicionarCategoria from '@/pages/admin/categorias/adicionar.vue';
 import AdminListarUsuarios from '@/pages/admin/usuarios/listagem.vue';
 import AdminAdicionarUsuarios from '@/pages/admin/usuarios/adicionar.vue';
 import AdminEditarUsuario from '@/pages/admin/usuarios/editar.vue';
+import AdminConfigs from '@/pages/admin/configuracoes/configs.vue';
 
 
 import Login from '@/pages/login/login.vue';
@@ -69,6 +70,7 @@ export const routes = [
   { path: '/admin/usuarios', component: AdminListarUsuarios },
   { path: '/admin/usuarios/adicionar', component: AdminAdicionarUsuarios },
   { path: '/admin/usuarios/:id', component: AdminEditarUsuario },
+  { path: '/admin/configuracoes', component: AdminConfigs },
 
 
   { path: '/:path(.*)', component: NotFound },

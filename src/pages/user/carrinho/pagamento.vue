@@ -238,7 +238,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                 <h3> {{ totalPrice() != 0 ? "R$" + formatPrice(totalPrice()) : "--" }}
                                 </h3>
                             </div>
-                        
+                            <img :src=QrCode>
                         </el-card>
                         <div class="actions">
                     <el-button type="info" plain @click="previousStep"><el-icon>
