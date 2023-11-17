@@ -35,6 +35,7 @@
 
 <script>
 import axios from 'axios';
+import { ElMessage } from 'element-plus';
 
 export default {
     data() {
@@ -54,7 +55,7 @@ export default {
             axios.post('http://localhost:8081/users/create-account', this.cadastro)
             .then(response => {
           if (response.status === 201) {
-            // Colocar tela de cadastro concluido ou algum aviso
+            ElMessage.success('Cadastro realizado com sucesso!');
             this.$router.push('/login');
           } else {
             console.error('Erro ao realizar cadastro. Código de status:', response.status);

@@ -112,8 +112,8 @@ methods: {
       align-items: center;
       justify-content: center;
       padding: 20px;
-margin-top: 20px;
-margin-bottom: 20px;
+      margin-top: 20px;
+      margin-bottom: 20px;
   }
 
   .el-menu-item {
@@ -127,8 +127,8 @@ margin-bottom: 20px;
       }
 
       &.is-active{
-          color: $tertiary-color !important;
-          background-color: $primary-color;
+          color: $primary-color !important;
+          background-color: $cta-color;
       }
   }
   

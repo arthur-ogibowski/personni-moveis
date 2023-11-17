@@ -10,6 +10,10 @@
               <h2>Meus dados</h2>
   
               <div class="info-box">
+                <h3 class="info-item title">Nome: </h3>
+                <h3 class="info-item text">{{ user.name }}</h3>
+              </div>
+              <div class="info-box">
                 <h3 class="info-item title">Email: </h3>
                 <h3 class="info-item text">{{ user.email }}</h3>
               </div>
@@ -27,12 +31,12 @@
           </div>
           <div class="dashboard-right">
             <div class="dashboard-enderecos">
-              <h2> Meus Endereços </h2>
+              <h2> Meus endereços </h2>
               <el-table :data="enderecosDash" style="width: 100%">
                 <el-table-column prop="addressNickname" label="Apelido" width="*" />
                 <el-table-column label="Rua" width="*">
                   <template #default="{ row }">
-                    <span>{{ row.street }}, {{ row.number }}, {{ row.details }}</span>
+                    <span>{{ row.street }}, {{ row.number }} <span v-if=row.details>, {{ row.details }}</span></span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="cep" label="CEP" width="*" />
@@ -42,10 +46,10 @@
               <el-button class="cta" type="primary" @click="activeName = 'enderecos'">Ver todos</el-button>
             </div>
             <div class="dashboard-pedidos">
-              <h2> Meus Pedidos </h2>
+              <h2> Meus pedidos </h2>
               <el-table :data="pedidosDash" style="width: 100%">
-                <el-table-column prop="date" label="Data" width="180"/>
-                <el-table-column prop="status" label="Status" width="180">
+                <el-table-column prop="date" label="Data" width="*"/>
+                <el-table-column prop="status" label="Status" width="*">
                   <template #default="{ row }">
                   <!-- Mockando o campo status com um texto padrão -->
                     <span>{{ row.status || 'Ativo' }}</span>
@@ -60,54 +64,29 @@
         </div>
       </el-tab-pane>
 
-      <el-tab-pane label="Pedidos" name="pedidos"></el-tab-pane>
-      <el-tab-pane label="Configurações" name="configuracoes">
-        <div>
-            <div class="user-info">
-              <h1 class="info-title">Suas configurações de conta</h1>
-              <!-- <h1 class="section-title">Seus dados:</h1> -->
-              <div class="info-box">
-                <h2 class="info-item title">Nome: </h2>
-                <el-input v-model="editUser.name"></el-input>
+
+      <el-tab-pane label="Endereços" name="enderecos">
+        <div class="enderecos-container">
+            <div v-if="!showAddAddressForm && !showUserConfigs" class="address-list">
+              <div class="address-list-left">
+                <h1>Meus endereços</h1>
+                <h2>Adicione, edite ou exclua seus endereços.</h2>
+                <el-button type="primary" class="cta" @click="showAddAddressForm = true">Adicionar Novo Endereço</el-button>
               </div>
-              <div class="info-box">
-                <h2 class="info-item title">Email: </h2>
-                <el-input v-model="editUser.email"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">CPF: </h2>
-                <el-input v-model="editUser.cpf"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">Telefone: </h2>
-                <el-input v-model="editUser.phoneNumber"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">Senha Atual: </h2>
-                <el-input v-model="editUser.currentPassword"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">Nova Senha: </h2>
-                <el-input v-model="editUser.newPassword"></el-input>
-              </div>
-              <el-button type="primary" @click="saveUser">Salvar</el-button>
+              <div class="address-list-right">
+                <div v-for="address in addresses" :key="address.addressId" class="address-summary">
+                  <h3>{{ address.addressNickname }}</h3>
+                  <p class="dados-endereco">{{ address.street }}</p>
+                  <p class="dados-endereco">{{ address.number }}</p>
+                  <p class="dados-endereco">{{ address.details }}</p>
+                  <p class="dados-endereco">{{ address.district }}</p>
+                  <p class="dados-endereco">{{ address.city }} - {{ address.state }}</p>
+                  <p class="dados-endereco">{{ address.cep }}</p>
+                  <el-button @click="editAddress(address)">Editar</el-button>
+                  <el-button @click="deleteAddress(address)">Excluir</el-button>
+                </div>
             </div>
           </div>
-      </el-tab-pane>
-      <el-tab-pane label="Endereços" name="enderecos">
-        <div class="container">
-        <userNavbar />
-          <div class="user-info">
-            <div v-if="!showAddAddressForm && !showUserConfigs">
-              <h1 class="info-title">Seus Endereços</h1>
-              <div v-for="address in addresses" :key="address.addressId" class="address-summary">
-                <h2>{{ address.addressNickname }}</h2>
-                <p class="dados-endereco">{{ address.street }}, {{ address.number }}, {{ address.district }}, {{ address.city }}, {{ address.state }}, {{ address.cep }}</p>
-                <el-button @click="editAddress(address)">Editar</el-button>
-                <el-button @click="deleteAddress(address)">Excluir</el-button>
-              </div>
-                <el-button type="primary" @click="showAddAddressForm = true">Adicionar Novo Endereço</el-button>
-            </div>
           <!-- </div> -->
 
             <div v-if="showAddAddressForm && !showUserConfigs">
@@ -148,11 +127,61 @@
                 </div>
               </form>
             </div>
-
-          </div>
           
         </div>
       </el-tab-pane>
+
+
+      <el-tab-pane label="Pedidos" name="pedidos">
+        <h2>Meus pedidos</h2>
+        <el-table :data="pedidos" class="perfil-table" style="width: 100%">
+          <el-table-column prop="orderId" label="#" width="100" />
+          <el-table-column prop="totalPrice" label="Valor Total" />
+          <el-table-column prop="produtos" label="Produtos" />
+          <el-table-column prop="pagamento" label="Método de pagamento" />
+          <el-table-column prop="valor" label="Valor total" />
+          <el-table-column prop="status" label="Status" />
+          <el-table-column>
+            <el-button plain>Detalhes</el-button>
+          </el-table-column>
+        </el-table>
+      </el-tab-pane>
+
+
+      <el-tab-pane label="Configurações" name="configuracoes">
+        <div class="user-info">
+        <h1 class="info-title">Suas configurações de conta</h1>
+        <!-- <h1 class="section-title">Seus dados:</h1> -->
+        <div class="info-box">
+          <h2 class="info-item title">Name: </h2>
+          <el-input v-model="user.name"></el-input>
+        </div>
+        <div class="info-box">
+          <h2 class="info-item title">Email: </h2>
+          <el-input v-model="user.email"></el-input>
+        </div>
+        <div class="info-box">
+          <h2 class="info-item title">CPF: </h2>
+          <el-input v-model="user.cpf"></el-input>
+        </div>
+        <div class="info-box">
+          <h2 class="info-item title">Telefone: </h2>
+          <el-input v-model="user.phoneNumber"></el-input>
+        </div>
+        <div class="info-box">
+          <h2 class="info-item title">Senha Atual: </h2>
+          <el-input v-model="user.currentPassword"></el-input>
+        </div>
+        <div class="info-box">
+          <h2 class="info-item title">Nova Senha: </h2>
+          <el-input v-model="user.newPassword"></el-input>
+        </div>
+        <el-button type="primary" @click="saveUser">Salvar</el-button>
+      </div>
+      </el-tab-pane>
+
+
+
     </el-tabs>
   </div>
 </template>
@@ -281,7 +310,8 @@ export default {
           .post('http://localhost:8081/users/create-new-address', this.newAddress, config)
           .then((response) => {
             ElMessage.success('Endereço adicionado com sucesso.');
-            this.$router.push('/perfil/enderecos');
+            this.showAddAddressForm = false;
+
           })
           .catch((error) => {
             ElMessage.error('Erro ao adicionar endereço.');
@@ -297,6 +327,7 @@ export default {
             this.editUser = response.data;
           })
           .catch((error) => {
+            ElMessage.error('Erro ao carregar os dados do usuário.');
             console.error('Erro:', error);
           });
       },
@@ -393,7 +424,58 @@ function clearLocalStorage() {
 <style scoped lang="scss">
 @import "@/assets/styles/scss/basics.scss";
 
+div.enderecos-container{
+  margin-top: 20px;
 
+  h3{
+    font-size: 1.6rem;
+  }
+  p {
+    font-size: 1.4rem;
+  
+  }
+  h1{
+    font-size: 5rem;
+    font-weight: 300;
+    margin-bottom: 0;
+  }
+  h2{
+    font-size: 2rem;
+    font-weight: 400;
+    margin-top: 0;
+    color: $admin-grey;
+  }
+
+  .address-list {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    .address-list-left {
+      flex-basis: 30%;
+      border: 1px solid $grey-border;
+      background-color: $primary-color;
+      height: 100%;
+      padding: 20px;
+    }
+    .address-list-right {
+      flex-basis: 65%;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .address-summary {
+        width: 45%;
+        background-color: $primary-color;
+        border: 1px solid $grey-border;
+        margin-bottom: 20px;
+        padding: 20px;
+        margin-right: 20px;
+      }
+    }
+  }
+}
 div.dashboard-container{
   display: flex;
   flex-direction: row;
