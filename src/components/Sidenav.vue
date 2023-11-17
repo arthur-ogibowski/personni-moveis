@@ -6,7 +6,7 @@
             :default-active="currentPageMenuIndex()"
           >
 
-             <div class="menu-items">         
+            <div class="menu-items">         
               
               <router-link to="/"><h1><img src="../assets/img/personniLogo-White.png" alt="Personni Móveis" class="img-item"/></h1></router-link>
 
@@ -45,19 +45,18 @@
                 </el-menu-item>
               </router-link>
               
+              <router-link to="/admin/configuracoes">
                 <el-menu-item index="5">
-                  <router-link to="/admin/configuracoes">
                     <el-icon><setting /></el-icon>
                     <span>Configurações</span>
-                  </router-link>
-                </el-menu-item></div>
-
-
+                </el-menu-item>
+              </router-link>
+            </div>
+            
               <router-link to="/" class="voltar">
                 <el-icon><Back /></el-icon>
                 <span>Voltar ao site</span>
               </router-link>
-
           </el-menu>
       </el-col>
   </div>
