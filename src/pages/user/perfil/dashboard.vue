@@ -75,15 +75,13 @@
               </div>
               <div class="address-list-right">
                 <div v-for="address in addresses" :key="address.addressId" class="address-summary">
-                  <h3>{{ address.addressNickname }}</h3>
+                  <h3>{{ address.addressNickname }} <span><el-icon @click="deleteAddress(address)"><Delete/></el-icon> <el-icon @click="editAddress(address)"><Edit /></el-icon></span></h3>
                   <p class="dados-endereco">{{ address.street }}</p>
                   <p class="dados-endereco">{{ address.number }}</p>
                   <p class="dados-endereco">{{ address.details }}</p>
                   <p class="dados-endereco">{{ address.district }}</p>
                   <p class="dados-endereco">{{ address.city }} - {{ address.state }}</p>
                   <p class="dados-endereco">{{ address.cep }}</p>
-                  <el-button @click="editAddress(address)">Editar</el-button>
-                  <el-button @click="deleteAddress(address)">Excluir</el-button>
                 </div>
             </div>
           </div>
@@ -429,6 +427,7 @@ div.enderecos-container{
 
   h3{
     font-size: 1.6rem;
+    margin-top: 0;
   }
   p {
     font-size: 1.4rem;
@@ -472,6 +471,16 @@ div.enderecos-container{
         margin-bottom: 20px;
         padding: 20px;
         margin-right: 20px;
+
+        h3{
+          display: flex;
+          justify-content: space-between;
+
+          i{
+            margin-left: 5px;
+            cursor: pointer;
+          }
+        }
       }
     }
   }
