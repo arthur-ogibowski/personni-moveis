@@ -40,6 +40,7 @@
 import axios from 'axios';
 import AuthService from '@/store/authService.js';
 import jwtDecode from 'jwt-decode';
+import { ElMessage } from 'element-plus'
 
 export default {
     data() {
@@ -71,7 +72,13 @@ export default {
             const usuario = jwtDecode(token);
             console.log('Informações do usuário:', usuario);
 
-            this.$router.push(this.$router.options.history.state.back || '/');
+            if (this.$router.options.history.state.back == '/carrinho') {
+              this.$router.push('/carrinho');
+            }
+            else {
+              this.$router.push('/');
+            }
+            ElMessage.success('Login efetuado com sucesso!');
           } else {
             console.error('Erro ao fazer login. Código de status:', response.status);
           }

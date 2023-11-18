@@ -35,12 +35,12 @@
             </div>
 
         <!-- CMP -->
-        <h1 class="page-title" v-if="!cmpIsEmpty()">Móveis modelados:</h1>
+        <h1 style="margin-top: 2rem;" class="page-title" v-if="!cmpIsEmpty()">Móveis modelados:</h1>
             <div class="listagem-produtos">
                 <div class="produto-card" v-for="cmp in cmpProducts" :key="cmp">
                     <el-card class="carrinho-item" shadow="never">
                         <img
-                        :src="cmp.img"
+                        src="../../../assets/img/personniLogo-Grey.png"
                         class="image"
                         />
                         <h2> CMP </h2>
@@ -220,6 +220,7 @@ export default {
 <style scoped lang="scss">
 
 @import "@/assets/styles/scss/basics.scss";
+
 
 #carrinho-container{
     display: flex;

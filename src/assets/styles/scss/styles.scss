@@ -237,11 +237,17 @@ body{
     .login{
         background-color: #CACACA;
     }
+
+    .el-button:hover{
+        background-color: transparent;
+        border: 1px solid $cta-color;
+        color: $cta-color;
+    }
     
     button.cta{
         border: none !important;
         background-color: $cta-color !important; 
-        color: white;
+        color: white !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         transition: all 0.3 ease-in-out;
