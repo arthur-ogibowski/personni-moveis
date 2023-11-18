@@ -127,8 +127,8 @@ methods: {
       }
 
       &.is-active{
-          color: $primary-color !important;
-          background-color: $cta-color;
+          color: $tertiary-color !important;
+          background-color: $primary-color;
       }
   }
   
