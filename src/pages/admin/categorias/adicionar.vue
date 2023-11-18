@@ -92,7 +92,7 @@
                                                     
                                                 </el-form-item>
                                                 <el-form-item label="Descrição">
-                                                    <el-input v-model="option.descriptions" size="small"></el-input>
+                                                    <el-input v-model="option.descriptions" resize="none" type="textarea" size="small"></el-input>
                                                     
                                                 </el-form-item>
                                                 <el-form-item label="Preço">
@@ -461,7 +461,7 @@ div.section-item{
         flex-direction: row;
         flex-wrap: wrap;
         margin-left: 20px;
-        height: 100% ;
+        height: 300px ;
 
 
         .option-item{
@@ -478,7 +478,7 @@ div.section-item{
         }
 
         .el-button{
-            height: 180px;
+            height: auto;
             border: 1px solid $admin-grey;
             color: $admin-grey;
             background: transparent;

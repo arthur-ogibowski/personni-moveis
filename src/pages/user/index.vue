@@ -49,6 +49,11 @@
         </div>
       </div>
 
+      <div class="localizacao">
+        <h2> Localização </h2>
+        <img src="../../assets/img/map.png"/>
+      </div>
+
       
     </div>
 
@@ -371,6 +376,29 @@ div.content {
       }
     }
     
+  }
+}
+div.localizacao{
+  width: 100vw;
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  h2 {
+    font-size: 4rem;
+    font-weight: 300;
+    color: inherit;     
+    text-align: center; 
+    font-family: josefin;
+    color: $cta-color;
+    margin: 6rem 0 3rem 0;
+  }
+
+  img{
+    width: 100%;
+    height: auto;
   }
 }
 
