@@ -238,7 +238,6 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                 <h3> {{ totalPrice() != 0 ? "R$" + formatPrice(totalPrice()) : "--" }}
                                 </h3>
                             </div>
-                            <img :src=QrCode>
                         </el-card>
                         <div class="actions">
                     <el-button type="info" plain @click="previousStep"><el-icon>
@@ -416,6 +415,7 @@ export default {
                         this.QrCode = response.data;
                         /** Limpa carrinho após finalizar o pedido. */
                         cartService.removeAllFromCarts();
+                        this.currentStep = 3;
                     })
                     .catch(error => {
                         ElMessage.error('Não foi possível registrar o pedido.');

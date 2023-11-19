@@ -4,8 +4,13 @@
     <router-link :to="{path: '/admin/usuarios/adicionar'}"><el-button class="cta">+ Novo usuário</el-button></router-link>
  
     <el-table :data="usuarios" style="width: 100%;" class="admin-table">
-        <el-table-column type="selection" width="50"/>
-        <el-table-column prop="userId" label="ID" sortable width="80" />
+        <el-table-column prop="userId" label="ID" sortable width="80" >
+        <template v-slot="scope">
+              <div class="id">
+                <h4># {{ scope.row.userId }}</h4>
+              </div>
+            </template>
+          </el-table-column>
         <el-table-column prop="name" label="Nome" sortable width="*"/>
         <el-table-column prop="email" label="Email" sortable width="*"/>
         <el-table-column prop="cpf" sortable label="CPF" width="*"/>
@@ -15,8 +20,8 @@
         </el-table-column>
         <el-table-column label="Ações" prop="userId"> 
           <template #default="scope">  
-            <router-link :to="{path: '/admin/usuarios/' + scope.row.userId}"><el-button class="table-edit" color="#A8A8A8" plain>Editar</el-button></router-link>
-            <el-button v-on:click="deleteUser(scope.row.userId)" class="table-delete" color="#F56C6C" plain>Deletar</el-button>
+            <el-icon class="table-edit" color="#A8A8A8"  ><Edit/><router-link :to="{path: '/admin/usuarios/' + scope.row.userId}"></router-link></el-icon>
+            <el-icon v-on:click="deleteUser(scope.row.userId)" class="table-delete" color="#F56C6C" plain><Delete/></el-icon> 
           </template>
         </el-table-column>
         <!--<el-pagination layout="prev, pager, next" :total="this.categorias.length" @current-change="setPage">
@@ -80,6 +85,11 @@ methods: {
 </script>
 
 
-<style>
-
+<style scoped lang="scss">
+h1{
+  margin-top: 0 !important; 
+}
+.el-icon{
+  font-size: 20px;
+}
 </style>
