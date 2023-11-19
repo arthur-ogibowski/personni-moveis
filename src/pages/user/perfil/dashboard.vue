@@ -170,27 +170,27 @@
           <div class="config-right">
             <div class="info-box">
               <label class="info-item title">Name: </label>
-              <el-input v-model="user.name"></el-input>
+              <el-input v-model="editUser.name"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">Email: </label>
-              <el-input v-model="user.email"></el-input>
+              <el-input v-model="editUser.email"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">CPF: </label>
-              <el-input v-model="user.cpf"></el-input>
+              <el-input v-model="editUser.cpf"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">Telefone: </label>
-              <el-input v-model="user.phoneNumber"></el-input>
+              <el-input v-model="editUser.phoneNumber"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">Senha Atual: </label>
-              <el-input v-model="user.currentPassword"></el-input>
+              <el-input v-model="editUser.currentPassword"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">Nova Senha: </label>
-              <el-input v-model="user.newPassword"></el-input>
+              <el-input v-model="editUser.newPassword"></el-input>
             </div>
             <div class="form-group">
               <el-button type="primary" @click="saveUser" class="cta">Salvar</el-button>
