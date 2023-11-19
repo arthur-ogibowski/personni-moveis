@@ -1,7 +1,7 @@
 <template>
   <div class="admin-container">
     <h1>Usuários</h1>
-    <router-link :to="{path: '/admin/usuarios/adicionar'}"><el-button class="admin-cta" color="$admin-cta">+ Criar novo usuário</el-button></router-link>
+    <router-link :to="{path: '/admin/usuarios/adicionar'}"><el-button class="cta">+ Novo usuário</el-button></router-link>
  
     <el-table :data="usuarios" style="width: 100%;" class="admin-table">
         <el-table-column type="selection" width="50"/>

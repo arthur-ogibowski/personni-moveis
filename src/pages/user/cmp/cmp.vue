@@ -105,6 +105,7 @@
                     <div class="revisar-section-item-option">
                       <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
                       <h3 class="element-price">{{ element.price != 0 ? "R$ " +  element.price : "--" }}</h3>
+                      <el-icon class="option-dialog-button" @click="optionDialog(element.option)"><InfoFilled /></el-icon>
                     </div>
                   </div>
                 </div>
@@ -120,6 +121,7 @@
                       <div class="revisar-section-item-option">
                         <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
                         <h3 class="element-price">{{ element.price != 0 ? "R$ " + element.price : "--" }}</h3>
+                        <el-icon class="option-dialog-button" @click="optionDialog(option)"><InfoFilled /></el-icon>
                       </div>
                     </div>
                   </div>
@@ -690,7 +692,7 @@ h2{
     flex-wrap: wrap;
     justify-content: center;
     //border: 1px solid $admin-grey;
-    padding: 10px;
+    padding: 10px 0 10px 10px;
 
     .revisar-section-item{
       margin: 0 10px 0 0;
@@ -708,6 +710,7 @@ h2{
         font-size: 14px;
         font-weight: 400;
         color: var(--el-color-success);
+
       }
       .element-price{
         font-size: 12px;
@@ -769,6 +772,13 @@ h2{
         :deep(.el-text) {
               align-self: end !important;
         }
+
+        i.option-dialog-button{
+        position: relative !important;
+          align-self: baseline !important;
+          color: $admin-grey;
+          margin: 5px 5px 0px 0px;
+        }
       }
     }
 
@@ -776,7 +786,7 @@ h2{
       width: 380px;
       height: 180px;
       flex-direction: row;
-      padding: 0px 10px 0px 5px;
+      padding: 0px 0px 0px 5px;
     }
   }
 
@@ -813,7 +823,7 @@ h2{
       display: flex;
       justify-content: space-between;
       margin-left: 20px;
-      margin-right: 10px;
+      margin-right: 0;
       align-items: flex-end !important;
       :deep(.el-text) {
             align-self: end !important;

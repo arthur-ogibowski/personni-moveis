@@ -26,7 +26,7 @@
               </el-select>
           </el-form-item>
         <el-form-item>
-            <el-button type="primary" @click="criarUsuario">Salvar</el-button>
+            <el-button type="primary" class="cta" @click="criarUsuario">Salvar</el-button>
         </el-form-item>
     </el-form>
   </div>

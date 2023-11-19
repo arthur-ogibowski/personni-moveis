@@ -3,7 +3,6 @@
       <div class="top-content">
         <div class="left">
           <h1>Pedidos</h1>
-          <router-link :to="{path: '/admin/categorias/adicionar'}"><el-button class="cta" color="$admin-cta">+ Novo Pedido</el-button></router-link>
         </div>
         <el-input v-model="pedidosSearch" placeholder="Procurar por nome">
           <template #prefix>

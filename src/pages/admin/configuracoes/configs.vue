@@ -6,14 +6,32 @@
         <el-form-item label="Nome da Empresa">
           <el-input v-model="user.storeName"></el-input>
         </el-form-item>
-        <el-form-item label="Logomarca da Empresa">
-          <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChange">
-              <img v-if="user.storeLogoPath" :src="user.storeLogoPath" class="avatar" />
-              <el-icon v-else class="avatar-uploader-icon">
-                  <Upload />
-              </el-icon>
-          </el-upload>
-        </el-form-item>
+        <div class="images">
+          <el-form-item label="Logomarca da Empresa">
+            <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChange">
+                <img v-if="user.storeLogoPath" :src="user.storeLogoPath" class="avatar" />
+                <el-icon v-else class="avatar-uploader-icon">
+                    <Upload />
+                </el-icon>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="Logomarca alternativa da Empresa">
+            <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChange">
+                <img v-if="user.storeSecondaryImgPath" :src="user.storeSecondaryImgPath" class="avatar" />
+                <el-icon v-else class="avatar-uploader-icon">
+                    <Upload />
+                </el-icon>
+            </el-upload>
+          </el-form-item>
+          <el-form-item label="Placeholder para produtos sem imagem">
+            <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChange">
+                <img v-if="user.storeTertiaryImgPath" :src="user.storeTertiaryImgPath" class="avatar" />
+                <el-icon v-else class="avatar-uploader-icon">
+                    <Upload />
+                </el-icon>
+            </el-upload>
+          </el-form-item>
+        </div>
         <el-form-item label="Email da Empresa">
           <el-input v-model="user.storeEmail"></el-input>
         </el-form-item>
@@ -24,7 +42,13 @@
           <el-input v-model="user.storePhone"></el-input>
         </el-form-item>
         <el-form-item label="Endereço da Empresa">
-          <el-input v-model="user.storeAddress"></el-input>
+          <vue-google-autocomplete
+            id="address-input"
+            placeholder=""
+            v-on:placechanged="getAddressData"
+            :options="options"
+            class="el-input el-input_wrapper"
+          ></vue-google-autocomplete>
         <div id="infowindow-content">
           <span id="place-name" class="title"></span><br />
           <span id="place-address"></span>
@@ -53,24 +77,38 @@
   import axios from 'axios';
   import { ElMessage } from 'element-plus';
   import AuthService from '@/store/authService';
+  import VueGoogleAutocomplete from "vue-google-autocomplete";
   
   export default {
+    components: { VueGoogleAutocomplete },
     data() {
       return {
         user: {
           storeId: "1",
           storeName: "Personni móveis",
           storeLogoPath: "",
+          storeSecondaryImgPath: "",
+          storeTertiaryImgPath: "",
           storeEmail: "personni@gmail.com",
           aboutUsInfo: "Bem-vindo à Personni móveis, onde a personalização e modelagem de móveis são a essência do nosso trabalho. Transformamos espaços com soluções sob medida, refletindo o estilo de cada cliente. ",
           storeAddress: "",
           storePhone: "41 99999-9999",
           primaryColor: " #B68D40 ",
           secondaryColor: " #112620",
-        }
+        },
+        options: {
+          types: ["geocode"]
+        },
       }
     },
     mounted() {
+
+      const mapsScript = document.createElement('script');
+      mapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAN8WuBocaymoMHLv-iSkench1O6hVrOVY&libraries=places';
+      document.body.appendChild(mapsScript);
+
+      
+
         // this.user.storeId = 1;
         const config = { headers: { Authorization: AuthService.getToken() } };
       // Fazer uma solicitação GET para buscar dados do usuário por ID
@@ -110,6 +148,10 @@
       }
     },
     methods: {
+      getAddressData(place) {
+        // Handle the selected place data
+        console.log(place);
+      },
       editarUsuario() {
         this.user.storeId = 1;
         console.log('Dados a serem enviados:', this.user);
@@ -207,5 +249,13 @@ body :deep(.el-popper.is-light) {
 :deep(.el-color-picker__trigger) {
   height: 100px !important;
   width: 100px !important;
+}
+.images{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+.el-input_wrapper{
+  border: 1px solid $grey-border;
 }
 </style>

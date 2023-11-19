@@ -212,7 +212,7 @@ div.container {
 
                 h1{
                     color: $cta-color;
-                    width: 250px;
+                    width: 400px;
                     text-decoration: underline;
                 }
             }

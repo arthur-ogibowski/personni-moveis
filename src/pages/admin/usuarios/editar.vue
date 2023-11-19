@@ -24,7 +24,7 @@
         </el-form-item>
 
         <el-form-item>
-          <el-button type="primary" @click="editarUsuario">Salvar</el-button>
+          <el-button type="primary" class="cta" @click="editarUsuario">Salvar</el-button>
         </el-form-item>
       </el-form>
     </div>

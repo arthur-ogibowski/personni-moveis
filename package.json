@@ -31,6 +31,7 @@
     "postcss-html": "^1.5.0",
     "sass": "^1.62.1",
     "vite": "^4.1.4",
-    "vite-svg-loader": "^4.0.0"
+    "vite-svg-loader": "^4.0.0",
+    "vue-google-autocomplete": "^1.1.4"
   }
 }
