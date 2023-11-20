@@ -7,16 +7,19 @@
           <el-input v-model="user.storeName"></el-input>
         </el-form-item>
         <div class="images">
-          <el-form-item label="Logomarca da Empresa">
-            <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChange">
-                <img v-if="user.storeLogoPath" :src="user.storeLogoPath" class="avatar" />
-                <el-icon v-else class="avatar-uploader-icon">
-                    <Upload />
-                </el-icon>
-            </el-upload>
-          </el-form-item>
+          <el-form-item label="Imagem">
+                              <div>
+                                <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
+                                  @change="handleImageChange">
+                                  <img v-if="user.storeLogoPath" :src="user.storeLogoPath" class="avatar" />
+                                  <el-icon v-else class="avatar-uploader-icon">
+                                    <Upload />
+                                  </el-icon>
+                                </el-upload>
+                              </div>
+                            </el-form-item>
           <el-form-item label="Logomarca alternativa da Empresa">
-            <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChange">
+            <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChangeSecondary($event)">
                 <img v-if="user.storeSecondaryImgPath" :src="user.storeSecondaryImgPath" class="avatar" />
                 <el-icon v-else class="avatar-uploader-icon">
                     <Upload />
@@ -24,8 +27,8 @@
             </el-upload>
           </el-form-item>
           <el-form-item label="Placeholder para produtos sem imagem">
-            <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChange">
-                <img v-if="user.storeTertiaryImgPath" :src="user.storeTertiaryImgPath" class="avatar" />
+            <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChangePlaceholder($event)">
+                <img v-if="user.storePlaceholdeImgPath" :src="user.storePlaceholdeImgPath" class="avatar" />
                 <el-icon v-else class="avatar-uploader-icon">
                     <Upload />
                 </el-icon>
@@ -42,13 +45,14 @@
           <el-input v-model="user.storePhone"></el-input>
         </el-form-item>
         <el-form-item label="Endereço da Empresa">
-          <vue-google-autocomplete
+          <el-input v-model="user.storeAddress"></el-input>
+          <!-- <vue-google-autocomplete
             id="address-input"
             placeholder=""
             v-on:placechanged="getAddressData"
             :options="options"
             class="el-input el-input_wrapper"
-          ></vue-google-autocomplete>
+          ></vue-google-autocomplete> -->
         <div id="infowindow-content">
           <span id="place-name" class="title"></span><br />
           <span id="place-address"></span>
@@ -56,13 +60,13 @@
         </el-form-item>
         <h2>Configurações do site</h2>
         <el-form-item label="Cor principal do Site">
-            <el-color-picker class="cor-pick" v-model="user.primaryColor" color-format="hex" />
-            <h2>{{ user.primaryColor  }}</h2>
+            <el-color-picker class="cor-pick" v-model="user.primaryCollor" color-format="hex" />
+            <h2>{{ user.primaryCollor  }}</h2>
         </el-form-item>
         <el-form-item label="Cor secundária do Site">
-            <el-color-picker v-model="user.secondaryColor" class="cor-pick" color-format="hex" />
+            <el-color-picker v-model="user.secondaryCollor" class="cor-pick" color-format="hex" />
 
-            <h2>{{ user.secondaryColor   }}</h2>
+            <h2>{{ user.secondaryCollor   }}</h2>
         </el-form-item>
 
         <el-form-item>
@@ -77,24 +81,26 @@
   import axios from 'axios';
   import { ElMessage } from 'element-plus';
   import AuthService from '@/store/authService';
-  import VueGoogleAutocomplete from "vue-google-autocomplete";
+  import imgConverter from '@/store/imgConverter.js';
+  
+  // import VueGoogleAutocomplete from "vue-google-autocomplete";
   
   export default {
-    components: { VueGoogleAutocomplete },
+    // components: { VueGoogleAutocomplete },
     data() {
       return {
         user: {
           storeId: "1",
           storeName: "Personni móveis",
-          storeLogoPath: "",
-          storeSecondaryImgPath: "",
-          storeTertiaryImgPath: "",
+          storeLogoPath: null,
+          storeSecondaryImgPath: null,
+          storePlaceholdeImgPath: null,
           storeEmail: "personni@gmail.com",
           aboutUsInfo: "Bem-vindo à Personni móveis, onde a personalização e modelagem de móveis são a essência do nosso trabalho. Transformamos espaços com soluções sob medida, refletindo o estilo de cada cliente. ",
           storeAddress: "",
           storePhone: "41 99999-9999",
-          primaryColor: " #B68D40 ",
-          secondaryColor: " #112620",
+          primaryCollor: "",
+          secondaryCollor: "",
         },
         options: {
           types: ["geocode"]
@@ -103,62 +109,89 @@
     },
     mounted() {
 
-      const mapsScript = document.createElement('script');
-      mapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAN8WuBocaymoMHLv-iSkench1O6hVrOVY&libraries=places';
-      document.body.appendChild(mapsScript);
+      // const mapsScript = document.createElement('script');
+      // mapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAN8WuBocaymoMHLv-iSkench1O6hVrOVY&libraries=places';
+      // document.body.appendChild(mapsScript);
 
       
 
         // this.user.storeId = 1;
         const config = { headers: { Authorization: AuthService.getToken() } };
       // Fazer uma solicitação GET para buscar dados do usuário por ID
-      /*axios.get(`http://localhost:8081/store`, config)
+      axios.get(`http://localhost:8081/store`)
         .then((response) => {
         if (response.status === 200) {
             this.user = response.data;
-            if (this.user.primaryColor === null || this.user.primaryColor === '') {
-                this.user.primaryColor = '#B68D40';
+            if (this.user.primaryCollor === null || this.user.primaryCollor === '') {
+                this.user.primaryCollor = '#B68D40';
             }
-            if (this.user.secondaryColor === null || this.user.secondaryColor === '') {
-                this.user.secondaryColor = '#112620';
+            if (this.user.secondaryCollor === null || this.user.secondaryCollor === '') {
+                this.user.secondaryCollor = '#112620';
             }
             console.log('Dados recebidos do backend:', this.user);
+            
         } else {
             ElMessage.error('Erro ao buscar dados da API:', response.statusText);
         }
+        
     })
     .catch((error) => {
         console.error('Erro ao buscar dados da API:', error);
-    });*/
+    });
     },
     computed: {
-      autocomplete() {
-        const autocomplete = new google.maps.places.Autocomplete(
-          input,
-          options
-        );
-        autocomplete.addListener("place_changed", () => {
-          const place = autocomplete.getPlace();
-          if (!place.geometry || !place.geometry.location) {
-            return;
-          }
-          this.user.storeAddress = place.formatted_address;
-        });
+      // autocomplete() {
+      //   const autocomplete = new google.maps.places.Autocomplete(
+      //     input,
+      //     options
+      //   );
+      //   autocomplete.addListener("place_changed", () => {
+      //     const place = autocomplete.getPlace();
+      //     if (!place.geometry || !place.geometry.location) {
+      //       return;
+      //     }
+      //     this.user.storeAddress = place.formatted_address;
+      //   });
         
-      }
+      // }
     },
     methods: {
       getAddressData(place) {
         // Handle the selected place data
         console.log(place);
       },
+
+      async handleImageChange(file, option) {
+            try {
+                // Adquire imagem como string base64.
+                this.user.storeLogoPath = await imgConverter.fileToBase64String(file.raw);
+            } catch (error) {
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+            }
+        },
+        async handleImageChangeSecondary(file, option) {
+            try {
+                // Adquire imagem como string base64.
+                this.user.storeSecondaryImgPath = await imgConverter.fileToBase64String(file.raw);
+            } catch (error) {
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+            }
+        },
+        async handleImageChangePlaceholder(file, option) {
+            try {
+                // Adquire imagem como string base64.
+                this.user.storePlaceholdeImgPath = await imgConverter.fileToBase64String(file.raw);
+            } catch (error) {
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+            }
+        },
       editarUsuario() {
         this.user.storeId = 1;
         console.log('Dados a serem enviados:', this.user);
 
         const config = { headers: { Authorization: AuthService.getToken() } };
 
-        axios.put(`http://localhost:8081/store/update-store`, this.user, config)
+        axios.put(`http://localhost:8081/store/update-store`, this.user)
           .then((response) => {
             if (response.status === 200) {
               console.log('Usuário editado com sucesso', response.data);
@@ -171,7 +204,7 @@
             console.error('Erro ao editar usuário:', error);
           });
       }
-    }
+    },
   }
   </script>
 

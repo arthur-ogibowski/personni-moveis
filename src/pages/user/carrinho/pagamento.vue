@@ -106,7 +106,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                     </div>
                 </el-form>
 
-                
+
 
                 <div class="actions">
                     <el-button type="info" plain @click="previousStep"><el-icon>
@@ -184,9 +184,9 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                 </template>
                                 </div>
                             </el-card>
-                        
+
                         </div>
-                    
+
                         <div class="pagamento-info">
                             <el-card class="box-card" shadow="never">
                                 <div class="card-header card-item">
@@ -195,12 +195,13 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                         </el-icon> Forma de pagamento</h2>
                                 </div>
                                 <div class="card-item">
-                                    <img src="../../../assets/img/logoPix.png" style="width: 100%; max-width: 200px; margin-bottom: 20px;/">
+                                    <img src="../../../assets/img/logoPix.png"
+                                        style="width: 100%; max-width: 200px; margin-bottom: 20px;/">
 
                                 </div>
                             </el-card>
                         </div>
-                    
+
                         <div class="frete">
                             <el-card class="box-card" shadow="never">
                                 <div class="card-header card-item">
@@ -247,11 +248,11 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                             </div>
                         </el-card>
                         <div class="actions">
-                    <el-button type="info" plain @click="previousStep"><el-icon>
-                            <ArrowLeftBold />
-                        </el-icon> Voltar</el-button>
-                    <el-button type="success" @click="makeOrder()" size="large">Confirmar pedido</el-button>
-                </div>
+                            <el-button type="info" plain @click="previousStep"><el-icon>
+                                    <ArrowLeftBold />
+                                </el-icon> Voltar</el-button>
+                            <el-button type="success" @click="makeOrder()" size="large">Confirmar pedido</el-button>
+                        </div>
 
                     </div>
                 </div>
@@ -259,6 +260,8 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
             <div class="final-step" v-if="currentStep == 3">
                 <h1>Pedido concluído</h1>
+                <h2>Tempo Restante: {{ minutos }}:{{ segundos < 10 ? '0' : '' }}{{ segundos }} minutos</h2>
+                <h2>Não saia dessa tela</h2>
                 <img v-if="QrCode != null" :src=QrCode>
                 <div class="mega-icon">
                     <el-icon color="#67c23a">
@@ -286,6 +289,7 @@ import { ref } from 'vue';
 export default {
     data() {
         return {
+            tempoRestante: 60, // 5 minutos em segundos
             QrCode: null,
             currentStep: 0,
             metodoPagamento: "pix",
@@ -349,10 +353,18 @@ export default {
             addressChoice: 'existingAddress',
         };
     },
+    computed: {
+    minutos() {
+      return Math.floor(this.tempoRestante / 60);
+    },
+    segundos() {
+      return this.tempoRestante % 60;
+    },
+  },
     created() {
         // Usuário deve estar logado para acessar checkout.
         AuthService.shouldRedirectToLogin(this.$router);
-        
+
         const loading = ElLoading.service({
             lock: true,
             text: 'Carregando..',
@@ -372,6 +384,22 @@ export default {
         }, 250)
     },
     methods: {
+        iniciarTemporizador() {
+            this.temporizador = setInterval(() => {
+                if (this.tempoRestante > 0) {
+                    this.tempoRestante--;
+                } else {
+                    // Quando o temporizador atinge zero, redirecione para outra tela
+                    clearInterval(this.temporizador);
+                    // Adicione aqui o código para redirecionar para outra tela
+                    this.$router.push('/')
+                }
+            }, 1000);
+        },
+
+        beforeDestroy() {
+            clearInterval(this.temporizador);
+        },
         // selectAddress(address) {
         //     this.selectedAddress = address;
         // },
@@ -389,7 +417,7 @@ export default {
         },
         /** Faz pedidos e retorna qrcode pix. */
         makeOrder() {
-            const config = { 
+            const config = {
                 headers: { Authorization: AuthService.getToken() },
                 params: { shipmentFee: Number(this.calcularFrete()) }
             }
@@ -435,6 +463,7 @@ export default {
                         /** Limpa carrinho após finalizar o pedido. */
                         cartService.removeAllFromCarts();
                         this.currentStep = 3;
+                        this.iniciarTemporizador();
                     })
                     .catch(error => {
                         ElMessage.error('Não foi possível registrar o pedido.');
@@ -509,7 +538,7 @@ export default {
         },
 
         formatPrice(x) {
-            return x.toString().toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+            return x.toString().toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
         },
 
         nextStep() {
@@ -583,12 +612,12 @@ export default {
             // Substitua a URL abaixo pela URL real do seu endpoint de endereços
             axios.get('http://localhost:8081/users/get-user-address', config)
                 .then((response) => {
-                  this.userAddresses = response.data; // Armazene os endereços na variável do componente
+                    this.userAddresses = response.data; // Armazene os endereços na variável do componente
                 })
                 .catch((error) => {
-                  // Lide com erros de forma apropriada, por exemplo, exibindo uma mensagem de erro
-                  console.error('Erro ao carregar endereços:', error);
-            });
+                    // Lide com erros de forma apropriada, por exemplo, exibindo uma mensagem de erro
+                    console.error('Erro ao carregar endereços:', error);
+                });
         },
     },
 }
@@ -714,7 +743,8 @@ export default {
         flex-basis: 45%;
         margin: 0 10px;
     }
-    .forma-pagamento{
+
+    .forma-pagamento {
         width: 100%;
     }
 
@@ -759,9 +789,10 @@ export default {
         width: fit-content;
         display: inline-block;
     }
-    
+
     .el-radio-button {
-        display: inline; /* Faz o botão de rádio ficar em linha com o texto */
+        display: inline;
+        /* Faz o botão de rádio ficar em linha com o texto */
     }
 }
 
@@ -793,7 +824,7 @@ input[type="radio"] {
     display: none;
 }
 
-input[type="radio"]:checked + .radio-button::before {
+input[type="radio"]:checked+.radio-button::before {
     content: "X";
     position: absolute;
     top: 50%;
@@ -804,136 +835,128 @@ input[type="radio"]:checked + .radio-button::before {
     color: #007BFF;
 }
 
-.finalizar{
+.finalizar {
     width: 100%;
 }
 
 .finalizar-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
-  .finalizar-left, .finalizar-right{
-    flex-basis: 45%;
-  }
+    .finalizar-left,
+    .finalizar-right {
+        flex-basis: 45%;
+    }
 }
+
 .box-card {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .el-card {
-            background-color: $primary-color;
-            border: 2px solid var(--el-card-border-color);
-
-            h2 {
-                display: flex;
-                align-items: center;
-                font-size: 20px;
-                margin-bottom: 4rem;
-
-                i {
-                    margin-right: 10px;
-                }
-            }
-
-            h3 {
-                font-weight: 400;
-                font-size: 18px;
-                margin-bottom: 5px;
-                margin-top: 0px;
-            }
-
-            h4 {
-                font-size: 14px;
-                font-weight: 400;
-                margin-top: 0px;
-                margin-bottom: 5px;
-            }
-
-            div.card-header.card-item {
-                padding: 0.5rem 0 0 2rem;
-            }
-
-            .card-item {
-                padding: 16px;
-                padding-top: 0px;
-            }
-
-            .card-item-inner {
-                font-size: 12px;
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                padding-bottom: 2rem;
-                border-bottom: 1px solid var(--el-card-border-color);
-
-                .card-item-about {
-                    width: 70%;
-                    padding-right: 4rem;
-
-                    .el-text--small {
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        word-break: normal;
-                    }
-                }
-
-                .card-item-price {
-                    width: 30%;
-                    text-align: end;
-                    //margin-left: 30%;
-                }
-
-            }
-
-            .card-item.subtotal {
-                display: flex;
-                 justify-content: flex-end;
-                align-items: baseline;
-
-                h4 {
-                    margin-bottom: 0px;
-                }
-
-                h3 {
-                    margin-left: 1rem;
-                }
-            }
-
-            .card-item.frete {
-                display: flex;
-                 justify-content: flex-end;
-                align-items: baseline;
-
-                h4 {
-                    margin: 0;
-                    margin-left: 1rem;
-                }
-            }
-
-            :deep(.el-card__body) {
-                padding: 0px;
-            }
-
-            .preco-final {
-                font-size: 20px;
-                padding: 20px;
-                text-align: center;
-
-                h3 {
-                    color: green;
-                }
-            }
-        }
-
-.existing-address-radio{
+    width: 100%;
     margin-bottom: 20px;
+}
 
-    .el-radio{
-        width: 150px;
-        margin-bottom: 10px;
-        margin-left: 10px;
+.el-card {
+    background-color: $primary-color;
+    border: 2px solid var(--el-card-border-color);
+
+    h2 {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        margin-bottom: 4rem;
+
+        i {
+            margin-right: 10px;
+        }
+    }
+
+    h3 {
+        font-weight: 400;
+        font-size: 18px;
+        margin-bottom: 5px;
+        margin-top: 0px;
+    }
+
+    h4 {
+        font-size: 14px;
+        font-weight: 400;
+        margin-top: 0px;
+        margin-bottom: 5px;
+    }
+
+    div.card-header.card-item {
+        padding: 0.5rem 0 0 2rem;
+    }
+
+    .card-item {
+        padding: 16px;
+        padding-top: 0px;
+    }
+
+    .card-item-inner {
+        font-size: 12px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--el-card-border-color);
+
+        .card-item-about {
+            width: 70%;
+            padding-right: 4rem;
+
+            .el-text--small {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                word-break: normal;
+            }
+        }
+
+        .card-item-price {
+            width: 30%;
+            text-align: end;
+            //margin-left: 30%;
+        }
+
+    }
+
+    .card-item.subtotal {
+        display: flex;
+        justify-content: flex-end;
+        align-items: baseline;
+
+        h4 {
+            margin-bottom: 0px;
+        }
+
+        h3 {
+            margin-left: 1rem;
+        }
+    }
+
+    .card-item.frete {
+        display: flex;
+        justify-content: flex-end;
+        align-items: baseline;
+
+        h4 {
+            margin: 0;
+            margin-left: 1rem;
+        }
+    }
+
+    :deep(.el-card__body) {
+        padding: 0px;
+    }
+
+    .preco-final {
+        font-size: 20px;
+        padding: 20px;
+        text-align: center;
+
+        h3 {
+            color: green;
+        }
     }
 }
 </style>
