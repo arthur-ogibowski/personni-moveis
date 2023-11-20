@@ -20,13 +20,13 @@
           </div>
         </template>
         </el-table-column>
-        <el-table-column prop="category.name" label="Categoria" sortable width="150">
+        <!-- <el-table-column prop="category.name" label="Categoria" sortable width="150">
         <template v-slot="scope">
           <div class="categoria">
             <h4>{{ scope.row.category.name}}</h4>
           </div>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column prop="mainImg" label="Imagem" width="100" >
         <template v-slot="scope">
           <img :src="scope.row.mainImg"/>
