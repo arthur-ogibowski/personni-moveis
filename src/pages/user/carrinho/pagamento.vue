@@ -25,7 +25,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                     <el-radio border size="large" label="existingAddress">Escolher endereço cadastrado</el-radio>
                     <el-radio-group v-if="addressChoice === 'existingAddress'" v-model="selectAddress" class="existing-address-radio">
                         <div v-for="address in userAddresses" :key="address.addressId">
-                            <el-radio border size="default" :label="address.addressNickname">
+                            <el-radio border size="default" :label="address.addressNickname" @change="selectExistingAddress(address)">
                             </el-radio>
                         </div>
                     </el-radio-group>
@@ -34,6 +34,9 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
       <el-form :model="endereco" label-position="top" v-if="addressChoice === 'newAddress'">
         <el-col :span="10">
+          <el-form-item label="Apelido">
+            <el-input v-model="endereco.addressNickname" required></el-input>
+          </el-form-item>
           <el-form-item label="CEP">
             <el-input placeholder="#####-###" v-model="endereco.cep" required @blur="consultarCEP"
               v-mask="'#####-###'" maxlength="9"></el-input>
@@ -45,20 +48,20 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
       <div class="after-cep" v-loading="cepLoading">
         <el-form-item label="Rua">
-          <el-input v-model="endereco.rua" :disabled="!cepExists" required></el-input>
+          <el-input v-model="endereco.street" :disabled="!cepExists" required></el-input>
         </el-form-item>
         <div class="small-inputs">
           <el-form-item label="Número">
-            <el-input v-model="endereco.numero" :disabled="!cepExists" required></el-input>
+            <el-input v-model="endereco.number" :disabled="!cepExists" required></el-input>
           </el-form-item>
           <el-form-item label="Complemento (Opcional)">
-            <el-input v-model="endereco.complemento" :disabled="!cepExists"></el-input>
+            <el-input v-model="endereco.details" :disabled="!cepExists"></el-input>
           </el-form-item>
           <el-form-item label="Cidade">
-            <el-input v-model="endereco.cidade" :disabled="!cepExists" required></el-input>
+            <el-input v-model="endereco.city" :disabled="!cepExists" required></el-input>
           </el-form-item>
           <el-form-item label="Estado">
-            <el-input v-model="endereco.estado" :disabled="!cepExists" required></el-input>
+            <el-input v-model="endereco.state" :disabled="!cepExists" required></el-input>
           </el-form-item>
         </div>
       </div>
@@ -164,13 +167,21 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                         </el-icon> Endereço de entrega</h2>
                                 </div>
                                 <div class="card-item">
-                                    <h4>Aguinaldo Lucas</h4>
-                                    <h4>Rua Saldanha Marinho 123</h4>
-                                    <h4>80410-151</h4>
-                                    <h4>Centro</h4>
-                                    <h4>Curitiba, PR</h4>
-                                    <h4>Brasil</h4>
-                                
+                                    <template v-if="selectedAddress">
+                                    <h4>{{ selectedAddress.name }}</h4>
+                                    <h4>{{ selectedAddress.street }} {{ selectedAddress.number }}</h4>
+                                    <h4>{{ selectedAddress.cep }}</h4>
+                                    <h4>{{ selectedAddress.district }}</h4>
+                                    <h4>{{ selectedAddress.city }}, {{ selectedAddress.state }}</h4>
+                                </template>
+                                <!-- Display the new address if entered -->
+                                <template v-else-if="endereco.cep">
+                                    <h4>{{ endereco.name }}</h4>
+                                    <h4>{{ endereco.street }} {{ endereco.number }}</h4>
+                                    <h4>{{ endereco.cep }}</h4>
+                                    <h4>{{ endereco.district }}</h4>
+                                    <h4>{{ endereco.city }}, {{ endereco.state }}</h4>
+                                </template>
                                 </div>
                             </el-card>
                         
@@ -299,14 +310,14 @@ export default {
                 sectionCmps: [],
             },
             endereco: {
+                addressNickname: "",
                 cep: "",
-                rua: "",
-                numero: "",
-                complemento: "",
-                bairro: "",
-                cidade: "",
-                estado: "",
-                pais: "",
+                street: "",
+                number: "",
+                details: "",
+                district: "",
+                city: "",
+                state: "",
             },
             cartao: {
                 nomeCartao: "",
@@ -332,6 +343,8 @@ export default {
             productCmps: [],
             userAddresses: [],
             cepExists: false,
+            addressAdded: false,
+            selectedAddress: null,
             selectAddress: "",
             addressChoice: 'existingAddress',
         };
@@ -362,6 +375,10 @@ export default {
         // selectAddress(address) {
         //     this.selectedAddress = address;
         // },
+        selectExistingAddress(address) {
+            console.log('Selected Address:', address);
+            this.selectedAddress = { ...address };
+        },
         clearSelectedAddress() {
             this.selectedAddress = null;
         },
@@ -399,8 +416,14 @@ export default {
             // Monta dto para processamento do pedido no back.
             const ordersReq = {
                 requestProduct: getReqProduct,
-                requestCmp: getReqCmp
+                requestCmp: getReqCmp,
+                deliveryAddress: this.addressChoice === 'existingAddress' ? this.selectedAddress : this.endereco,
             }
+
+            if (this.addressChoice === 'newAddress') {
+                ordersReq.deliveryAddress = this.newAddress;
+            }
+
             // Faz requisição enviando pedidos.
             if ((cartService.getCartItems() != null || cartService.getCartItems().length > 0)
                 && (cartService.getCmpItems() != null || cartService.getCmpItems().length > 0)) {
@@ -433,10 +456,10 @@ export default {
 
                         if (!data.erro) {
                             // Preencha os campos com os dados retornados pela API
-                            this.endereco.rua = data.logradouro;
-                            this.endereco.bairro = data.bairro;
-                            this.endereco.cidade = data.localidade;
-                            this.endereco.estado = data.uf;
+                            this.endereco.street = data.logradouro;
+                            this.endereco.district = data.bairro;
+                            this.endereco.city = data.localidade;
+                            this.endereco.state = data.uf;
                             this.cepExists = true;
                             setTimeout(() => {
                                 this.cepLoading = false;
@@ -455,6 +478,28 @@ export default {
             }
         },
 
+        addAddress() {
+            const config = { headers: { Authorization: AuthService.getToken() } };
+
+            axios.post('http://localhost:8081/users/create-new-address', this.endereco, config)
+            .then((response) => {
+            ElMessage.success('Endereço adicionado com sucesso.');
+            
+            this.addressAdded = true;
+            // Atualize a lista de endereços do usuário após adicionar um novo endereço
+            // this.loadUserAddresses();
+
+            // reload
+            // setTimeout(() => {
+            //     window.location.reload();
+            // }, 2000);
+            })
+            .catch((error) => {
+                ElMessage.error('Erro ao adicionar endereço.');
+                console.error('Erro:', error);
+            });
+        },
+
         calcularFrete() {
             let frete = "15";
             /*if (this.products && this.products.length > 0) {
@@ -468,6 +513,9 @@ export default {
         },
 
         nextStep() {
+            if (this.addressChoice === 'newAddress' && !this.addressAdded) {
+                this.addAddress();
+            }
             this.currentStep++;
         },
         previousStep() {
