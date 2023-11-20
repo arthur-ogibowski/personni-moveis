@@ -75,7 +75,7 @@
               </div>
               <div class="address-list-right">
                 <div v-for="address in addresses" :key="address.addressId" class="address-summary">
-                  <h3>{{ address.addressNickname }} <span><el-icon @click="deleteAddress(address)"><Delete/></el-icon> <el-icon @click="editAddress(address)"><Edit /></el-icon></span></h3>
+                  <h3>{{ address.addressNickname }} <span><el-icon @click="deleteAddress(address)"><Delete/></el-icon> <el-icon @click="showEditAddressForm = true"><Edit /></el-icon></span></h3>
                   <p class="dados-endereco">{{ address.street }}</p>
                   <p class="dados-endereco">{{ address.number }}</p>
                   <p class="dados-endereco">{{ address.details }}</p>
@@ -133,6 +133,39 @@
                 </form>
               </div>
             </div>
+
+            <div class="user-info" v-if="showEditAddressForm">
+              <h1 class="info-title">Editar Endereço</h1>
+              <div class="info-box">
+                <h2 class="info-item title">Apelido: </h2>
+                <el-input v-model="editedAddress.addressNickname"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Rua: </h2>
+                <el-input v-model="editedAddress.street"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Número: </h2>
+                <el-input v-model="editedAddress.number"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Bairro: </h2>
+                <el-input v-model="editedAddress.district"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Cidade: </h2>
+                <el-input v-model="editedAddress.city"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Estado: </h2>
+                <el-input v-model="editedAddress.state"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">CEP: </h2>
+                <el-input v-model="editedAddress.cep"></el-input>
+              </div>
+              <el-button type="primary" @click="saveAddress">Salvar</el-button>
+            </div>
           
         </div>
       </el-tab-pane>
@@ -170,27 +203,27 @@
           <div class="config-right">
             <div class="info-box">
               <label class="info-item title">Name: </label>
-              <el-input v-model="user.name"></el-input>
+              <el-input v-model="editUser.name"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">Email: </label>
-              <el-input v-model="user.email"></el-input>
+              <el-input v-model="editUser.email"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">CPF: </label>
-              <el-input v-model="user.cpf"></el-input>
+              <el-input v-model="editUser.cpf"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">Telefone: </label>
-              <el-input v-model="user.phoneNumber"></el-input>
+              <el-input v-model="editUser.phoneNumber"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">Senha Atual: </label>
-              <el-input v-model="user.currentPassword"></el-input>
+              <el-input v-model="editUser.currentPassword"></el-input>
             </div>
             <div class="info-box">
               <label class="info-item title">Nova Senha: </label>
-              <el-input v-model="user.newPassword"></el-input>
+              <el-input v-model="editUser.newPassword"></el-input>
             </div>
             <div class="form-group">
               <el-button type="primary" @click="saveUser" class="cta">Salvar</el-button>
@@ -236,6 +269,16 @@ export default {
           cpf: "",
           currentPassword: "",
           newPassword: ""
+        },
+        editedAddress: {
+          addressId: null, // O ID do endereço a ser editado
+          addressNickname: "",
+          street: "",
+          number: "",
+          district: "",
+          city: "",
+          state: "",
+          cep: ""
         },
         cepExists: false,
       };

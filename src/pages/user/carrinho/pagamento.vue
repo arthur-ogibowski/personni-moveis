@@ -341,7 +341,7 @@ export default {
             productCmps: [],
             userAddresses: [],
             cepExists: false,
-            selectAddress: null,
+            selectAddress: "",
             addressChoice: 'existingAddress',
         };
     },
