@@ -178,14 +178,11 @@
             <h2>Veja aqui todos os seus pedidos.</h2>
           </div>
           <div class="pedidos-right">
-            <el-table :data="pedidos" class="perfil-table" style="width: 100%">
-              <el-table-column prop="orderId" label="#" width="100" />
-              <el-table-column prop="totalPrice" label="Valor Total" width="*"/>
-              <el-table-column prop="produtos" label="Produtos" width="*"/>
-              <el-table-column prop="pagamento" label="Método de pagamento" width="*" />
-              <el-table-column prop="valor" label="Valor total" width="*"/>
-              <el-table-column prop="status" label="Status" width="*"/>
-              <el-table-column width="100">
+            <el-table :data="pedidosAll" class="perfil-table" style="width: 100%">
+              <el-table-column prop="orderId" label="#" width="300" />
+              <el-table-column prop="totalPrice" label="Valor Total" width="300"/>
+              <el-table-column prop="status" label="Status" width="300"/>
+              <el-table-column label="Ações" width="300">
                 <el-button plain>Detalhes</el-button>
               </el-table-column>
             </el-table>
@@ -249,6 +246,7 @@ export default {
         user: {},
         enderecosDash:[],
         pedidosDash: [],
+        pedidosAll: [],
         activeName: 'dashboard',
         showAddAddressForm: false,
         showEditAddressForm: false,
@@ -289,6 +287,7 @@ export default {
       this.loadAddresses();
       this.updateUserInfo();
       this.getPedidos();
+      this.getPedidosAll();
       // this.getAddressToEdit();
     },
     methods: {
@@ -332,6 +331,35 @@ export default {
           console.error('Erro:', error);
         });
     },
+
+    getPedidosAll() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+
+      axios.get('http://localhost:8081/orders/client-orders', config) 
+        .then((response) => {
+          // Transforma datas para formato dia/mes/ano.
+          response.data = response.data.map(order => {
+            const dataArray = order.date;
+            const data = new Date(dataArray[0], dataArray[1] - 1, dataArray[2]);
+            
+            const day = data.getDate();
+            const month = data.getMonth() + 1; // Meses em JavaScript são indexados de 0 a 11
+            const year = data.getFullYear();
+            
+            // Atribuir a string formatada de volta a order.date
+            order.date = `${day}/${month}/${year}`;
+            
+            return order;
+          });
+
+          // Fazendo set dos valores na lista de pedidos em tela.
+          this.pedidosAll = response.data;
+        })
+        .catch((error) => {
+          console.error('Erro:', error);
+        });
+    },
+
 
     loadAddresses() {
       // Faça uma solicitação ao servidor para carregar a lista de endereços do usuário
