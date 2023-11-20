@@ -23,18 +23,14 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                 <h1>Endereço de entrega</h1>
                 <el-radio-group v-model="addressChoice">
                     <el-radio border size="large" label="existingAddress">Escolher endereço cadastrado</el-radio>
+                    <el-radio-group v-if="addressChoice === 'existingAddress'" v-model="selectAddress" class="existing-address-radio">
+                        <div v-for="address in userAddresses" :key="address.addressId">
+                            <el-radio border size="default" :label="address.addressNickname">
+                            </el-radio>
+                        </div>
+                    </el-radio-group>
                     <el-radio border size="large" label="newAddress" @change="clearSelectedAddress">Cadastrar novo endereço</el-radio>
                 </el-radio-group>
-                <div v-if="addressChoice === 'existingAddress'">
-                    
-                <div v-for="address in userAddresses" :key="address.addressId">
-                        <label :for="address.addressId" class="radio-label">
-                        <input type="radio" :id="address.addressId" v-model="selectedAddress" :value="address" />
-                        <span class="radio-button"></span>
-                            {{ address.addressNickname }}
-                        </label>
-                    </div>
-                </div>
 
       <el-form :model="endereco" label-position="top" v-if="addressChoice === 'newAddress'">
         <el-col :span="10">
@@ -336,7 +332,7 @@ export default {
             productCmps: [],
             userAddresses: [],
             cepExists: false,
-            selectAddress: null,
+            selectAddress: "",
             addressChoice: 'existingAddress',
         };
     },
@@ -882,4 +878,14 @@ input[type="radio"]:checked + .radio-button::before {
                 }
             }
         }
+
+.existing-address-radio{
+    margin-bottom: 20px;
+
+    .el-radio{
+        width: 150px;
+        margin-bottom: 10px;
+        margin-left: 10px;
+    }
+}
 </style>

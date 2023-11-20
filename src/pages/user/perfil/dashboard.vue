@@ -75,7 +75,7 @@
               </div>
               <div class="address-list-right">
                 <div v-for="address in addresses" :key="address.addressId" class="address-summary">
-                  <h3>{{ address.addressNickname }} <span><el-icon @click="deleteAddress(address)"><Delete/></el-icon> <el-icon @click="editAddress(address)"><Edit /></el-icon></span></h3>
+                  <h3>{{ address.addressNickname }} <span><el-icon @click="deleteAddress(address)"><Delete/></el-icon> <el-icon @click="showEditAddressForm = true"><Edit /></el-icon></span></h3>
                   <p class="dados-endereco">{{ address.street }}</p>
                   <p class="dados-endereco">{{ address.number }}</p>
                   <p class="dados-endereco">{{ address.details }}</p>
@@ -132,6 +132,39 @@
                   </div>
                 </form>
               </div>
+            </div>
+
+            <div class="user-info" v-if="showEditAddressForm">
+              <h1 class="info-title">Editar Endereço</h1>
+              <div class="info-box">
+                <h2 class="info-item title">Apelido: </h2>
+                <el-input v-model="editedAddress.addressNickname"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Rua: </h2>
+                <el-input v-model="editedAddress.street"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Número: </h2>
+                <el-input v-model="editedAddress.number"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Bairro: </h2>
+                <el-input v-model="editedAddress.district"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Cidade: </h2>
+                <el-input v-model="editedAddress.city"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">Estado: </h2>
+                <el-input v-model="editedAddress.state"></el-input>
+              </div>
+              <div class="info-box">
+                <h2 class="info-item title">CEP: </h2>
+                <el-input v-model="editedAddress.cep"></el-input>
+              </div>
+              <el-button type="primary" @click="saveAddress">Salvar</el-button>
             </div>
           
         </div>
@@ -236,6 +269,16 @@ export default {
           cpf: "",
           currentPassword: "",
           newPassword: ""
+        },
+        editedAddress: {
+          addressId: null, // O ID do endereço a ser editado
+          addressNickname: "",
+          street: "",
+          number: "",
+          district: "",
+          city: "",
+          state: "",
+          cep: ""
         },
         cepExists: false,
       };

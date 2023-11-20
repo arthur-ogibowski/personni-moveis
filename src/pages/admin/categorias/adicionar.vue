@@ -461,7 +461,7 @@ div.section-item{
         flex-direction: row;
         flex-wrap: wrap;
         margin-left: 20px;
-        height: 300px ;
+        height: 100%;
 
 
         .option-item{
