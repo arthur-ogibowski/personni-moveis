@@ -396,14 +396,15 @@ export default {
                 cartService.getCmpItems().forEach(cmp => getReqCmp.push(
                     {
                         productCmp: cmp,
-                        amount: cmp.amount
+                        amount: cmp.amount,
                     }
                 ));
             }
             // Monta dto para processamento do pedido no back.
             const ordersReq = {
                 requestProduct: getReqProduct,
-                requestCmp: getReqCmp
+                requestCmp: getReqCmp,
+                shipmentFee: Number(this.calcularFrete())
             }
             // Faz requisição enviando pedidos.
             if ((cartService.getCartItems() != null || cartService.getCartItems().length > 0)

@@ -146,13 +146,12 @@
           </div>
           <div class="pedidos-right">
             <el-table :data="pedidos" class="perfil-table" style="width: 100%">
-              <el-table-column prop="orderId" label="#" width="100" />
-              <el-table-column prop="totalPrice" label="Valor Total" width="*"/>
+              <el-table-column prop="orderId" label="#" width="*" />
               <el-table-column prop="produtos" label="Produtos" width="*"/>
               <el-table-column prop="pagamento" label="Método de pagamento" width="*" />
               <el-table-column prop="valor" label="Valor total" width="*"/>
               <el-table-column prop="status" label="Status" width="*"/>
-              <el-table-column width="100">
+              <el-table-column width="*">
                 <el-button plain>Detalhes</el-button>
               </el-table-column>
             </el-table>
@@ -216,6 +215,31 @@ export default {
         user: {},
         enderecosDash:[],
         pedidosDash: [],
+        pedidos: [
+
+          {
+            orderId: "2",
+            produtos: "Mesa Chantom",
+            pagamento: "PIX",
+            valor: "550,00",
+            status: "ATIVO" 
+          },
+          {
+            orderId: "3",
+            produtos: "Cadeira Eames, Banqueta clássica",
+            pagamento: "PIX",
+            valor: "720,35",
+            status: "Concluído" 
+          },
+          {
+            orderId: "4",
+            produtos: "Cadeira Ipanema",
+            pagamento: "PIX",
+            valor: "315,00",
+            status: "Cancelado" 
+          }
+            
+        ],
         activeName: 'dashboard',
         showAddAddressForm: false,
         showEditAddressForm: false,
