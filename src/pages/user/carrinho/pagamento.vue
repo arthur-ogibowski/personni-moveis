@@ -254,7 +254,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
             <div class="final-step" v-if="currentStep == 3">
                 <h1>Pedido concluído</h1>
-                <p>Tempo Restante: {{ minutos }}:{{ segundos < 10 ? '0' : '' }}{{ segundos }} minutos</p>
+                <h2>Tempo Restante: {{ minutos }}:{{ segundos < 10 ? '0' : '' }}{{ segundos }} minutos</h2>
                 <h2>Não saia dessa tela</h2>
                 <img v-if="QrCode != null" :src=QrCode>
                 <div class="mega-icon">
@@ -283,7 +283,7 @@ import { ref } from 'vue';
 export default {
     data() {
         return {
-            tempoRestante: 300, // 5 minutos em segundos
+            tempoRestante: 60, // 5 minutos em segundos
             QrCode: null,
             currentStep: 0,
             metodoPagamento: "pix",
@@ -384,7 +384,7 @@ export default {
                     // Quando o temporizador atinge zero, redirecione para outra tela
                     clearInterval(this.temporizador);
                     // Adicione aqui o código para redirecionar para outra tela
-                    // Por exemplo: this.$router.push('/outra-tela')
+                    this.$router.push('/')
                 }
             }, 1000);
         },
