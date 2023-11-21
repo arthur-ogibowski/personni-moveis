@@ -495,6 +495,12 @@ export default {
             const index = itemList.indexOf(itemToBeRemoved);
             itemList.splice(index, 1);
         },
+        deleteCascade(Seccao, Option) {
+            const product = this.product;
+            // remote option from section
+            const index = Seccao.options.indexOf(Option);
+            Seccao.options.splice(index, 1);
+        },
     }
 }
 </script>
