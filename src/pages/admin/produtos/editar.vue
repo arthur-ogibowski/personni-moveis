@@ -265,9 +265,28 @@ export default {
             this.uniqueKey += 1; // Isso forçará a recriação do componente
         },
         removerimg(index) {
-            // Função para remover a imagem com base no índice
-            this.images.splice(index, 1);
+            // Obtém a imagem com base no índice
+            const imagemRemovida = this.images[index];
+
+            // Verifica se a imagem tem um productImgId
+            if (imagemRemovida.productImgId !== null && imagemRemovida.productImgId !== 0) {
+                // Se tiver um productImgId, faz uma requisição axios.delete
+                axios.delete(`http://localhost:8081/productImg/${imagemRemovida.productImgId}`)
+                    .then(response => {
+                        ElMessage.success('Imagem deletada com sucesso!');
+                        // Remove a imagem do array local após a exclusão bem-sucedida
+                        this.images.splice(index, 1);
+                    })
+                    .catch(error => {
+                        // Lida com o erro (se necessário)
+                        console.error(error);
+                    });
+            } else {
+                // Se não tiver um productImgId, remove do array local
+                this.images.splice(index, 1);
+            }
         },
+
 
 
         getCategories() {
@@ -290,7 +309,7 @@ export default {
                         // Seta se produto estava indisponível no inicio da edição. Se mudar para disponível passa no fluxo de notificação dos clientes.
                         this.productWasAvailable = this.product.available;
                         this.product.secondaryImages.forEach(element => {
-                            this.images.push({ productImgId: this.images.length + 1, img: element.img })
+                            this.images.push({ productImgId: element.productImgId, img: element.img })
                         });
                     })
                     .catch(error => {
@@ -315,7 +334,15 @@ export default {
                 ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos "1" em estoque');
                 return;
             }
-            this.product.secondaryImages.img = this.images;
+            // Filtra as imagens que não têm um productImgId definido (são novas).
+            const novasImagens = this.images.filter(img => img.productImgId === null || img.productImgId === 0);
+
+            // Atribui diretamente as novas imagens ao campo img de secondaryImages.
+            this.product.secondaryImages = {
+                img: novasImagens.map(img => img.img)
+            };
+
+
             // Começa loading.
             const loading = ElLoading.service({
                 lock: true,
@@ -463,7 +490,7 @@ export default {
                 const base64String = await imgConverter.fileToBase64String(file.raw);
 
                 // Adiciona a nova imagem ao array existente
-                this.images.push({ productImgId: this.images.length + 1, img: base64String });
+                this.images.push({ productImgId: null, img: base64String });
             } catch (error) {
                 ElMessage.error('Erro - não foi possível fazer o upload da imagem.');
             }
