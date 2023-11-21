@@ -223,7 +223,7 @@
 <script>
 import AuthService from '@/store/authService.js';
 import axios from 'axios';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElLoading } from 'element-plus';
 import imgConverter from '@/store/imgConverter.js';
 
 export default {
@@ -316,17 +316,25 @@ export default {
                 return;
             }
             this.product.secondaryImages.img = this.images;
+            // Começa loading.
+            const loading = ElLoading.service({
+                lock: true,
+                text: 'Editando produto',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
             // Se id do produto na URl não é nulo, manda requisição para editar produto.
             if (this.product.productId != null) {
                 const config = { params: { categoryId: this.selectedCategory } }
                 axios.put(`http://localhost:8081/products/save-full-product`, this.product, config)
                     .then(response => {
                         ElMessage.success('Produto editado com sucesso!');
+                        loading.close();
                         this.$router.replace('/admin/produtos')
                     })
                     .catch(error => {
                         ElMessage.error('Erro ao editar produto.')
                         console.error(error);
+                        loading.close();
                     });
 
                 // Se o produto estava indisponível e passou a estar disponível, 
