@@ -11,27 +11,18 @@
                     </el-form-item>
                     <!-- Preço -->
                     <el-form-item label="Preço">
-                        <el-input
-                            controls-position="right"
-                            v-model="product.value"
-                            class="preco-input">
-                            <template #prepend>R$</template> 
+                        <el-input controls-position="right" v-model="product.value" class="preco-input">
+                            <template #prepend>R$</template>
                         </el-input>
                     </el-form-item>
                     <!-- Estoque -->
                     <el-form-item label="Estoque">
-                        <el-input-number 
-                            v-model="product.quantity"
-                            :min="0"
-                            controls-position="right">
+                        <el-input-number v-model="product.quantity" :min="0" controls-position="right">
                         </el-input-number>
                     </el-form-item>
                     <!-- Descrição -->
                     <el-form-item label="Descrição">
-                        <el-input 
-                            :maxlength="250"
-                            type="textarea" 
-                            placeholder="Descrição..."
+                        <el-input :maxlength="250" type="textarea" placeholder="Descrição..."
                             v-model="product.description"></el-input>
                     </el-form-item>
                     <!-- Disponível -->
@@ -40,35 +31,62 @@
                     </el-form-item>
                     <!-- Imagem principal -->
                     <el-form-item label="Imagem principal">
-                        <div>
-                            <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
-                                                            @change="handleImageChange">
-                                                            <img v-if="product.mainImg" :src="product.mainImg" class="avatar" />
-                                                            <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
-                                                        </el-upload>
+                        <!-- Adicione a diretiva v-if para condicionalmente renderizar o el-upload -->
+                        <el-upload v-if="!product.mainImg" class="avatar-uploader" :auto-upload="false" :limit="1"
+                            @change="handleImageChange">
+                            <el-icon class="avatar-uploader-icon">
+                                <Upload />
+                            </el-icon>
+                        </el-upload>
+                        <div class="avatar-container">
+                            <div class="image-wrapper-principal">
+                                <img v-if="product.mainImg" :src="product.mainImg" class="avatar-principal" />
+                                <div class="overlayPrincipal" @click="PrincipalImgRemove" v-if="product.mainImg">
+                                    <el-icon class="table-delete" size="50" color="#A8A8A8" style="border: 50px;">
+                                        <Delete />
+                                    </el-icon>
+                                </div>
+                            </div>
                         </div>
                     </el-form-item>
                     <!-- Imagens secundárias -->
-                    <!-- <el-form-item label="Imagens secundárias">
-                        <div>
-                            <el-upload class="avatar-uploader" :auto-upload="false" list-type="picture-card" v-model:file-list="product.secondaryImages"
-                                @change="handleSecondaryImagesChange">
-                                <img v-if="product.secondaryImages" :src="product.secondaryImages" class="avatar" />
-                                <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
+                    <el-form-item label="Imagens secundárias">
+                        <div class="secondary-image-list">
+                            <!-- Use v-if para condicionalmente renderizar o el-upload -->
+                            <el-upload v-if="this.images.length < 999" class="avatar-uploader secondary-image-uploader"
+                                multiple :auto-upload="false" :limit="999" @change="handleSecondaryImagesChange">
+                                <el-icon class="avatar-uploader-icon">
+                                    <Upload />
+                                </el-icon>
                             </el-upload>
+                            <!-- Use v-for para percorrer a lista de imagens secundárias -->
+                            <div v-for="(image, index) in this.images" :key="index" class="avatar-container"
+                                @click="removerimg(index)">
+                                <div class="image-wrapper">
+                                    <img :src="image.img" class="avatar" />
+                                    <div class="overlay">
+                                        <el-icon class="table-delete" size="50" color="#A8A8A8" style="border: 50px;">
+                                            <Delete />
+                                        </el-icon>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </el-form-item> -->
+                    </el-form-item>
+
+
+
+
+
+
+
+
+
                     <!-- Categoria -->
                     <el-form-item label="Categoria">
-                        <el-select
-                            filterable
-                            collapse-tags
-                            clearable
-                            v-model="this.selectedCategory"
+                        <el-select filterable collapse-tags clearable v-model="this.selectedCategory"
                             placeholder="Selecione">
-                            <el-option v-for="category in this.fetchedCategories"
-                                :key="category.id"
-                                :label="category.name"
+                            <el-option v-for="category in this.fetchedCategories" :key="category.id" :label="category.name"
                                 :value="category.id" />
                         </el-select>
                     </el-form-item>
@@ -84,24 +102,26 @@
                     <h2>Detalhes do produto</h2>
                     <div class="details">
                         <div class="detail-item" v-for="detail in product.details" v-bind:key="detail">
-                            <el-divider/>
-                            <el-icon v-on:click="removeItem(product.details, detail)" style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20" color="#A8A8A8"><CloseBold /></el-icon>
+                            <el-divider />
+                            <el-icon v-on:click="removeItem(product.details, detail)"
+                                style="margin-right: 35px; float: right; margin-top: 33px; cursor: pointer;" :size="20"
+                                color="#A8A8A8">
+                                <CloseBold />
+                            </el-icon>
                             <div>
-                                        <el-form-item label="Título">
-                                            <el-input v-model="detail.fieldContent" placeholder="Novo título"></el-input>
-                                        </el-form-item>
-                                        <el-form-item label="Descrição">
-                                            <el-input 
-                                                type="textarea" 
-                                                maxlength= "250"
-                                                placeholder="Descrição..."
-                                                show-word-limit label="Conteúdo"
-                                                v-model="detail.detailField"></el-input>
-                                        </el-form-item>
+                                <el-form-item label="Título">
+                                    <el-input v-model="detail.fieldContent" placeholder="Novo título"></el-input>
+                                </el-form-item>
+                                <el-form-item label="Descrição">
+                                    <el-input type="textarea" maxlength="250" placeholder="Descrição..." show-word-limit
+                                        label="Conteúdo" v-model="detail.detailField"></el-input>
+                                </el-form-item>
                             </div>
                         </div>
                         <el-divider class="divider-button" v-on:click="newDetail()">
-                                    <el-icon><Plus /></el-icon> Detalhe
+                            <el-icon>
+                                <Plus />
+                            </el-icon> Detalhe
                         </el-divider>
                     </div>
                 </div>
@@ -118,66 +138,70 @@
 
                         <div class="elements">
                             <el-collapse accordion v-model="currentOpenSection">
-                            <div v-for="section in product.sections" v-bind:key="section">
-                                <el-collapse-item class="element-item" :name="section.sectionID">
-                                    <template #title>
-                                    <h1> {{ section.name ? section.name : 'Nova seção' }} </h1>
-                                    <p v-if="section.options.length"> - {{ section.options.length }} {{ section.options.length != 1 ? 'opções' : 'opção' }} </p>
-                                    <el-icon v-on:click="removeItem(product.sections, section)" style="margin-left: 8px; cursor: pointer;"
-                                        :size="20" color="#A8A8A8">
-                                        <Delete />
-                                    </el-icon>
-                                </template>
-
-                                <div>
-
-                                    <el-form-item label="Nome">
-                                        <el-input v-model="section.name"></el-input>
-                                    </el-form-item>
-
-
-
-                                    <div class="option-item" v-for="option in section.options" v-bind:key="option">
-                                        <el-divider/>
-                                        <div class="inputs">
-                                            <div class="basic-inputs">
-                                                    <el-form-item label="Opção">
-                                                        <el-input v-model="option.name" size="small"></el-input>
-                                                    </el-form-item>
-                                                    <el-form-item label="Preço">
-                                                        <el-input v-model="option.price" size="small">
-                                                            <template #prepend>R$</template></el-input>
-                                                    </el-form-item>
-                                            </div>
-                                            <el-form-item label="Imagem">
-                                                <div>
-                                                    <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
-                                                        @change="handleOptionImageChange($event, option)">
-                                                        <img v-if="option.mainImg" :src="option.mainImg" class="avatar" />
-                                                        <el-icon v-else class="avatar-uploader-icon"><Upload /></el-icon>
-                                                    </el-upload>
-                                                </div>
-                                            </el-form-item>
-                                            <el-icon v-on:click="deleteCascade(section, option)"
-                                                style="margin-left: 8px; float: right; cursor: pointer;" :size="20"
-                                                color="#A8A8A8">
+                                <div v-for="section in product.sections" v-bind:key="section">
+                                    <el-collapse-item class="element-item" :name="section.sectionID">
+                                        <template #title>
+                                            <h1> {{ section.name ? section.name : 'Nova seção' }} </h1>
+                                            <p v-if="section.options.length"> - {{ section.options.length }} {{
+                                                section.options.length != 1 ? 'opções' : 'opção' }} </p>
+                                            <el-icon v-on:click="removeItem(product.sections, section)"
+                                                style="margin-left: 8px; cursor: pointer;" :size="20" color="#A8A8A8">
                                                 <Delete />
                                             </el-icon>
+                                        </template>
+
+                                        <div>
+
+                                            <el-form-item label="Nome">
+                                                <el-input v-model="section.name"></el-input>
+                                            </el-form-item>
+
+
+
+                                            <div class="option-item" v-for="option in section.options" v-bind:key="option">
+                                                <el-divider />
+                                                <div class="inputs">
+                                                    <div class="basic-inputs">
+                                                        <el-form-item label="Opção">
+                                                            <el-input v-model="option.name" size="small"></el-input>
+                                                        </el-form-item>
+                                                        <el-form-item label="Preço">
+                                                            <el-input v-model="option.price" size="small">
+                                                                <template #prepend>R$</template></el-input>
+                                                        </el-form-item>
+                                                    </div>
+                                                    <el-form-item label="Imagem">
+                                                        <div>
+                                                            <el-upload class="avatar-uploader" :auto-upload="false"
+                                                                limit="1" @change="handleOptionImageChange($event, option)">
+                                                                <img v-if="option.mainImg" :src="option.mainImg"
+                                                                    class="avatar" />
+                                                                <el-icon v-else class="avatar-uploader-icon">
+                                                                    <Upload />
+                                                                </el-icon>
+                                                            </el-upload>
+                                                        </div>
+                                                    </el-form-item>
+                                                    <el-icon v-on:click="deleteCascade(section, option)"
+                                                        style="margin-left: 8px; float: right; cursor: pointer;" :size="20"
+                                                        color="#A8A8A8">
+                                                        <Delete />
+                                                    </el-icon>
+                                                </div>
+                                            </div>
+                                            <el-button class="option-button" v-on:click="newOption(section)">
+                                                <el-icon>
+                                                    <Plus />
+                                                </el-icon> Opção
+                                            </el-button>
+
                                         </div>
-                                    </div>
-                                    <el-button class="option-button" v-on:click="newOption(section)">
-                                            <el-icon>
-                                                <Plus />
-                                            </el-icon> Opção
-                                        </el-button>
+                                    </el-collapse-item>
 
                                 </div>
-                                </el-collapse-item>
 
-                            </div>
 
-                            
-                            <el-button class="section-button" v-on:click="newSection()">
+                                <el-button class="section-button" v-on:click="newSection()">
                                     <el-icon>
                                         <Plus />
                                     </el-icon> Seção
@@ -200,6 +224,7 @@
 import AuthService from '@/store/authService.js';
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
+import imgConverter from '@/store/imgConverter.js';
 
 export default {
     data() {
@@ -211,13 +236,20 @@ export default {
                 value: 0,
                 quantity: 1,
                 editable: false,
-                mainmainImg: '',
+                mainImg: '',
                 description: '',
                 available: true,
                 sections: [],
                 details: [],
+                secondaryImages: {
+                    img: [],
+                    productImgId: 0,
+                },
             },
+            uniqueKey: 0,
+            images: [],
             fetchedCategories: [],
+            secondaryImagesArray: [],
             selectedCategory: null,
             productWasAvailable: null
         }
@@ -228,6 +260,16 @@ export default {
         this.getCategories();
     },
     methods: {
+        PrincipalImgRemove() {
+            this.product.mainImg = null;
+            this.uniqueKey += 1; // Isso forçará a recriação do componente
+        },
+        removerimg(index) {
+            // Função para remover a imagem com base no índice
+            this.images.splice(index, 1);
+        },
+
+
         getCategories() {
             axios.get('http://localhost:8081/category')
                 .then(response => {
@@ -247,6 +289,9 @@ export default {
                         this.selectedCategory = this.product.categoryId;
                         // Seta se produto estava indisponível no inicio da edição. Se mudar para disponível passa no fluxo de notificação dos clientes.
                         this.productWasAvailable = this.product.available;
+                        this.product.secondaryImages.forEach(element => {
+                            this.images.push({ productImgId: this.images.length + 1, img: element.img })
+                        });
                     })
                     .catch(error => {
                         console.error('Erro ao obter dados da API:', error);
@@ -270,7 +315,7 @@ export default {
                 ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos "1" em estoque');
                 return;
             }
-
+            this.product.secondaryImages.img = this.images;
             // Se id do produto na URl não é nulo, manda requisição para editar produto.
             if (this.product.productId != null) {
                 const config = { params: { categoryId: this.selectedCategory } }
@@ -406,10 +451,13 @@ export default {
         },
         async handleSecondaryImagesChange(file, fileList) {
             try {
-                // Adquire imagem como string base64.
-                this.product.secondaryImages.push(await imgConverter.fileToBase64String(file.raw));
+                // Adquire a imagem como string base64.
+                const base64String = await imgConverter.fileToBase64String(file.raw);
+
+                // Adiciona a nova imagem ao array existente
+                this.images.push({ productImgId: this.images.length + 1, img: base64String });
             } catch (error) {
-                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.');
             }
         },
         /**
@@ -454,12 +502,146 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/styles/scss/basics.scss";
 
+
+.image-wrapper-principal {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-principal {
+    width: 102px;
+    height: 102px;
+    display: block;
+}
+
+.avatar-container:hover .avatar {
+    filter: blur(4px);
+    /* Adiciona o efeito de desfoque à imagem ao passar o mouse */
+    cursor: pointer;
+}
+
+.avatar {
+    height: 102px;
+    width: 102px;
+}
+
+.overlayPrincipal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlayPrincipal i {
+    color: #A8A8A8;
+}
+
+.overlayPrincipal:hover {
+    opacity: 1;
+    /* Torna o overlay visível ao passar o mouse */
+}
+
+.overlayPrincipal i:hover {
+    filter: blur(0);
+    /* Adiciona o efeito de desfoque ao ícone ao passar o mouse */
+}
+
+.avatar-container:hover .avatar-principal {
+    filter: blur(4px);
+    /* Adiciona o efeito de desfoque à imagem ao passar o mouse */
+    cursor: pointer;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlay i {
+    color: #A8A8A8;
+}
+
+.overlay:hover {
+    opacity: 1;
+    /* Torna o overlay visível ao passar o mouse */
+}
+
+.overlay i:hover {
+    filter: blur(0);
+    /* Adiciona o efeito de desfoque ao ícone ao passar o mouse */
+}
+
+
+.avatar-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-container:hover .avatar {
+    filter: blur(4px);
+    /* Adiciona o efeito de desfoque à imagem ao passar o mouse */
+    cursor: pointer;
+}
+
+.avatar-container:hover .overlay {
+    opacity: 1;
+    /* Torna o overlay visível ao passar o mouse */
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Define uma cor de fundo para o overlay */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    /* Adiciona uma transição suave para a opacidade */
+}
+
+.overlay i {
+    color: #A8A8A8;
+    /* Define a cor do ícone no overlay */
+}
+
+
 hr {
     border: 1px solid $admin-grey;
     margin: 30px 0;
 }
 
-h2{
+h2 {
     font-size: 20px;
     font-weight: 400;
 }
@@ -486,114 +668,130 @@ h2{
     }
 }
 
-.avatar-uploader .avatar {
-  width: 178px;
-  height: 178px;
-  display: block;
+.avatar-uploader .avatar-principal {
+    width: 102px;
+    height: 102px;
+    display: block;
 }
 
-:deep(.el-upload){
+.avatar-uploader .avatar {
+    width: 178px;
+    height: 178px;
+    display: block;
+}
+
+:deep(.el-upload) {
     border: 1px dashed $admin-grey;
 
-    &:hover{
+    &:hover {
         border: 1px dashed $cta-color;
     }
 }
 
 .el-icon.avatar-uploader-icon {
-  font-size: 28px;
-  color: #8c939d;
-  width: 100px;
-  height: 100px;
-  text-align: center;
+    font-size: 28px;
+    color: #8c939d;
+    width: 100px;
+    height: 100px;
+    text-align: center;
 
-    &:hover{
+    &:hover {
         color: $cta-color;
     }
 }
 
 .avatar-uploader .avatar {
-  width: 100px;
-  height: 100px;
-  display: block;
-  min-width: 100px;
-  min-height: 100px;
+    width: 100px;
+    height: 100px;
+    display: block;
+    min-width: 100px;
+    min-height: 100px;
 }
-:deep(ul.el-upload-list){
+
+:deep(ul.el-upload-list) {
     display: none;
 }
 
 .product-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
-  .left-content, .right-content, .center-content{
-    flex-basis: 30%;
-  }
-  .el-divider--vertical{
-    height: auto;
-    border-left: 2px var(--el-border-color) var(--el-border-style);
-  }
+    .left-content,
+    .right-content,
+    .center-content {
+        flex-basis: 30%;
+    }
+
+    .el-divider--vertical {
+        height: auto;
+        border-left: 2px var(--el-border-color) var(--el-border-style);
+    }
 }
-.preco-input{
+
+.preco-input {
     width: 50%;
 }
 
 :deep(.el-divider__text.is-center) {
-  display: flex;
-  align-items: center;
-  color: $cta-color;
+    display: flex;
+    align-items: center;
+    color: $cta-color;
 
     .el-icon {
         margin-right: 10px;
     }
 }
-.divider-button{
+
+.divider-button {
     border-top: 1px solid $cta-color;
     cursor: pointer;
     height: 10px;
 }
 
-.detail-item{
+.detail-item {
     width: 100%;
 
-    & > i{
+    &>i {
         margin: 0 !important
     }
 }
 
+
+
 .inputs {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
 }
 
-div.element-card{
+div.element-card {
     width: 100%;
-    margin: 0 0 20px 0 ;
+    margin: 0 0 20px 0;
 }
 
-div.element-item{
+div.element-item {
     width: 100%;
     margin-bottom: 15px;
     border: 1px solid $grey-border;
 
-    :deep(.el-collapse-item__header){
+    :deep(.el-collapse-item__header) {
         border-bottom: 0;
 
-        h1{
+        h1 {
             font-size: 20px;
             margin: 0;
             padding-left: 10px;
         }
-        p{
+
+        p {
             font-size: 14px;
             color: $admin-grey;
             margin: 0;
             margin-left: 5px;
         }
     }
+
     :deep(.el-collapse-item__content) {
         padding: 20px;
         background: #f6f6f6;
@@ -601,61 +799,77 @@ div.element-item{
 }
 
 .basic-inputs {
-  padding-right: 15%;
+    padding-right: 15%;
 }
 
-.el-collapse{
+.el-collapse {
     width: 100%;
 }
 
 .section-button {
-  width: 100%;
-  height: 48px;
-  background: transparent;
-  border: 1px solid $admin-grey;
-  color: $admin-grey;
-  font-size: 20px;
+    width: 100%;
+    height: 48px;
+    background: transparent;
+    border: 1px solid $admin-grey;
+    color: $admin-grey;
+    font-size: 20px;
 
     &:hover {
         color: $cta-color;
         background: transparent;
         border-color: $cta-color;
     }
-    &:active, &:focus{
+
+    &:active,
+    &:focus {
         background: transparent;
         border-color: $admin-grey;
         color: $admin-grey;
     }
 
-    i{
+    i {
         margin-right: 5px;
     }
-    
+
 }
+
 .option-button {
-  width: auto;
-  height: 20px;
-  background: transparent;
-  border: 1px solid $admin-grey;
-  color: $admin-grey;
-  font-size: 14px;
-  margin: 0;
-  width: 100%;
+    width: auto;
+    height: 20px;
+    background: transparent;
+    border: 1px solid $admin-grey;
+    color: $admin-grey;
+    font-size: 14px;
+    margin: 0;
+    width: 100%;
 
     &:hover {
         color: $cta-color;
         background: transparent;
         border-color: $cta-color;
     }
-    &:active, &:focus{
+
+    &:active,
+    &:focus {
         background: transparent;
         border-color: $admin-grey;
         color: $admin-grey;
     }
 
-    i{
+    i {
         margin-right: 5px;
     }
-    
+
+}
+
+.secondary-image-list {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+
+    img {
+        width: 102px;
+        height: 102px;
+    }
 }
 </style>

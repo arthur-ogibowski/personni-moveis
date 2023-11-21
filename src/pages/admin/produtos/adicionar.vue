@@ -29,24 +29,27 @@
                     <el-form-item label="Mostrar no catálogo">
                         <el-switch active-text="Sim" inactive-text="Não" v-model="product.available"></el-switch>
                     </el-form-item>
-                 <!-- Imagem principal -->
+                    <!-- Imagem principal -->
                     <el-form-item label="Imagem principal">
-                            <el-upload class="avatar-uploader" :auto-upload="false" :limit="1" @change="handleImageChange">
-                                <el-icon class="avatar-uploader-icon">
-                                    <Upload />
-                                </el-icon>
-                            </el-upload>
-                            <div class="avatar-container">
-                                <div class="image-wrapper-principal">
-                                    <img v-if="product.mainImg" :src="product.mainImg" class="avatar-principal" />
-                                    <div class="overlayPrincipal" @click="PrincipalImgRemove">
-                                        <el-icon class="table-delete" size="50" color="#A8A8A8" style="border: 50px;">
-                                            <Delete />
-                                        </el-icon>
-                                    </div>
+                        <!-- Adicione a diretiva v-if para condicionalmente renderizar o el-upload -->
+                        <el-upload v-if="!product.mainImg" class="avatar-uploader" :auto-upload="false" :limit="1"
+                            @change="handleImageChange">
+                            <el-icon class="avatar-uploader-icon">
+                                <Upload />
+                            </el-icon>
+                        </el-upload>
+                        <div class="avatar-container">
+                            <div class="image-wrapper-principal">
+                                <img v-if="product.mainImg" :src="product.mainImg" class="avatar-principal" />
+                                <div class="overlayPrincipal" @click="PrincipalImgRemove" v-if="product.mainImg">
+                                    <el-icon class="table-delete" size="50" color="#A8A8A8" style="border: 50px;">
+                                        <Delete />
+                                    </el-icon>
                                 </div>
                             </div>
+                        </div>
                     </el-form-item>
+
                     <!-- Imagens secundárias -->
                     <el-form-item label="Imagens secundárias">
                         <div class="secondary-image-list">
@@ -67,7 +70,6 @@
                                     </div>
                                 </div>
                             </div>
-
                         </div>
                     </el-form-item>
 
@@ -236,6 +238,7 @@ export default {
                 material: '',
                 tags: []
             },
+            uniqueKey: 0,
             fetchedCategories: [],
             materials: [],
             fetchedTags: [],
@@ -263,8 +266,9 @@ export default {
 
     methods: {
 
-        PrincipalImgRemove(){
-                this.product.mainImg = null;
+        PrincipalImgRemove() {
+            this.product.mainImg = null;
+            this.uniqueKey += 1; // Isso forçará a recriação do componente
         },
         removerimg(index) {
             // Função para remover a imagem com base no índice
@@ -403,17 +407,18 @@ export default {
 @import "@/assets/styles/scss/basics.scss";
 
 
-.image-wrapper-principal{
+.image-wrapper-principal {
     position: relative;
     overflow: hidden;
 }
+
 .image-wrapper {
     position: relative;
     overflow: hidden;
 }
 
-.avatar-principal{
-  width: 102px;
+.avatar-principal {
+    width: 102px;
     height: 102px;
     display: block;
 }
@@ -422,6 +427,11 @@ export default {
     filter: blur(4px);
     /* Adiciona o efeito de desfoque à imagem ao passar o mouse */
     cursor: pointer;
+}
+
+.avatar{
+    height: 102px;
+    width: 102px;
 }
 
 .overlayPrincipal {
@@ -439,7 +449,7 @@ export default {
 }
 
 .overlayPrincipal i {
-    color: white;
+    color: #A8A8A8;
 }
 
 .overlayPrincipal:hover {
@@ -765,4 +775,5 @@ div.element-item {
         width: 102px;
         height: 102px;
     }
-}</style>
+}
+</style>
