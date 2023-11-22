@@ -289,7 +289,7 @@ import { ref } from 'vue';
 export default {
     data() {
         return {
-            tempoRestante: 60, // 5 minutos em segundos
+            tempoRestante: 60 * 5, // 5 minutos em segundos
             QrCode: null,
             currentStep: 0,
             metodoPagamento: "pix",
@@ -417,6 +417,11 @@ export default {
         },
         /** Faz pedidos e retorna qrcode pix. */
         makeOrder() {
+            const loading = ElLoading.service({
+                lock: true,
+                text: 'Carregando...',
+                background: 'rgba(0, 0, 0, 0.7)'
+            });
             const config = {
                 headers: { Authorization: AuthService.getToken() },
                 params: { shipmentFee: Number(this.calcularFrete()) }
@@ -464,13 +469,16 @@ export default {
                         cartService.removeAllFromCarts();
                         this.currentStep = 3;
                         this.iniciarTemporizador();
+                        loading.close();
                     })
                     .catch(error => {
                         ElMessage.error('Não foi possível registrar o pedido.');
                         console.error(error);
+                        loading.close();
                     });
             } else {
                 ElMessage.warning('Devem haver produtos no carrinho para realizar o pedido!');
+                loading.close();
             }
         },
         consultarCEP() {

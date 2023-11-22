@@ -139,6 +139,7 @@ export default {
                 background: 'rgba(0, 0, 0, 0.7)'
             });
             cartService.addToCart(this.product, this.selectedOptionsInfo);
+            loading.close();
             ElMessage({
               message: 'Produto adicionado ao carrinho',
               type: 'success',
