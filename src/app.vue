@@ -24,8 +24,8 @@ import AuthService from '@/store/authService';
 export default {
   data() {
     return {
-      primaryColor: "",
-      secondaryColor: "",
+      primaryColor: "#B68D40",
+      secondaryColor: "#112620",
       user: {
           primaryCollor: "",
           secondaryCollor: "",
@@ -51,13 +51,21 @@ export default {
         if (response.status === 200) {
             this.user = response.data;
           console.log(this.user.primaryCollor)
+
+          if (this.user.primaryCollor === null || this.user.primaryCollor === '') {
+            this.user.primaryCollor = this.primaryColor;
+          }
+          if (this.user.secondaryCollor === null || this.user.secondaryCollor === '') {
+            this.user.secondaryCollor = this.secondaryColor;
+          }
+
             document.documentElement.style.setProperty(
                 '--cta-color',
-                this.primaryColor ? '#BD68D40' : this.user.primaryCollor
+                this.user.primaryCollor
             );
             document.documentElement.style.setProperty(
                 '--tertiary-color',
-                this.secondaryColor ? '#112620' : this.user.secondaryCollor
+                this.user.secondaryCollor
             );
           
         } else {

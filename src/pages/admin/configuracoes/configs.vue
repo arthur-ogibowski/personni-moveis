@@ -7,7 +7,7 @@
           <el-input v-model="user.storeName"></el-input>
         </el-form-item>
         <div class="images">
-          <el-form-item label="Imagem">
+          <el-form-item label="Logomarca da Empresa">
                               <div>
                                 <el-upload class="avatar-uploader" :auto-upload="false" limit="1"
                                   @change="handleImageChange">
@@ -78,7 +78,7 @@
 
   <script>
   import axios from 'axios';
-  import { ElMessage } from 'element-plus';
+  import { ElMessage, ElLoading } from 'element-plus';
   import AuthService from '@/store/authService';
   import imgConverter from '@/store/imgConverter.js';
   
@@ -98,8 +98,8 @@
           aboutUsInfo: "Bem-vindo à Personni móveis, onde a personalização e modelagem de móveis são a essência do nosso trabalho. Transformamos espaços com soluções sob medida, refletindo o estilo de cada cliente. ",
           storeAddress: "",
           storePhone: "41 99999-9999",
-          primaryCollor: " var(--cta-color) ",
-          secondaryCollor: " var(--tertiary-color)",
+          primaryCollor: "#B68D40",
+          secondaryCollor: "#112620",
         },
         options: {
           types: ["geocode"]
@@ -122,10 +122,10 @@
         if (response.status === 200) {
             this.user = response.data;
             if (this.user.primaryCollor === null || this.user.primaryCollor === '') {
-                this.user.primaryCollor = 'var(--cta-color)';
+                this.user.primaryCollor = '#B68D40';
             }
             if (this.user.secondaryCollor === null || this.user.secondaryCollor === '') {
-                this.user.secondaryCollor = 'var(--tertiary-color)';
+                this.user.secondaryCollor = '#112620';
             }
             console.log('Dados recebidos do backend:', this.user);
             
@@ -171,8 +171,7 @@
         async handleImageChangeSecondary(file, option) {
             try {
                 // Adquire imagem como string base64.
-                this.user.storeSecondary
-                Path = await imgConverter.fileToBase64String(file.raw);
+                this.user.storeSecondaryImgPath = await imgConverter.fileToBase64String(file.raw);
             } catch (error) {
                 ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
             }
@@ -186,6 +185,12 @@
             }
         },
       editarUsuario() {
+        const loading = this.$loading({
+          lock: true,
+          text: 'Salvando...',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)',
+        });
         this.user.storeId = 1;
         console.log('Dados a serem enviados:', this.user);
 
@@ -195,7 +200,11 @@
           .then((response) => {
             if (response.status === 200) {
               console.log('Usuário editado com sucesso', response.data);
-              this.$router.push('/admin/configuracoes');
+              setTimeout(() => {
+                loading.close();
+                ElMessage.success('Dados de configuração editados com sucesso!');
+                location.reload();
+              }, 250);
             } else {
               console.error('Erro ao editar dados de configuração:', response.statusText);
             }
