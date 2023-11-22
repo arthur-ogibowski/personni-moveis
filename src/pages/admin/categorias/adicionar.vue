@@ -351,9 +351,9 @@ div.section-item{
   font-size: 20px;
 
     &:hover {
-        color: $cta-color;
+        color: var(--cta-color);
         background: transparent;
-        border-color: $cta-color;
+        border-color: var(--cta-color);
     }
     &:active, &:focus{
         background: transparent;
@@ -376,9 +376,9 @@ div.section-item{
   margin: 0 20px;
 
     &:hover {
-        color: $cta-color;
+        color: var(--cta-color);
         background: transparent;
-        border-color: $cta-color;
+        border-color: var(--cta-color);
     }
     &:active, &:focus{
         background: transparent;
@@ -490,9 +490,9 @@ div.section-item{
             }
 
             &:hover {
-                color: $cta-color;
+                color: var(--cta-color);
                 background: transparent;
-                border-color: $cta-color;
+                border-color: var(--cta-color);
             }
             &:active, &:focus{
                 background: transparent;
@@ -517,10 +517,10 @@ div.section-item{
 }
 
 :deep(.avatar-uploader .el-upload:hover) {
-  border-color: $cta-color !important;
+  border-color: var(--cta-color) !important;
 
     .el-icon {
-        color: $cta-color;
+        color: var(--cta-color);
     }
 }
 
@@ -563,15 +563,15 @@ div.admin-container button.el-button{
 :deep(.el-divider__text.is-center) {
   display: flex;
   align-items: center;
-  color: $cta-color;
+  color: var(--cta-color);
 
     .el-icon {
         margin-right: 10px;
-        color: $cta-color;
+        color: var(--cta-color);
     }
 }
 .divider-button{
-    border-top: 1px solid $cta-color;
+    border-top: 1px solid var(--cta-color);
     cursor: pointer;
     height: 10px;
 }

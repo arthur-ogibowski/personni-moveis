@@ -724,8 +724,8 @@ h2 {
 :deep(.el-upload) {
     border: 1px dashed $admin-grey;
 
-    &:hover {
-        border: 1px dashed $cta-color;
+    &:hover{
+        border: 1px dashed var(--cta-color);
     }
 }
 
@@ -736,8 +736,8 @@ h2 {
     height: 100px;
     text-align: center;
 
-    &:hover {
-        color: $cta-color;
+    &:hover{
+        color: var(--cta-color);
     }
 }
 
@@ -775,17 +775,16 @@ h2 {
 }
 
 :deep(.el-divider__text.is-center) {
-    display: flex;
-    align-items: center;
-    color: $cta-color;
+  display: flex;
+  align-items: center;
+  color: var(--cta-color);
 
     .el-icon {
         margin-right: 10px;
     }
 }
-
-.divider-button {
-    border-top: 1px solid $cta-color;
+.divider-button{
+    border-top: 1px solid var(--cta-color);
     cursor: pointer;
     height: 10px;
 }
@@ -856,9 +855,9 @@ div.element-item {
     font-size: 20px;
 
     &:hover {
-        color: $cta-color;
+        color: var(--cta-color);
         background: transparent;
-        border-color: $cta-color;
+        border-color: var(--cta-color);
     }
 
     &:active,
@@ -885,9 +884,9 @@ div.element-item {
     width: 100%;
 
     &:hover {
-        color: $cta-color;
+        color: var(--cta-color);
         background: transparent;
-        border-color: $cta-color;
+        border-color: var(--cta-color);
     }
 
     &:active,

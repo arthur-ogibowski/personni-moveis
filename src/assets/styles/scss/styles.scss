@@ -43,7 +43,7 @@ body{
     
     
     div.dialog{
-        background: $tertiary-color;
+        background: var(--tertiary-color);
         box-shadow: none;
         display: flex;
         flex-direction: column;
@@ -194,7 +194,7 @@ body{
                 h3 {
                     font-size: 16px;
                     font-weight: 400;
-                    color: $cta-color;
+                    color: var(--cta-color);
                 }
 
                 h4 {
@@ -240,20 +240,20 @@ body{
 
     .el-button:hover{
         background-color: transparent;
-        border: 1px solid $cta-color;
-        color: $cta-color;
+        border: 1px solid var(--cta-color);
+        color: var(--cta-color);
     }
     
     button.cta{
         border: none !important;
-        background-color: $cta-color !important; 
+        background-color: var(--cta-color) !important; 
         color: white !important;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         transition: all 0.3 ease-in-out;
         &:hover{
             transform: scale(1.1);
-            background-color: $cta-color;
+            background-color: var(--cta-color);
         }
     }
     button.admin-cta{
@@ -266,12 +266,12 @@ body{
         padding: 20px 40px !important;
     }
     button.cta.is-disabled{
-        background-color: $cta-color;
+        background-color: var(--cta-color);
         opacity: 0.5;
         cursor: not-allowed;
         &:hover{
             transform: none;
-            background-color: $cta-color;
+            background-color: var(--cta-color);
         }
     }
 
@@ -291,7 +291,7 @@ body{
                 text-decoration: underline;
 
                 &:hover{
-                    color: $cta-color;
+                    color: var(--cta-color);
                 }
             }
         }
@@ -318,13 +318,13 @@ body{
             align-items: center;
     
           &:hover{
-            color: $cta-color;
+            color: var(--cta-color);
           }
     
         }
         .el-radio-button__original-radio:checked + .el-radio-button__inner{
-            background-color: $tertiary-color;
-            color: $cta-color;
+            background-color: var(--tertiary-color);
+            color: var(--cta-color);
         }
       }
 
@@ -333,56 +333,56 @@ body{
       .el-input__wrapper.is-focus,
       .el-select .el-input.is-focus .el-input__wrapper,
       .el-textarea__inner:focus {
-        box-shadow: 0 0 0 1px $cta-color inset !important;
+        box-shadow: 0 0 0 1px var(--cta-color) inset !important;
       }
       .el-switch.is-checked .el-switch__core {
-        border-color: $cta-color;
-        background-color: $cta-color;
+        border-color: var(--cta-color);
+        background-color: var(--cta-color);
       }
       .el-select-dropdown {
         background-color: $primary-color;
       }
       .el-select-dropdown__item.selected {
-        color: $cta-color;
+        color: var(--cta-color);
       }
       .el-input-number__decrease:hover, .el-input-number__increase:hover {
-        color: $cta-color;
+        color: var(--cta-color);
       }
       .el-input-number__decrease:hover ~ .el-input:not(.is-disabled) .el-input__wrapper, .el-input-number__increase:hover ~ .el-input:not(.is-disabled) .el-input__wrapper {
-        box-shadow: 0 0 0 1px $cta-color inset !important;
+        box-shadow: 0 0 0 1px var(--cta-color) inset !important;
       }
       .el-switch__label.is-active {
-        color: $cta-color;
+        color: var(--cta-color);
       }
       .el-table .ascending .sort-caret.ascending {
-        border-bottom-color: $cta-color;
+        border-bottom-color: var(--cta-color);
       }
       .el-table .descending .sort-caret.descending {
-        border-top-color: $cta-color;
+        border-top-color: var(--cta-color);
       }
       .el-checkbox__input.is-checked + .el-checkbox__label{
-        color: $cta-color;
+        color: var(--cta-color);
       }
       .el-checkbox{
         .is-checked{
-            color: $cta-color;
+            color: var(--cta-color);
             .el-checkbox__inner{
-                border-color: $cta-color;
-                background-color: $cta-color;
+                border-color: var(--cta-color);
+                background-color: var(--cta-color);
             }
         }
       }
       .el-checkbox__inner:hover{
-        border-color: $cta-color;
+        border-color: var(--cta-color);
       }
       .el-tabs__active-bar{
-        background-color: $cta-color;
+        background-color: var(--cta-color);
       }
       .el-tabs__item.is-active{
-        color: $cta-color;
+        color: var(--cta-color);
       }
       .el-tabs__item:hover{
-        color: $cta-color;
+        color: var(--cta-color);
       }
 
       .el-table td.el-table__cell, .el-table th.el-table__cell.is-leaf {

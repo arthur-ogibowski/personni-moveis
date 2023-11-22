@@ -1,6 +1,6 @@
 <template>
-   <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="#112620"
-        active-text-color="$tertiary-color" @select="handleSelect">
+   <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="var(--tertiary-color)"
+        active-text-color="var(--tertiary-color)" @select="handleSelect">
         <el-menu-item><router-link to="/"><img style="width: 200px;"
                     src="../../../assets/img/personniLogo-Green.png" /></router-link></el-menu-item>
 
@@ -95,7 +95,7 @@ div.categoria-item{
     transform: scale(1.1);
 
     h3{
-        color: $cta-color;
+        color: var(--cta-color);
     }
   }
 
@@ -108,7 +108,7 @@ div.categoria-item{
 
   h3{
     font-size: 5rem;
-    color: $tertiary-color;
+    color: var(--tertiary-color);
     font-family: josefin;
     transition: all 0.3s ease-in-out;
     font-weight: 400;

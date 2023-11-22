@@ -14,7 +14,7 @@ export default {
 @import '@/assets/styles/scss/basics.scss';
 div.footer{
     height: 100px;
-    background-color: $tertiary-color;
+    background-color: var(--tertiary-color);
     margin-top: 20px;
     display: flex;
     justify-content: center;

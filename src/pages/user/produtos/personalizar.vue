@@ -44,7 +44,7 @@
                 </div>
 
                 <h2 class="total"><span>Total:</span> {{ calcularTotal() != 0 ? "R$" + formatPrice(calcularTotal()) : "--" }}</h2>
-                <el-button class="cta" color="$cta-color" size="small" @click="addToCart">Adicionar ao carrinho</el-button>
+                <el-button class="cta" color="var(--cta-color)" size="small" @click="addToCart">Adicionar ao carrinho</el-button>
             </div>
         </div>
     </div>
@@ -209,10 +209,10 @@ div.content {
                     margin-bottom: 0;
                 }
                 &:hover{
-                    border-color: $cta-color;
+                    border-color: var(--cta-color);
                     
                     :deep(.el-collapse-item__header){
-                        color: $cta-color;
+                        color: var(--cta-color);
                     }
                 }
             }

@@ -78,7 +78,7 @@
                         <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3>{{ formatPrice(calcularTotal()) }}</h3>
                     </div>
 
-                    <router-link to="/checkout"><el-button class="cta" color="$cta-color">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
+                    <router-link to="/checkout"><el-button class="cta" color="var(--cta-color)">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
                    
                 </el-card>
             </div>

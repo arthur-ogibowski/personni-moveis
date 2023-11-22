@@ -22,7 +22,7 @@
                       show-password
                     />
                     <router-link class="recuperar-senha" to="/login/recuperar-senha"><el-link size="small">Esqueci minha senha</el-link></router-link>
-                  <el-button color="$cta-color" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="fazerLogin()">Entrar</el-button>
+                  <el-button color="var(--cta-color)" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="fazerLogin()">Entrar</el-button>
                   <div class="register">
                             <el-divider>Ou</el-divider>
                     <!-- <h2>Não possui uma conta?</h2> -->
@@ -142,7 +142,7 @@ div.dialog{
       border-top: 1px solid $admin-grey;
     }
     :deep(.el-divider__text) {
-      background-color: $tertiary-color;
+      background-color: var(--tertiary-color);
       color: $admin-grey;
     }
     .register{
@@ -165,7 +165,7 @@ h1{
 h2 {
   text-align: center;
   margin-top: 20px;
-  color: $cta-color;
+  color: var(--cta-color);
   font-weight: 400;
 
   .voltar{

@@ -32,7 +32,7 @@
                 <h3 style="font-size: 2.5rem; font-weight: 400;">{{ formatPrice(product.value) }}</h3>
                 <p style="font-size: 1.6rem; ont-weight: 400;">{{ product.description }}</p>
                 <div class="info-box-action" v-if="product.quantity > 0">
-                    <el-button class="cta" color="$cta-color" @click="addToCart">Adicionar ao carrinho</el-button>
+                    <el-button class="cta" color="var(--cta-color)" @click="addToCart">Adicionar ao carrinho</el-button>
                     <el-divider v-if="product.editable">OU</el-divider>
                     <router-link  v-if="product.editable" :to="{path: '/produtos/' + product.productId + '/personalizar'}"><h1>Personalizar <el-icon><Right /></el-icon></h1></router-link>
                 </div>
@@ -211,7 +211,7 @@ div.container {
 
 
                 h1{
-                    color: $cta-color;
+                    color: var(--cta-color);
                     width: 400px;
                     text-decoration: underline;
                 }

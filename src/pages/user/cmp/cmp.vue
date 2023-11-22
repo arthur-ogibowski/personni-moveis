@@ -1,6 +1,6 @@
 <template>
-  <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="#112620"
-        active-text-color="$tertiary-color" @select="handleSelect">
+  <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="var(--tertiary-color)"
+        active-text-color="var(--tertiary-color)" @select="handleSelect">
         <el-menu-item><router-link to="/"><img style="width: 200px;"
                     src="../../../assets/img/personniLogo-Green.png" /></router-link></el-menu-item>
 
@@ -70,9 +70,9 @@
                 </template>
               </el-dialog>
               <div class="actions">
-                <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="currentSection !== 0"><el-icon><CaretLeft /></el-icon> Voltar</el-button>
-                <el-button class="cta" color="$cta-color" style="visibility: hidden;" type="primary" @click="previousSection" v-else></el-button>
-                <el-button class="cta" color="$cta-color" type="primary" @click="nextSection">Próximo passo <el-icon><CaretRight /></el-icon></el-button>
+                <el-button class="cta" color="var(--cta-color)" type="primary" @click="previousSection" v-if="currentSection !== 0"><el-icon><CaretLeft /></el-icon> Voltar</el-button>
+                <el-button class="cta" color="var(--cta-color)" style="visibility: hidden;" type="primary" @click="previousSection" v-else></el-button>
+                <el-button class="cta" color="var(--cta-color)" type="primary" @click="nextSection">Próximo passo <el-icon><CaretRight /></el-icon></el-button>
               </div>
             </div>
           </div>
@@ -184,8 +184,8 @@
           <h3>Preço final:</h3> <h2>R$ {{ products_cmp.value }}</h2>
         </div>
         <div class="revisar-actions">
-          <el-button class="cta" color="$cta-color" type="primary" @click="previousSection" v-if="isLastSection"><el-icon><CaretLeft /></el-icon> Voltar</el-button>    
-          <el-button class="cta" color="$cta-color" size="large" type="primary" @click="criarCMP" v-if="isLastSection">Adicionar ao carrinho</el-button>
+          <el-button class="cta" color="var(--cta-color)" type="primary" @click="previousSection" v-if="isLastSection"><el-icon><CaretLeft /></el-icon> Voltar</el-button>    
+          <el-button class="cta" color="var(--cta-color)" size="large" type="primary" @click="criarCMP" v-if="isLastSection">Adicionar ao carrinho</el-button>
         </div>
       </div>
     
@@ -484,12 +484,12 @@ export default {
 @import '@/assets/styles/scss/basics.scss';
 
 /*:deep(.el-step__head.is-finish) {
-  color: $cta-color;
-  border-color: $cta-color;
+  color: var(--cta-color);
+  border-color: var(--cta-color);
 }
 
 :deep(.el-step__title.is-finish) {
-  color: $cta-color;
+  color: var(--cta-color);
 }*/
 
 .container, .cmp-container{
@@ -628,7 +628,7 @@ h2{
 
     h2{
       font-size: 20px;
-      color: $cta-color;
+      color: var(--cta-color);
     }
 
 
@@ -860,7 +860,7 @@ div.el-radio-group{
   :deep(.el-radio-button.is-active > .el-radio-button__inner) {
     transition: 0.1s;
     background-color: transparent !important;
-    outline: 2px solid $cta-color !important;
+    outline: 2px solid var(--cta-color) !important;
     color: $text-color !important;
 
 }

@@ -45,14 +45,13 @@
           <el-input v-model="user.storePhone"></el-input>
         </el-form-item>
         <el-form-item label="Endereço da Empresa">
-          <el-input v-model="user.storeAddress"></el-input>
-          <!-- <vue-google-autocomplete
+          <!--<vue-google-autocomplete
             id="address-input"
             placeholder=""
             v-on:placechanged="getAddressData"
             :options="options"
             class="el-input el-input_wrapper"
-          ></vue-google-autocomplete> -->
+          ></vue-google-autocomplete>-->
         <div id="infowindow-content">
           <span id="place-name" class="title"></span><br />
           <span id="place-address"></span>
@@ -99,8 +98,8 @@
           aboutUsInfo: "Bem-vindo à Personni móveis, onde a personalização e modelagem de móveis são a essência do nosso trabalho. Transformamos espaços com soluções sob medida, refletindo o estilo de cada cliente. ",
           storeAddress: "",
           storePhone: "41 99999-9999",
-          primaryCollor: "",
-          secondaryCollor: "",
+          primaryCollor: " var(--cta-color) ",
+          secondaryCollor: " var(--tertiary-color)",
         },
         options: {
           types: ["geocode"]
@@ -118,15 +117,15 @@
         // this.user.storeId = 1;
         const config = { headers: { Authorization: AuthService.getToken() } };
       // Fazer uma solicitação GET para buscar dados do usuário por ID
-      axios.get(`http://localhost:8081/store`)
+      axios.get(`http://localhost:8081/store`, config)
         .then((response) => {
         if (response.status === 200) {
             this.user = response.data;
             if (this.user.primaryCollor === null || this.user.primaryCollor === '') {
-                this.user.primaryCollor = '#B68D40';
+                this.user.primaryCollor = 'var(--cta-color)';
             }
             if (this.user.secondaryCollor === null || this.user.secondaryCollor === '') {
-                this.user.secondaryCollor = '#112620';
+                this.user.secondaryCollor = 'var(--tertiary-color)';
             }
             console.log('Dados recebidos do backend:', this.user);
             
@@ -140,20 +139,20 @@
     });
     },
     computed: {
-      // autocomplete() {
-      //   const autocomplete = new google.maps.places.Autocomplete(
-      //     input,
-      //     options
-      //   );
-      //   autocomplete.addListener("place_changed", () => {
-      //     const place = autocomplete.getPlace();
-      //     if (!place.geometry || !place.geometry.location) {
-      //       return;
-      //     }
-      //     this.user.storeAddress = place.formatted_address;
-      //   });
+      /*autocomplete() {
+        const autocomplete = new google.maps.places.Autocomplete(
+          input,
+          options
+        );
+        autocomplete.addListener("place_changed", () => {
+          const place = autocomplete.getPlace();
+          if (!place.geometry || !place.geometry.location) {
+            return;
+          }
+          this.user.storeAddress = place.formatted_address;
+        });
         
-      // }
+      }*/
     },
     methods: {
       getAddressData(place) {
@@ -172,7 +171,8 @@
         async handleImageChangeSecondary(file, option) {
             try {
                 // Adquire imagem como string base64.
-                this.user.storeSecondaryImgPath = await imgConverter.fileToBase64String(file.raw);
+                this.user.storeSecondary
+                Path = await imgConverter.fileToBase64String(file.raw);
             } catch (error) {
                 ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
             }
@@ -191,7 +191,7 @@
 
         const config = { headers: { Authorization: AuthService.getToken() } };
 
-        axios.put(`http://localhost:8081/store/update-store`, this.user)
+        axios.put(`http://localhost:8081/store/update-store  `, this.user, config)
           .then((response) => {
             if (response.status === 200) {
               console.log('Usuário editado com sucesso', response.data);
@@ -252,7 +252,7 @@ h1{
     border: 1px dashed $admin-grey;
 
     &:hover {
-        border: 1px dashed $cta-color;
+        border: 1px dashed var(--cta-color);
     }
 }
 
@@ -264,7 +264,7 @@ h1{
     text-align: center;
 
     &:hover {
-        color: $cta-color;
+        color: var(--cta-color);
     }
 }
 body :deep(.el-popper.is-light) {
