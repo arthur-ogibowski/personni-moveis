@@ -1,15 +1,12 @@
 //$primary-color: #C5C1C0;
 $primary-color: #FEFEFE;
-//$secondary-color: #0a1612;
+
 $secondary-color: #f2f3f5;
 $secondary-darker: #E3E3E3;
-//$tertiary-color: #1a2930;
-//$tertiary-color: #113E21;
+
 $tertiary-color: #112620;
 $tertiary-darker: #0C211B;
-//$cta-color: #f7ce3e; 
-//$cta-color: #b38b59;
-//$cta-color: #D6AD60;
+
 $cta-color: #B68D40;
 $complementary-cream: #F4EBD0;
 $admin-grey: #A8A8A8;
@@ -19,6 +16,11 @@ $user-grey: #A6A6A6;
 $admin-cta: $cta-color;
 $admin-primary: $tertiary-color;
 $text-color: #2c2c2c;
+
+:root{
+    --cta-color: "";
+    --tertiary-color: ""; 
+}
 
 // boilerplate
 *,
@@ -85,7 +87,7 @@ summary,
 @font-face { font-family: josefin; src: url('../../fonts/Josefin_Sans/JosefinSans-VariableFont_wght.ttf'); }
 
 body {
-    background-color: $tertiary-color;
+    background-color: var(--tertiary-color);
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -106,7 +108,7 @@ h1{
 }
 
 h2,h3 {
-    color: $tertiary-color;
+    color: var(--tertiary-color);
 }
 
 p {

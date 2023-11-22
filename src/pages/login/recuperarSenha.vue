@@ -14,7 +14,7 @@
                   size="large"
                   placeholder="Email"
                 />
-                <el-button class="cta" color="$cta-color" size="large">Enviar</el-button>
+                <el-button class="cta" color="var(--cta-color)" size="large">Enviar</el-button>
         </div>
       </div>
       <h2><router-link class="voltar" to="/login"><el-icon><ArrowLeftBold /></el-icon> Voltar para login</router-link></h2>
@@ -84,7 +84,7 @@ div.dialog{
       border-top: 1px solid $admin-grey;
     }
     :deep(.el-divider__text) {
-      background-color: $tertiary-color;
+      background-color: var(--tertiary-color);
       color: $admin-grey;
     }
     .register{
@@ -113,7 +113,7 @@ h3 {
 h2 {
   text-align: center;
   margin-top: 20px;
-  color: $cta-color;
+  color: var(--cta-color);
   font-weight: 400;
 
   .voltar{

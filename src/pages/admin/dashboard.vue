@@ -142,7 +142,7 @@ export default {
 }
 .card-content-item > a {
   font-size: 10px;
-  color: $cta-color;
+  color: var(--cta-color);
   display: flex;
   align-items: center;
   text-decoration: underline;

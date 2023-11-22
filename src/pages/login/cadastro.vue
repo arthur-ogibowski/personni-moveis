@@ -25,7 +25,7 @@
                 <el-input type="password" v-model="cadastro.password" size="medium" placeholder="Senha" />
               </el-form-item>
             </div>
-                <el-button color="$cta-color" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="cadastrarUsuario()">Criar Conta</el-button>
+                <el-button color="var(--cta-color)" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="cadastrarUsuario()">Criar Conta</el-button>
         </div>
       </div>
       <h2><router-link class="voltar" to="/login"><el-icon><ArrowLeftBold /></el-icon> Voltar para login</router-link></h2>
@@ -120,7 +120,7 @@ div.dialog{
       border-top: 1px solid $admin-grey;
     }
     :deep(.el-divider__text) {
-      background-color: $tertiary-color;
+      background-color: var(--tertiary-color);
       color: $admin-grey;
     }
     .register{
@@ -142,7 +142,7 @@ h1{
 h2 {
   text-align: center;
   margin-top: 20px;
-  color: $cta-color;
+  color: var(--cta-color);
   font-weight: 400;
 
   .voltar{

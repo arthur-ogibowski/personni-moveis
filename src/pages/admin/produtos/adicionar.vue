@@ -418,7 +418,7 @@ h2 {
     border: 1px dashed $admin-grey;
 
     &:hover {
-        border: 1px dashed $cta-color;
+        border: 1px dashed var(--cta-color);
     }
 }
 
@@ -430,7 +430,7 @@ h2 {
     text-align: center;
 
     &:hover {
-        color: $cta-color;
+        color: var(--cta-color);
     }
 }
 
@@ -470,7 +470,7 @@ h2 {
 :deep(.el-divider__text.is-center) {
     display: flex;
     align-items: center;
-    color: $cta-color;
+    color: var(--cta-color);
 
     .el-icon {
         margin-right: 10px;
@@ -478,7 +478,7 @@ h2 {
 }
 
 .divider-button {
-    border-top: 1px solid $cta-color;
+    border-top: 1px solid var(--cta-color);
     cursor: pointer;
     height: 10px;
 }
@@ -547,9 +547,9 @@ div.element-item {
     font-size: 20px;
 
     &:hover {
-        color: $cta-color;
+        color: var(--cta-color);
         background: transparent;
-        border-color: $cta-color;
+        border-color: var(--cta-color);
     }
 
     &:active,
@@ -576,9 +576,9 @@ div.element-item {
     width: 100%;
 
     &:hover {
-        color: $cta-color;
+        color: var(--cta-color);
         background: transparent;
-        border-color: $cta-color;
+        border-color: var(--cta-color);
     }
 
     &:active,

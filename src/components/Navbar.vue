@@ -2,9 +2,9 @@
   <el-menu
     mode="horizontal"
     :ellipsis="false"
-    background-color="#112620"
-    text-color="#B68D40"
-    active-text-color="$tertiary-color"
+    background-color="var(--tertiary-color)"
+    text-color="var(--cta-color)"
+    active-text-color="var(--tertiary-color)"
     @select="handleSelect"
   >
     <el-menu-item><router-link to="/"><img style="width: 200px;" src="../assets/img/personniLogo-Gold.png"/></router-link></el-menu-item>
@@ -13,7 +13,7 @@
     <el-menu-item><router-link to="/produtos">Catálogo</router-link></el-menu-item>
     <el-menu-item><router-link to="/perfil">Meu perfil</router-link></el-menu-item>
     <el-menu-item><router-link to="/carrinho">Carrinho <span v-if="cartItemsCounter > 0">({{ cartItemsCounter }})</span></router-link></el-menu-item>
-    <router-link to="/modelar"><el-button class="cta" color="$cta-color">Começar à modelar</el-button></router-link>
+    <router-link to="/modelar"><el-button class="cta" color="var(--cta-color)">Começar à modelar</el-button></router-link>
   </el-menu>
 </template>
 

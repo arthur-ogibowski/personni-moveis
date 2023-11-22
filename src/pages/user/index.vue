@@ -8,7 +8,7 @@
           <h1> Modelagem e personalização de móveis </h1>
           <p> Bem-vindo à Personni móveis, onde a personalização e modelagem de móveis são a essência do nosso trabalho. Transformamos espaços com soluções sob medida, refletindo o estilo de cada cliente. </p>
           <br>
-          <router-link to="/modelar"><el-button class="cta" color="$cta-color">Começar à modelar</el-button></router-link>
+          <router-link to="/modelar"><el-button class="cta" color="var(--cta-color)">Começar à modelar</el-button></router-link>
 
         </div>
       </div>
@@ -23,7 +23,7 @@
                 <div class="carousel-text">
                   <h3> {{ product.name }} </h3>
                   <p> {{ product.desciption }} </p>
-                  <router-link :to="`/produtos/${product.productId}`"><el-button class="cta" color="$cta-color">Detalhes</el-button></router-link>
+                  <router-link :to="`/produtos/${product.productId}`"><el-button class="cta" color="var(--cta-color)">Detalhes</el-button></router-link>
                 </div>
                 <div class="carousel-image">
                   <img :src=product.mainImg>
@@ -45,7 +45,7 @@
         </div>
         
         <div class="sobre-catalogo">
-          <router-link to="/produtos"><el-button class="cta" color="$cta-color">Ver catálogo completo</el-button></router-link>
+          <router-link to="/produtos"><el-button class="cta" color="var(--cta-color)">Ver catálogo completo</el-button></router-link>
         </div>
       </div>
 
@@ -140,7 +140,7 @@ div.content {
       font-weight: 400;
       margin-bottom: 0;
       margin-top: 20px;
-      color: $cta-color;
+      color: var(--cta-color);
       font-family: playfair-display;
       text-transform: uppercase;      
       }
@@ -194,7 +194,7 @@ div.content {
       color: inherit;     
       text-align: center; 
       font-family: josefin;
-      color: $cta-color;
+      color: var(--cta-color);
       margin: 6rem 0 3rem 0;
     }
 
@@ -256,7 +256,7 @@ div.content {
       color: inherit;     
       text-align: center; 
       font-family: josefin;
-      color: $cta-color;
+      color: var(--cta-color);
       margin: 6rem 0 3rem 0;
     }
 
@@ -392,7 +392,7 @@ div.localizacao{
     color: inherit;     
     text-align: center; 
     font-family: josefin;
-    color: $cta-color;
+    color: var(--cta-color);
     margin: 6rem 0 3rem 0;
   }
 

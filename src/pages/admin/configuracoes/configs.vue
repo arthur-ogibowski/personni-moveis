@@ -42,13 +42,13 @@
           <el-input v-model="user.storePhone"></el-input>
         </el-form-item>
         <el-form-item label="Endereço da Empresa">
-          <vue-google-autocomplete
+          <!--<vue-google-autocomplete
             id="address-input"
             placeholder=""
             v-on:placechanged="getAddressData"
             :options="options"
             class="el-input el-input_wrapper"
-          ></vue-google-autocomplete>
+          ></vue-google-autocomplete>-->
         <div id="infowindow-content">
           <span id="place-name" class="title"></span><br />
           <span id="place-address"></span>
@@ -56,13 +56,13 @@
         </el-form-item>
         <h2>Configurações do site</h2>
         <el-form-item label="Cor principal do Site">
-            <el-color-picker class="cor-pick" v-model="user.primaryColor" color-format="hex" />
-            <h2>{{ user.primaryColor  }}</h2>
+            <el-color-picker class="cor-pick" v-model="user.primaryCollor" color-format="hex" />
+            <h2>{{ user.primaryCollor  }}</h2>
         </el-form-item>
         <el-form-item label="Cor secundária do Site">
-            <el-color-picker v-model="user.secondaryColor" class="cor-pick" color-format="hex" />
+            <el-color-picker v-model="user.secondaryCollor" class="cor-pick" color-format="hex" />
 
-            <h2>{{ user.secondaryColor   }}</h2>
+            <h2>{{ user.secondaryCollor   }}</h2>
         </el-form-item>
 
         <el-form-item>
@@ -77,10 +77,10 @@
   import axios from 'axios';
   import { ElMessage } from 'element-plus';
   import AuthService from '@/store/authService';
-  import VueGoogleAutocomplete from "vue-google-autocomplete";
+  //import VueGoogleAutocomplete from "vue-google-autocomplete";
   
   export default {
-    components: { VueGoogleAutocomplete },
+    //components: { VueGoogleAutocomplete },
     data() {
       return {
         user: {
@@ -93,8 +93,8 @@
           aboutUsInfo: "Bem-vindo à Personni móveis, onde a personalização e modelagem de móveis são a essência do nosso trabalho. Transformamos espaços com soluções sob medida, refletindo o estilo de cada cliente. ",
           storeAddress: "",
           storePhone: "41 99999-9999",
-          primaryColor: " #B68D40 ",
-          secondaryColor: " #112620",
+          primaryCollor: " var(--cta-color) ",
+          secondaryCollor: " var(--tertiary-color)",
         },
         options: {
           types: ["geocode"]
@@ -103,24 +103,24 @@
     },
     mounted() {
 
-      const mapsScript = document.createElement('script');
+      /*const mapsScript = document.createElement('script');
       mapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAN8WuBocaymoMHLv-iSkench1O6hVrOVY&libraries=places';
-      document.body.appendChild(mapsScript);
+      document.body.appendChild(mapsScript);*/
 
       
 
         // this.user.storeId = 1;
         const config = { headers: { Authorization: AuthService.getToken() } };
       // Fazer uma solicitação GET para buscar dados do usuário por ID
-      /*axios.get(`http://localhost:8081/store`, config)
+      axios.get(`http://localhost:8081/store`, config)
         .then((response) => {
         if (response.status === 200) {
             this.user = response.data;
-            if (this.user.primaryColor === null || this.user.primaryColor === '') {
-                this.user.primaryColor = '#B68D40';
+            if (this.user.primaryCollor === null || this.user.primaryCollor === '') {
+                this.user.primaryCollor = 'var(--cta-color)';
             }
-            if (this.user.secondaryColor === null || this.user.secondaryColor === '') {
-                this.user.secondaryColor = '#112620';
+            if (this.user.secondaryCollor === null || this.user.secondaryCollor === '') {
+                this.user.secondaryCollor = 'var(--tertiary-color)';
             }
             console.log('Dados recebidos do backend:', this.user);
         } else {
@@ -129,10 +129,10 @@
     })
     .catch((error) => {
         console.error('Erro ao buscar dados da API:', error);
-    });*/
+    });
     },
     computed: {
-      autocomplete() {
+      /*autocomplete() {
         const autocomplete = new google.maps.places.Autocomplete(
           input,
           options
@@ -145,7 +145,7 @@
           this.user.storeAddress = place.formatted_address;
         });
         
-      }
+      }*/
     },
     methods: {
       getAddressData(place) {
@@ -158,7 +158,7 @@
 
         const config = { headers: { Authorization: AuthService.getToken() } };
 
-        axios.put(`http://localhost:8081/store/update-store`, this.user, config)
+        axios.put(`http://localhost:8081/store/update-store  `, this.user, config)
           .then((response) => {
             if (response.status === 200) {
               console.log('Usuário editado com sucesso', response.data);
@@ -219,7 +219,7 @@ h1{
     border: 1px dashed $admin-grey;
 
     &:hover {
-        border: 1px dashed $cta-color;
+        border: 1px dashed var(--cta-color);
     }
 }
 
@@ -231,7 +231,7 @@ h1{
     text-align: center;
 
     &:hover {
-        color: $cta-color;
+        color: var(--cta-color);
     }
 }
 body :deep(.el-popper.is-light) {

@@ -94,7 +94,7 @@ methods: {
 .el-menu-vertical {
   width: 200px;
   height: 100vh;
-  background-color: $tertiary-color;
+  background-color: var(--tertiary-color);
   position: fixed;
   z-index: 999;
   display: flex;
@@ -127,7 +127,7 @@ methods: {
 
       &.is-active{
           color: $primary-color !important;
-          background-color: $cta-color;
+          background-color: var(--cta-color);
       }
   }
   
