@@ -72,6 +72,7 @@ export default {
     },
     components: { LineChart },
     methods: {
+        
     },
     created() {
         const loading = ElLoading.service({

@@ -25,7 +25,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                     <el-radio border size="large" label="existingAddress">Escolher endereço cadastrado</el-radio>
                     <el-radio-group v-if="addressChoice === 'existingAddress'" v-model="selectAddress" class="existing-address-radio">
                         <div v-for="address in userAddresses" :key="address.addressId">
-                            <el-radio border size="default" :label="address.addressNickname">
+                            <el-radio border size="default" :label="address.addressNickname" @change="selectExistingAddress(address)">
                             </el-radio>
                         </div>
                     </el-radio-group>
@@ -34,6 +34,9 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
       <el-form :model="endereco" label-position="top" v-if="addressChoice === 'newAddress'">
         <el-col :span="10">
+          <el-form-item label="Apelido">
+            <el-input v-model="endereco.addressNickname" required></el-input>
+          </el-form-item>
           <el-form-item label="CEP">
             <el-input placeholder="#####-###" v-model="endereco.cep" required @blur="consultarCEP"
               v-mask="'#####-###'" maxlength="9"></el-input>
@@ -45,20 +48,20 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
       <div class="after-cep" v-loading="cepLoading">
         <el-form-item label="Rua">
-          <el-input v-model="endereco.rua" :disabled="!cepExists" required></el-input>
+          <el-input v-model="endereco.street" :disabled="!cepExists" required></el-input>
         </el-form-item>
         <div class="small-inputs">
           <el-form-item label="Número">
-            <el-input v-model="endereco.numero" :disabled="!cepExists" required></el-input>
+            <el-input v-model="endereco.number" :disabled="!cepExists" required></el-input>
           </el-form-item>
           <el-form-item label="Complemento (Opcional)">
-            <el-input v-model="endereco.complemento" :disabled="!cepExists"></el-input>
+            <el-input v-model="endereco.details" :disabled="!cepExists"></el-input>
           </el-form-item>
           <el-form-item label="Cidade">
-            <el-input v-model="endereco.cidade" :disabled="!cepExists" required></el-input>
+            <el-input v-model="endereco.city" :disabled="!cepExists" required></el-input>
           </el-form-item>
           <el-form-item label="Estado">
-            <el-input v-model="endereco.estado" :disabled="!cepExists" required></el-input>
+            <el-input v-model="endereco.state" :disabled="!cepExists" required></el-input>
           </el-form-item>
         </div>
       </div>
@@ -103,7 +106,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                     </div>
                 </el-form>
 
-                
+
 
                 <div class="actions">
                     <el-button type="info" plain @click="previousStep"><el-icon>
@@ -164,18 +167,26 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                         </el-icon> Endereço de entrega</h2>
                                 </div>
                                 <div class="card-item">
-                                    <h4>Aguinaldo Lucas</h4>
-                                    <h4>Rua Saldanha Marinho 123</h4>
-                                    <h4>80410-151</h4>
-                                    <h4>Centro</h4>
-                                    <h4>Curitiba, PR</h4>
-                                    <h4>Brasil</h4>
-                                
+                                    <template v-if="selectedAddress">
+                                    <h4>{{ selectedAddress.name }}</h4>
+                                    <h4>{{ selectedAddress.street }} {{ selectedAddress.number }}</h4>
+                                    <h4>{{ selectedAddress.cep }}</h4>
+                                    <h4>{{ selectedAddress.district }}</h4>
+                                    <h4>{{ selectedAddress.city }}, {{ selectedAddress.state }}</h4>
+                                </template>
+                                <!-- Display the new address if entered -->
+                                <template v-else-if="endereco.cep">
+                                    <h4>{{ endereco.name }}</h4>
+                                    <h4>{{ endereco.street }} {{ endereco.number }}</h4>
+                                    <h4>{{ endereco.cep }}</h4>
+                                    <h4>{{ endereco.district }}</h4>
+                                    <h4>{{ endereco.city }}, {{ endereco.state }}</h4>
+                                </template>
                                 </div>
                             </el-card>
-                        
+
                         </div>
-                    
+
                         <div class="pagamento-info">
                             <el-card class="box-card" shadow="never">
                                 <div class="card-header card-item">
@@ -184,12 +195,13 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                         </el-icon> Forma de pagamento</h2>
                                 </div>
                                 <div class="card-item">
-                                    <img src="../../../assets/img/logoPix.png" style="width: 100%; max-width: 200px; margin-bottom: 20px;/">
+                                    <img src="../../../assets/img/logoPix.png"
+                                        style="width: 100%; max-width: 200px; margin-bottom: 20px;/">
 
                                 </div>
                             </el-card>
                         </div>
-                    
+
                         <div class="frete">
                             <el-card class="box-card" shadow="never">
                                 <div class="card-header card-item">
@@ -236,11 +248,11 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                             </div>
                         </el-card>
                         <div class="actions">
-                    <el-button type="info" plain @click="previousStep"><el-icon>
-                            <ArrowLeftBold />
-                        </el-icon> Voltar</el-button>
-                    <el-button type="success" @click="makeOrder()" size="large">Confirmar pedido</el-button>
-                </div>
+                            <el-button type="info" plain @click="previousStep"><el-icon>
+                                    <ArrowLeftBold />
+                                </el-icon> Voltar</el-button>
+                            <el-button type="success" @click="makeOrder()" size="large">Confirmar pedido</el-button>
+                        </div>
 
                     </div>
                 </div>
@@ -248,6 +260,8 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 
             <div class="final-step" v-if="currentStep == 3">
                 <h1>Pedido concluído</h1>
+                <h2>Tempo Restante: {{ minutos }}:{{ segundos < 10 ? '0' : '' }}{{ segundos }} minutos</h2>
+                <h2>Não saia dessa tela</h2>
                 <img v-if="QrCode != null" :src=QrCode>
                 <div class="mega-icon">
                     <el-icon color="#67c23a">
@@ -275,6 +289,7 @@ import { ref } from 'vue';
 export default {
     data() {
         return {
+            tempoRestante: 60, // 5 minutos em segundos
             QrCode: null,
             currentStep: 0,
             metodoPagamento: "pix",
@@ -299,14 +314,14 @@ export default {
                 sectionCmps: [],
             },
             endereco: {
+                addressNickname: "",
                 cep: "",
-                rua: "",
-                numero: "",
-                complemento: "",
-                bairro: "",
-                cidade: "",
-                estado: "",
-                pais: "",
+                street: "",
+                number: "",
+                details: "",
+                district: "",
+                city: "",
+                state: "",
             },
             cartao: {
                 nomeCartao: "",
@@ -332,14 +347,24 @@ export default {
             productCmps: [],
             userAddresses: [],
             cepExists: false,
+            addressAdded: false,
+            selectedAddress: null,
             selectAddress: "",
             addressChoice: 'existingAddress',
         };
     },
+    computed: {
+    minutos() {
+      return Math.floor(this.tempoRestante / 60);
+    },
+    segundos() {
+      return this.tempoRestante % 60;
+    },
+  },
     created() {
         // Usuário deve estar logado para acessar checkout.
         AuthService.shouldRedirectToLogin(this.$router);
-        
+
         const loading = ElLoading.service({
             lock: true,
             text: 'Carregando..',
@@ -359,9 +384,29 @@ export default {
         }, 250)
     },
     methods: {
+        iniciarTemporizador() {
+            this.temporizador = setInterval(() => {
+                if (this.tempoRestante > 0) {
+                    this.tempoRestante--;
+                } else {
+                    // Quando o temporizador atinge zero, redirecione para outra tela
+                    clearInterval(this.temporizador);
+                    // Adicione aqui o código para redirecionar para outra tela
+                    this.$router.push('/')
+                }
+            }, 1000);
+        },
+
+        beforeDestroy() {
+            clearInterval(this.temporizador);
+        },
         // selectAddress(address) {
         //     this.selectedAddress = address;
         // },
+        selectExistingAddress(address) {
+            console.log('Selected Address:', address);
+            this.selectedAddress = { ...address };
+        },
         clearSelectedAddress() {
             this.selectedAddress = null;
         },
@@ -372,7 +417,7 @@ export default {
         },
         /** Faz pedidos e retorna qrcode pix. */
         makeOrder() {
-            const config = { 
+            const config = {
                 headers: { Authorization: AuthService.getToken() },
                 params: { shipmentFee: Number(this.calcularFrete()) }
             }
@@ -399,8 +444,14 @@ export default {
             // Monta dto para processamento do pedido no back.
             const ordersReq = {
                 requestProduct: getReqProduct,
-                requestCmp: getReqCmp
+                requestCmp: getReqCmp,
+                deliveryAddress: this.addressChoice === 'existingAddress' ? this.selectedAddress : this.endereco,
             }
+
+            if (this.addressChoice === 'newAddress') {
+                ordersReq.deliveryAddress = this.newAddress;
+            }
+
             // Faz requisição enviando pedidos.
             if ((cartService.getCartItems() != null || cartService.getCartItems().length > 0)
                 && (cartService.getCmpItems() != null || cartService.getCmpItems().length > 0)) {
@@ -412,6 +463,7 @@ export default {
                         /** Limpa carrinho após finalizar o pedido. */
                         cartService.removeAllFromCarts();
                         this.currentStep = 3;
+                        this.iniciarTemporizador();
                     })
                     .catch(error => {
                         ElMessage.error('Não foi possível registrar o pedido.');
@@ -433,10 +485,10 @@ export default {
 
                         if (!data.erro) {
                             // Preencha os campos com os dados retornados pela API
-                            this.endereco.rua = data.logradouro;
-                            this.endereco.bairro = data.bairro;
-                            this.endereco.cidade = data.localidade;
-                            this.endereco.estado = data.uf;
+                            this.endereco.street = data.logradouro;
+                            this.endereco.district = data.bairro;
+                            this.endereco.city = data.localidade;
+                            this.endereco.state = data.uf;
                             this.cepExists = true;
                             setTimeout(() => {
                                 this.cepLoading = false;
@@ -455,6 +507,28 @@ export default {
             }
         },
 
+        addAddress() {
+            const config = { headers: { Authorization: AuthService.getToken() } };
+
+            axios.post('http://localhost:8081/users/create-new-address', this.endereco, config)
+            .then((response) => {
+            ElMessage.success('Endereço adicionado com sucesso.');
+            
+            this.addressAdded = true;
+            // Atualize a lista de endereços do usuário após adicionar um novo endereço
+            // this.loadUserAddresses();
+
+            // reload
+            // setTimeout(() => {
+            //     window.location.reload();
+            // }, 2000);
+            })
+            .catch((error) => {
+                ElMessage.error('Erro ao adicionar endereço.');
+                console.error('Erro:', error);
+            });
+        },
+
         calcularFrete() {
             let frete = "15";
             /*if (this.products && this.products.length > 0) {
@@ -464,10 +538,13 @@ export default {
         },
 
         formatPrice(x) {
-            return x.toString().toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
+            return x.toString().toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
         },
 
         nextStep() {
+            if (this.addressChoice === 'newAddress' && !this.addressAdded) {
+                this.addAddress();
+            }
             this.currentStep++;
         },
         previousStep() {
@@ -535,12 +612,12 @@ export default {
             // Substitua a URL abaixo pela URL real do seu endpoint de endereços
             axios.get('http://localhost:8081/users/get-user-address', config)
                 .then((response) => {
-                  this.userAddresses = response.data; // Armazene os endereços na variável do componente
+                    this.userAddresses = response.data; // Armazene os endereços na variável do componente
                 })
                 .catch((error) => {
-                  // Lide com erros de forma apropriada, por exemplo, exibindo uma mensagem de erro
-                  console.error('Erro ao carregar endereços:', error);
-            });
+                    // Lide com erros de forma apropriada, por exemplo, exibindo uma mensagem de erro
+                    console.error('Erro ao carregar endereços:', error);
+                });
         },
     },
 }
@@ -666,7 +743,8 @@ export default {
         flex-basis: 45%;
         margin: 0 10px;
     }
-    .forma-pagamento{
+
+    .forma-pagamento {
         width: 100%;
     }
 
@@ -711,9 +789,10 @@ export default {
         width: fit-content;
         display: inline-block;
     }
-    
+
     .el-radio-button {
-        display: inline; /* Faz o botão de rádio ficar em linha com o texto */
+        display: inline;
+        /* Faz o botão de rádio ficar em linha com o texto */
     }
 }
 
@@ -745,7 +824,7 @@ input[type="radio"] {
     display: none;
 }
 
-input[type="radio"]:checked + .radio-button::before {
+input[type="radio"]:checked+.radio-button::before {
     content: "X";
     position: absolute;
     top: 50%;
@@ -756,136 +835,128 @@ input[type="radio"]:checked + .radio-button::before {
     color: #007BFF;
 }
 
-.finalizar{
+.finalizar {
     width: 100%;
 }
 
 .finalizar-content {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
 
-  .finalizar-left, .finalizar-right{
-    flex-basis: 45%;
-  }
+    .finalizar-left,
+    .finalizar-right {
+        flex-basis: 45%;
+    }
 }
+
 .box-card {
-            width: 100%;
-            margin-bottom: 20px;
-        }
-
-        .el-card {
-            background-color: $primary-color;
-            border: 2px solid var(--el-card-border-color);
-
-            h2 {
-                display: flex;
-                align-items: center;
-                font-size: 20px;
-                margin-bottom: 4rem;
-
-                i {
-                    margin-right: 10px;
-                }
-            }
-
-            h3 {
-                font-weight: 400;
-                font-size: 18px;
-                margin-bottom: 5px;
-                margin-top: 0px;
-            }
-
-            h4 {
-                font-size: 14px;
-                font-weight: 400;
-                margin-top: 0px;
-                margin-bottom: 5px;
-            }
-
-            div.card-header.card-item {
-                padding: 0.5rem 0 0 2rem;
-            }
-
-            .card-item {
-                padding: 16px;
-                padding-top: 0px;
-            }
-
-            .card-item-inner {
-                font-size: 12px;
-                display: flex;
-                flex-direction: row;
-                justify-content: space-between;
-                padding-bottom: 2rem;
-                border-bottom: 1px solid var(--el-card-border-color);
-
-                .card-item-about {
-                    width: 70%;
-                    padding-right: 4rem;
-
-                    .el-text--small {
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                        word-break: normal;
-                    }
-                }
-
-                .card-item-price {
-                    width: 30%;
-                    text-align: end;
-                    //margin-left: 30%;
-                }
-
-            }
-
-            .card-item.subtotal {
-                display: flex;
-                 justify-content: flex-end;
-                align-items: baseline;
-
-                h4 {
-                    margin-bottom: 0px;
-                }
-
-                h3 {
-                    margin-left: 1rem;
-                }
-            }
-
-            .card-item.frete {
-                display: flex;
-                 justify-content: flex-end;
-                align-items: baseline;
-
-                h4 {
-                    margin: 0;
-                    margin-left: 1rem;
-                }
-            }
-
-            :deep(.el-card__body) {
-                padding: 0px;
-            }
-
-            .preco-final {
-                font-size: 20px;
-                padding: 20px;
-                text-align: center;
-
-                h3 {
-                    color: green;
-                }
-            }
-        }
-
-.existing-address-radio{
+    width: 100%;
     margin-bottom: 20px;
+}
 
-    .el-radio{
-        width: 150px;
-        margin-bottom: 10px;
-        margin-left: 10px;
+.el-card {
+    background-color: $primary-color;
+    border: 2px solid var(--el-card-border-color);
+
+    h2 {
+        display: flex;
+        align-items: center;
+        font-size: 20px;
+        margin-bottom: 4rem;
+
+        i {
+            margin-right: 10px;
+        }
+    }
+
+    h3 {
+        font-weight: 400;
+        font-size: 18px;
+        margin-bottom: 5px;
+        margin-top: 0px;
+    }
+
+    h4 {
+        font-size: 14px;
+        font-weight: 400;
+        margin-top: 0px;
+        margin-bottom: 5px;
+    }
+
+    div.card-header.card-item {
+        padding: 0.5rem 0 0 2rem;
+    }
+
+    .card-item {
+        padding: 16px;
+        padding-top: 0px;
+    }
+
+    .card-item-inner {
+        font-size: 12px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--el-card-border-color);
+
+        .card-item-about {
+            width: 70%;
+            padding-right: 4rem;
+
+            .el-text--small {
+                overflow: hidden;
+                text-overflow: ellipsis;
+                word-break: normal;
+            }
+        }
+
+        .card-item-price {
+            width: 30%;
+            text-align: end;
+            //margin-left: 30%;
+        }
+
+    }
+
+    .card-item.subtotal {
+        display: flex;
+        justify-content: flex-end;
+        align-items: baseline;
+
+        h4 {
+            margin-bottom: 0px;
+        }
+
+        h3 {
+            margin-left: 1rem;
+        }
+    }
+
+    .card-item.frete {
+        display: flex;
+        justify-content: flex-end;
+        align-items: baseline;
+
+        h4 {
+            margin: 0;
+            margin-left: 1rem;
+        }
+    }
+
+    :deep(.el-card__body) {
+        padding: 0px;
+    }
+
+    .preco-final {
+        font-size: 20px;
+        padding: 20px;
+        text-align: center;
+
+        h3 {
+            color: green;
+        }
     }
 }
 </style>

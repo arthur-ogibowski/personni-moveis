@@ -21,7 +21,6 @@
         <el-table-column label="Ações" prop="userId"> 
           <template #default="scope">  
             <el-icon class="table-edit" color="#A8A8A8"  ><Edit/><router-link :to="{path: '/admin/usuarios/' + scope.row.userId}"></router-link></el-icon>
-            <el-icon v-on:click="deleteUser(scope.row.userId)" class="table-delete" color="#F56C6C" plain><Delete/></el-icon> 
           </template>
         </el-table-column>
         <!--<el-pagination layout="prev, pager, next" :total="this.categorias.length" @current-change="setPage">

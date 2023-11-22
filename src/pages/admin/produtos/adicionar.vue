@@ -31,27 +31,45 @@
                     </el-form-item>
                     <!-- Imagem principal -->
                     <el-form-item label="Imagem principal">
-                        <div>
-                            <el-upload class="avatar-uploader" :auto-upload="false" limit="1" @change="handleImageChange">
-                                <img v-if="product.mainImg" :src="product.mainImg" class="avatar" />
-                                <el-icon v-else class="avatar-uploader-icon">
-                                    <Upload />
-                                </el-icon>
-                            </el-upload>
+                        <!-- Adicione a diretiva v-if para condicionalmente renderizar o el-upload -->
+                        <el-upload v-if="!product.mainImg" class="avatar-uploader" :auto-upload="false" :limit="1"
+                            @change="handleImageChange">
+                            <el-icon class="avatar-uploader-icon">
+                                <Upload />
+                            </el-icon>
+                        </el-upload>
+                        <div class="avatar-container">
+                            <div class="image-wrapper-principal">
+                                <img v-if="product.mainImg" :src="product.mainImg" class="avatar-principal" />
+                                <div class="overlayPrincipal" @click="PrincipalImgRemove" v-if="product.mainImg">
+                                    <el-icon class="table-delete" size="50" color="#A8A8A8" style="border: 50px;">
+                                        <Delete />
+                                    </el-icon>
+                                </div>
+                            </div>
                         </div>
                     </el-form-item>
+
                     <!-- Imagens secundárias -->
                     <el-form-item label="Imagens secundárias">
                         <div class="secondary-image-list">
-                            <el-upload class="avatar-uploader secondary-image-uploader" multiple :auto-upload="false" :limit="999"
-                                @change="handleSecondaryImagesChange">
+                            <el-upload class="avatar-uploader secondary-image-uploader" multiple :auto-upload="false"
+                                :limit="999" @change="handleSecondaryImagesChange">
                                 <el-icon v-if="secondaryImagesArray.length < 999" class="avatar-uploader-icon">
                                     <Upload />
                                 </el-icon>
                             </el-upload>
-                                <div v-for="(image, index) in secondaryImagesArray" :key="index" class="avatar-container">
+                            <div v-for="(image, index) in secondaryImagesArray" :key="index" class="avatar-container"
+                                @click="removerimg(index)">
+                                <div class="image-wrapper">
                                     <img :src="image" class="avatar" />
+                                    <div class="overlay">
+                                        <el-icon class="table-delete" size="50" color="#A8A8A8" style="border: 50px;">
+                                            <Delete />
+                                        </el-icon>
+                                    </div>
                                 </div>
+                            </div>
                         </div>
                     </el-form-item>
 
@@ -220,6 +238,7 @@ export default {
                 material: '',
                 tags: []
             },
+            uniqueKey: 0,
             fetchedCategories: [],
             materials: [],
             fetchedTags: [],
@@ -246,17 +265,28 @@ export default {
     },
 
     methods: {
+
+        PrincipalImgRemove() {
+            this.product.mainImg = null;
+            this.uniqueKey += 1; // Isso forçará a recriação do componente
+        },
+        removerimg(index) {
+            // Função para remover a imagem com base no índice
+            this.secondaryImagesArray.splice(index, 1);
+        },
+
         async handleSecondaryImagesChange(file, fileList) {
             try {
-                // Adquire imagem como string base64.
-                const imageArray = await Promise.all(fileList.map(async file => await imgConverter.fileToBase64String(file.raw)));
+                // Adquire a imagem como string base64.
+                const base64String = await imgConverter.fileToBase64String(file.raw);
 
-                // Adiciona as novas imagens ao array existente
-                this.secondaryImagesArray = imageArray
+                // Adiciona a nova imagem ao array existente
+                this.secondaryImagesArray.push(base64String);
             } catch (error) {
-                ElMessage.error('Erro - não foi possível fazer o upload da imagem.')
+                ElMessage.error('Erro - não foi possível fazer o upload da imagem.');
             }
         },
+
 
         /** Faz requisição para adquirir todas categorias. Produto só deve ter UMA CATEGORIA. */
         getCategories() {
@@ -376,6 +406,140 @@ export default {
 <style scoped lang="scss">
 @import "@/assets/styles/scss/basics.scss";
 
+
+.image-wrapper-principal {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-principal {
+    width: 102px;
+    height: 102px;
+    display: block;
+}
+
+.avatar-container:hover .avatar {
+    filter: blur(4px);
+    /* Adiciona o efeito de desfoque à imagem ao passar o mouse */
+    cursor: pointer;
+}
+
+.avatar{
+    height: 102px;
+    width: 102px;
+}
+
+.overlayPrincipal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlayPrincipal i {
+    color: #A8A8A8;
+}
+
+.overlayPrincipal:hover {
+    opacity: 1;
+    /* Torna o overlay visível ao passar o mouse */
+}
+
+.overlayPrincipal i:hover {
+    filter: blur(0);
+    /* Adiciona o efeito de desfoque ao ícone ao passar o mouse */
+}
+
+.avatar-container:hover .avatar-principal {
+    filter: blur(4px);
+    /* Adiciona o efeito de desfoque à imagem ao passar o mouse */
+    cursor: pointer;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.overlay i {
+    color: #A8A8A8;
+}
+
+.overlay:hover {
+    opacity: 1;
+    /* Torna o overlay visível ao passar o mouse */
+}
+
+.overlay i:hover {
+    filter: blur(0);
+    /* Adiciona o efeito de desfoque ao ícone ao passar o mouse */
+}
+
+
+.avatar-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.image-wrapper {
+    position: relative;
+    overflow: hidden;
+}
+
+.avatar-container:hover .avatar {
+    filter: blur(4px);
+    /* Adiciona o efeito de desfoque à imagem ao passar o mouse */
+    cursor: pointer;
+}
+
+.avatar-container:hover .overlay {
+    opacity: 1;
+    /* Torna o overlay visível ao passar o mouse */
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Define uma cor de fundo para o overlay */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    /* Adiciona uma transição suave para a opacidade */
+}
+
+.overlay i {
+    color: #A8A8A8;
+    /* Define a cor do ícone no overlay */
+}
+
+
 hr {
     border: 1px solid $admin-grey;
     margin: 30px 0;
@@ -406,6 +570,12 @@ h2 {
         text-align: center;
         color: $admin-grey;
     }
+}
+
+.avatar-uploader .avatar-principal {
+    width: 178px;
+    height: 178px;
+    display: block;
 }
 
 .avatar-uploader .avatar {
@@ -490,6 +660,8 @@ h2 {
         margin: 0 !important
     }
 }
+
+
 
 .inputs {
     display: flex;
@@ -598,7 +770,8 @@ div.element-item {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    img{
+
+    img {
         width: 102px;
         height: 102px;
     }

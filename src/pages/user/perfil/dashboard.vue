@@ -8,7 +8,7 @@
           <div class="dashboard-left">
             <div class="user-info">
               <h2>Meus dados</h2>
-  
+
               <div class="info-box">
                 <h3 class="info-item title">Nome: </h3>
                 <h3 class="info-item text">{{ user.name }}</h3>
@@ -25,7 +25,7 @@
                 <h3 class="info-item title">Telefone: </h3>
                 <h3 class="info-item text">{{ formatPhoneNumber(user.phoneNumber) }}</h3>
               </div>
-              <el-button class="cta" type="primary" @click="activeName = 'configuracoes'">Editar</el-button>  
+              <el-button class="cta" type="primary" @click="activeName = 'configuracoes'">Editar</el-button>
             </div>
             <el-text class="sair-text" type="info" @click="handleLogout">Fazer logout</el-text>
           </div>
@@ -48,14 +48,18 @@
             <div class="dashboard-pedidos">
               <h2> Meus pedidos </h2>
               <el-table :data="pedidosDash" style="width: 100%">
-                <el-table-column prop="date" label="Data" width="*"/>
+                <el-table-column prop="date" label="Data" width="*" />
                 <el-table-column prop="status" label="Status" width="*">
                   <template #default="{ row }">
-                  <!-- Mockando o campo status com um texto padrão -->
+                    <!-- Mockando o campo status com um texto padrão -->
                     <span>{{ row.status || 'Ativo' }}</span>
                   </template>
                 </el-table-column>
-                <el-table-column prop="totalPrice" label="Preço Total" width="180" />
+                <el-table-column prop="totalPrice" label="Preço Total" width="180">
+                  <template #default="{ row }">
+                    {{ formatPrice(row.totalPrice) }}
+                  </template>
+                </el-table-column>
               </el-table>
               <el-button class="cta" type="primary" @click="activeName = 'pedidos'">Ver todos</el-button>
             </div>
@@ -67,106 +71,110 @@
 
       <el-tab-pane label="Endereços" name="enderecos">
         <div class="enderecos-container">
-            <div v-if="!showAddAddressForm && !showUserConfigs" class="address-list">
-              <div class="address-list-left">
-                <h1>Meus endereços</h1>
-                <h2>Adicione, edite ou exclua seus endereços.</h2>
-                <el-button type="primary" class="cta" @click="showAddAddressForm = true">Adicionar Novo Endereço</el-button>
+          <div v-if="!showAddAddressForm && !showUserConfigs" class="address-list">
+            <div class="address-list-left">
+              <h1>Meus endereços</h1>
+              <h2>Adicione, edite ou exclua seus endereços.</h2>
+              <el-button type="primary" class="cta" @click="showAddAddressForm = true">Adicionar Novo Endereço</el-button>
+            </div>
+            <div class="address-list-right">
+              <div v-for="address in addresses" :key="address.addressId" class="address-summary">
+                <h3>{{ address.addressNickname }} <span><el-icon @click="deleteAddress(address)">
+                      <Delete />
+                    </el-icon> <el-icon @click="showEditAddressForm = true">
+                      <Edit />
+                    </el-icon></span></h3>
+                <p class="dados-endereco">{{ address.street }}</p>
+                <p class="dados-endereco">{{ address.number }}</p>
+                <p class="dados-endereco">{{ address.details }}</p>
+                <p class="dados-endereco">{{ address.district }}</p>
+                <p class="dados-endereco">{{ address.city }} - {{ address.state }}</p>
+                <p class="dados-endereco">{{ address.cep }}</p>
               </div>
-              <div class="address-list-right">
-                <div v-for="address in addresses" :key="address.addressId" class="address-summary">
-                  <h3>{{ address.addressNickname }} <span><el-icon @click="deleteAddress(address)"><Delete/></el-icon> <el-icon @click="showEditAddressForm = true"><Edit /></el-icon></span></h3>
-                  <p class="dados-endereco">{{ address.street }}</p>
-                  <p class="dados-endereco">{{ address.number }}</p>
-                  <p class="dados-endereco">{{ address.details }}</p>
-                  <p class="dados-endereco">{{ address.district }}</p>
-                  <p class="dados-endereco">{{ address.city }} - {{ address.state }}</p>
-                  <p class="dados-endereco">{{ address.cep }}</p>
-                </div>
             </div>
           </div>
           <!-- </div> -->
 
-            <div v-if="showAddAddressForm && !showUserConfigs" class="address-list">
-              <div class="address-list-left">
-                <h1 class="info-title">Adicionar Novo Endereço</h1>
-                <h2>Preencha os campos para adicionar um novo endereço.</h2>
-                <el-button @click="showAddAddressForm = false">Cancelar</el-button>
-              </div>
-              <div class="address-list-right add-address-form">
-                <form @submit.prevent="addAddress" class="address-form">
-                  <div class="form-group">
-                    <label for="addressNickname" class="title">Apelido do Endereço:</label>
-                    <el-input v-model="newAddress.addressNickname" required />
-                  </div>
-                  <div class="form-group">
-                    <label for="CEP" class="title">CEP:</label>
-                    <el-input placeholder="#####-###" @blur="consultarCEP"
-                    v-mask="'#####-###'" maxlength="9" v-model="newAddress.cep" required />
-                  </div>
-                  <el-alert type="info" v-if="!cepExists" show-icon :closable="false">
-                    <p>O endereço será automaticamente preenchido assim que o CEP for validado.</p>
-                  </el-alert>
-                  <div class="form-group">
-                    <label for="street" class="title">Rua:</label>
-                    <el-input v-model="newAddress.street" required :disabled="!cepExists" />
-                  </div>
-                  <div class="form-group">
-                    <label for="number" class="title">Número:</label>
-                    <el-input v-model="newAddress.number" required :disabled="!cepExists" />
-                  </div>
-                  <div class="form-group">
-                    <label for="district" class="title">Bairro:</label>
-                    <el-input v-model="newAddress.district" required :disabled="!cepExists" />
-                  </div>
-                  <div class="form-group">
-                    <label for="city" class="title">Cidade:</label>
-                    <el-input v-model="newAddress.city" required :disabled="!cepExists" />
-                  </div>
-                  <div class="form-group">
-                    <label for="state" class="title">Estado:</label>
-                    <el-input v-model="newAddress.state" required :disabled="!cepExists" />
-                  </div>
-                  <div class="form-group">
-                    <el-button class="cta" type="primary" native-type="submit">Salvar</el-button>
-                  </div>
-                </form>
-              </div>
+          <div v-if="showAddAddressForm && !showUserConfigs" class="address-list">
+            <div class="address-list-left">
+              <h1 class="info-title">Adicionar Novo Endereço</h1>
+              <h2>Preencha os campos para adicionar um novo endereço.</h2>
+              <el-button @click="showAddAddressForm = false">Cancelar</el-button>
             </div>
+            <div class="address-list-right add-address-form">
+              <form @submit.prevent="addAddress" class="address-form">
+                <div class="form-group">
+                  <label for="addressNickname" class="title">Apelido do Endereço:</label>
+                  <el-input v-model="newAddress.addressNickname" required />
+                </div>
+                <div class="form-group">
+                  <label for="CEP" class="title">CEP:</label>
+                  <el-input placeholder="#####-###" @blur="consultarCEP" v-mask="'#####-###'" maxlength="9"
+                    v-model="newAddress.cep" required />
+                </div>
+                <el-alert type="info" v-if="!cepExists" show-icon :closable="false">
+                  <p>O endereço será automaticamente preenchido assim que o CEP for validado.</p>
+                </el-alert>
+                <div class="form-group">
+                  <label for="street" class="title">Rua:</label>
+                  <el-input v-model="newAddress.street" required :disabled="!cepExists" />
+                </div>
+                <div class="form-group">
+                  <label for="number" class="title">Número:</label>
+                  <el-input v-model="newAddress.number" required :disabled="!cepExists" />
+                </div>
+                <div class="form-group">
+                  <label for="district" class="title">Bairro:</label>
+                  <el-input v-model="newAddress.district" required :disabled="!cepExists" />
+                </div>
+                <div class="form-group">
+                  <label for="city" class="title">Cidade:</label>
+                  <el-input v-model="newAddress.city" required :disabled="!cepExists" />
+                </div>
+                <div class="form-group">
+                  <label for="state" class="title">Estado:</label>
+                  <el-input v-model="newAddress.state" required :disabled="!cepExists" />
+                </div>
+                <div class="form-group">
+                  <el-button class="cta" type="primary" native-type="submit">Salvar</el-button>
+                </div>
+              </form>
+            </div>
+          </div>
 
-            <div class="user-info" v-if="showEditAddressForm">
-              <h1 class="info-title">Editar Endereço</h1>
-              <div class="info-box">
-                <h2 class="info-item title">Apelido: </h2>
-                <el-input v-model="editedAddress.addressNickname"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">Rua: </h2>
-                <el-input v-model="editedAddress.street"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">Número: </h2>
-                <el-input v-model="editedAddress.number"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">Bairro: </h2>
-                <el-input v-model="editedAddress.district"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">Cidade: </h2>
-                <el-input v-model="editedAddress.city"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">Estado: </h2>
-                <el-input v-model="editedAddress.state"></el-input>
-              </div>
-              <div class="info-box">
-                <h2 class="info-item title">CEP: </h2>
-                <el-input v-model="editedAddress.cep"></el-input>
-              </div>
-              <el-button type="primary" @click="saveAddress">Salvar</el-button>
+          <div class="user-info" v-if="showEditAddressForm">
+            <h1 class="info-title">Editar Endereço</h1>
+            <div class="info-box">
+              <h2 class="info-item title">Apelido: </h2>
+              <el-input v-model="editedAddress.addressNickname"></el-input>
             </div>
-          
+            <div class="info-box">
+              <h2 class="info-item title">Rua: </h2>
+              <el-input v-model="editedAddress.street"></el-input>
+            </div>
+            <div class="info-box">
+              <h2 class="info-item title">Número: </h2>
+              <el-input v-model="editedAddress.number"></el-input>
+            </div>
+            <div class="info-box">
+              <h2 class="info-item title">Bairro: </h2>
+              <el-input v-model="editedAddress.district"></el-input>
+            </div>
+            <div class="info-box">
+              <h2 class="info-item title">Cidade: </h2>
+              <el-input v-model="editedAddress.city"></el-input>
+            </div>
+            <div class="info-box">
+              <h2 class="info-item title">Estado: </h2>
+              <el-input v-model="editedAddress.state"></el-input>
+            </div>
+            <div class="info-box">
+              <h2 class="info-item title">CEP: </h2>
+              <el-input v-model="editedAddress.cep"></el-input>
+            </div>
+            <el-button type="primary" @click="saveAddress">Salvar</el-button>
+          </div>
+
         </div>
       </el-tab-pane>
 
@@ -178,14 +186,20 @@
             <h2>Veja aqui todos os seus pedidos.</h2>
           </div>
           <div class="pedidos-right">
-            <el-table :data="pedidos" class="perfil-table" style="width: 100%">
-              <el-table-column prop="orderId" label="#" width="100" />
-              <el-table-column prop="totalPrice" label="Valor Total" width="*"/>
-              <el-table-column prop="produtos" label="Produtos" width="*"/>
-              <el-table-column prop="pagamento" label="Método de pagamento" width="*" />
-              <el-table-column prop="valor" label="Valor total" width="*"/>
-              <el-table-column prop="status" label="Status" width="*"/>
-              <el-table-column width="100">
+            <el-table :data="pedidosAll" class="perfil-table" style="width: 100%">
+              <el-table-column prop="orderId" label="#" width="300" />
+              <el-table-column prop="status" label="Status" width="*">
+                <template #default="{ row }">
+                  <!-- Mockando o campo status com um texto padrão -->
+                  <span>{{ row.status || 'Ativo' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="totalPrice" label="Preço Total" width="180">
+                <template #default="{ row }">
+                  {{ formatPrice(row.totalPrice) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="" label="Detalhes" width="180">
                 <el-button plain>Detalhes</el-button>
               </el-table-column>
             </el-table>
@@ -229,7 +243,7 @@
               <el-button type="primary" @click="saveUser" class="cta">Salvar</el-button>
             </div>
           </div>
-      </div>
+        </div>
       </el-tab-pane>
 
 
@@ -244,54 +258,59 @@ import AuthService from '@/store/authService.js';
 import { ElMessage } from 'element-plus';
 
 export default {
-    data() {
-      return {
-        user: {},
-        enderecosDash:[],
-        pedidosDash: [],
-        activeName: 'dashboard',
-        showAddAddressForm: false,
-        showEditAddressForm: false,
-        showUserConfigs: false,
-        newAddress: {
-          addressNickname: '',
-          street: '',
-          number: '',
-          district: '',
-          city: '',
-          state: '',
-          cep: '',
-        },
-        editUser: {
-          name: "",
-          email: "",
-          phoneNumber: "",
-          cpf: "",
-          currentPassword: "",
-          newPassword: ""
-        },
-        editedAddress: {
-          addressId: null, // O ID do endereço a ser editado
-          addressNickname: "",
-          street: "",
-          number: "",
-          district: "",
-          city: "",
-          state: "",
-          cep: ""
-        },
-        cepExists: false,
-      };
+  data() {
+    return {
+      user: {},
+      enderecosDash: [],
+      pedidosDash: [],
+      pedidosAll: [],
+      activeName: 'dashboard',
+      showAddAddressForm: false,
+      showEditAddressForm: false,
+      showUserConfigs: false,
+      newAddress: {
+        addressNickname: '',
+        street: '',
+        number: '',
+        district: '',
+        city: '',
+        state: '',
+        cep: '',
+      },
+      editUser: {
+        name: "",
+        email: "",
+        phoneNumber: "",
+        cpf: "",
+        currentPassword: "",
+        newPassword: ""
+      },
+      editedAddress: {
+        addressId: null, // O ID do endereço a ser editado
+        addressNickname: "",
+        street: "",
+        number: "",
+        district: "",
+        city: "",
+        state: "",
+        cep: ""
+      },
+      cepExists: false,
+    };
+  },
+  created() {
+    AuthService.shouldRedirectToLogin(this.$router);
+    this.getUserInfo();
+    this.loadAddresses();
+    this.updateUserInfo();
+    this.getPedidos();
+    this.getPedidosAll();
+    // this.getAddressToEdit();
+  },
+  methods: {
+    formatPrice(price) {
+      return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
     },
-    created() {
-      AuthService.shouldRedirectToLogin(this.$router);
-      this.getUserInfo();
-      this.loadAddresses();
-      this.updateUserInfo();
-      this.getPedidos();
-      // this.getAddressToEdit();
-    },
-    methods: {
     getUserInfo() {
       const config = { headers: { Authorization: AuthService.getToken() } };
 
@@ -308,20 +327,20 @@ export default {
     getPedidos() {
       const config = { headers: { Authorization: AuthService.getToken() } };
 
-      axios.get('http://localhost:8081/orders/client-orders', config) 
+      axios.get('http://localhost:8081/orders/client-orders', config)
         .then((response) => {
           // Transforma datas para formato dia/mes/ano.
           response.data = response.data.map(order => {
             const dataArray = order.date;
             const data = new Date(dataArray[0], dataArray[1] - 1, dataArray[2]);
-            
+
             const day = data.getDate();
             const month = data.getMonth() + 1; // Meses em JavaScript são indexados de 0 a 11
             const year = data.getFullYear();
-            
+
             // Atribuir a string formatada de volta a order.date
             order.date = `${day}/${month}/${year}`;
-            
+
             return order;
           });
 
@@ -332,6 +351,35 @@ export default {
           console.error('Erro:', error);
         });
     },
+
+    getPedidosAll() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+
+      axios.get('http://localhost:8081/orders/client-orders', config)
+        .then((response) => {
+          // Transforma datas para formato dia/mes/ano.
+          response.data = response.data.map(order => {
+            const dataArray = order.date;
+            const data = new Date(dataArray[0], dataArray[1] - 1, dataArray[2]);
+
+            const day = data.getDate();
+            const month = data.getMonth() + 1; // Meses em JavaScript são indexados de 0 a 11
+            const year = data.getFullYear();
+
+            // Atribuir a string formatada de volta a order.date
+            order.date = `${day}/${month}/${year}`;
+
+            return order;
+          });
+
+          // Fazendo set dos valores na lista de pedidos em tela.
+          this.pedidosAll = response.data;
+        })
+        .catch((error) => {
+          console.error('Erro:', error);
+        });
+    },
+
 
     loadAddresses() {
       // Faça uma solicitação ao servidor para carregar a lista de endereços do usuário
@@ -368,73 +416,73 @@ export default {
     },
 
     addAddress() {
-        const config = { headers: { Authorization: AuthService.getToken() } };
-  
-        axios
-          .post('http://localhost:8081/users/create-new-address', this.newAddress, config)
-          .then((response) => {
-            ElMessage.success('Endereço adicionado com sucesso.');
-            // reload
+      const config = { headers: { Authorization: AuthService.getToken() } };
+
+      axios
+        .post('http://localhost:8081/users/create-new-address', this.newAddress, config)
+        .then((response) => {
+          ElMessage.success('Endereço adicionado com sucesso.');
+          // reload
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+
+        })
+        .catch((error) => {
+          ElMessage.error('Erro ao adicionar endereço.');
+          console.error('Erro:', error);
+        });
+    },
+
+    updateUserInfo() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+
+      axios.get('http://localhost:8081/users/user-info', config)
+        .then((response) => {
+          this.editUser = response.data;
+        })
+        .catch((error) => {
+          ElMessage.error('Erro ao carregar os dados do usuário.');
+          console.error('Erro:', error);
+        });
+    },
+    saveUser() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+
+      axios.put('http://localhost:8081/users/update-user', this.editUser, config)
+        .then((response) => {
+          if (response.status === 204) {
+            ElMessage.success('Dados do usuário atualizados com sucesso!');
             setTimeout(() => {
               window.location.reload();
             }, 2000);
-
-          })
-          .catch((error) => {
-            ElMessage.error('Erro ao adicionar endereço.');
-            console.error('Erro:', error);
+          } else {
+            console.error('Erro ao atualizar os dados do usuário:', response.statusText);
+          }
+        })
+        .catch((error) => {
+          ElMessage({
+            message: 'Erro ao atualizar os dados do usuário.',
+            type: 'error',
           });
-      },
+          console.error('Erro:', error);
+        });
+    },
 
-      updateUserInfo() {
-        const config = { headers: { Authorization: AuthService.getToken() } };
-  
-        axios.get('http://localhost:8081/users/user-info', config)
-          .then((response) => {
-            this.editUser = response.data;
-          })
-          .catch((error) => {
-            ElMessage.error('Erro ao carregar os dados do usuário.');
-            console.error('Erro:', error);
-          });
-      },
-      saveUser() {
-        const config = { headers: { Authorization: AuthService.getToken() } };
-  
-        axios.put('http://localhost:8081/users/update-user', this.editUser, config)
-          .then((response) => {
-            if (response.status === 204) {
-              ElMessage.success('Dados do usuário atualizados com sucesso!');
-              setTimeout(() => {
-                window.location.reload();
-              }, 2000);
-            } else {
-              console.error('Erro ao atualizar os dados do usuário:', response.statusText);
-            }
-          })
-          .catch((error) => {
-            ElMessage({
-              message: 'Erro ao atualizar os dados do usuário.',
-              type: 'error',
-            });
-            console.error('Erro:', error);
-          });
-      },
-
-      deleteAddress(address) {
+    deleteAddress(address) {
       // Implementar lógica de exclusão de endereço
       const config = { headers: { Authorization: AuthService.getToken() } };
       axios.delete(`http://localhost:8081/users/delete-user-address/${address.addressId}`, config)
-      .then(response => {
-        this.addresses = response.data;
-        ElMessage.success('Endereço deletado com Sucesso!')  
-      setTimeout(() => {
+        .then(response => {
+          this.addresses = response.data;
+          ElMessage.success('Endereço deletado com Sucesso!')
+          setTimeout(() => {
             window.location.reload()
-      }, 2000);
-    })
-    .catch(error => {
-      ElMessage.error('Erro ao deletar Usuário');
-    });
+          }, 2000);
+        })
+        .catch(error => {
+          ElMessage.error('Erro ao deletar Usuário');
+        });
     },
 
     formatPhoneNumber(phoneNumber) {
@@ -447,38 +495,38 @@ export default {
     },
 
     consultarCEP() {
-            const cep = this.newAddress.cep;
+      const cep = this.newAddress.cep;
 
-            // Verifique se o CEP foi fornecido antes de fazer a solicitação
-            if (cep) {
-                this.cepLoading = true;
-                axios.get(`https://viacep.com.br/ws/${cep}/json/`)
-                    .then((response) => {
-                        const data = response.data;
+      // Verifique se o CEP foi fornecido antes de fazer a solicitação
+      if (cep) {
+        this.cepLoading = true;
+        axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+          .then((response) => {
+            const data = response.data;
 
-                        if (!data.erro) {
-                            // Preencha os campos com os dados retornados pela API
-                            this.newAddress.street = data.logradouro;
-                            this.newAddress.district = data.bairro;
-                            this.newAddress.city = data.localidade;
-                            this.newAddress.state = data.uf;
-                            this.cepExists = true;
-                            setTimeout(() => {
-                                this.cepLoading = false;
-                            }, 400)
+            if (!data.erro) {
+              // Preencha os campos com os dados retornados pela API
+              this.newAddress.street = data.logradouro;
+              this.newAddress.district = data.bairro;
+              this.newAddress.city = data.localidade;
+              this.newAddress.state = data.uf;
+              this.cepExists = true;
+              setTimeout(() => {
+                this.cepLoading = false;
+              }, 400)
 
-                            // Preencha outros campos, se necessário
-                        } else {
-                            // Trate o caso em que o CEP não foi encontrado
-                            // Exiba uma mensagem de erro ou limpe os campos, por exemplo
-                        }
-                    })
-                    .catch((error) => {
-                        // Trate erros na solicitação, se necessário
-                        ElMessage.error('CEP não encontrado.');
-                    });
+              // Preencha outros campos, se necessário
+            } else {
+              // Trate o caso em que o CEP não foi encontrado
+              // Exiba uma mensagem de erro ou limpe os campos, por exemplo
             }
-        },
+          })
+          .catch((error) => {
+            // Trate erros na solicitação, se necessário
+            ElMessage.error('CEP não encontrado.');
+          });
+      }
+    },
   },
 
 }
@@ -493,17 +541,19 @@ function clearLocalStorage() {
 <style scoped lang="scss">
 @import "@/assets/styles/scss/basics.scss";
 
-div.pedidos-container{
+div.pedidos-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  .pedidos-left{
+
+  .pedidos-left {
     flex-basis: 30%;
     border: 1px solid $grey-border;
     background-color: $primary-color;
     padding: 20px;
   }
-  .pedidos-right{
+
+  .pedidos-right {
     flex-basis: 65%;
     display: flex;
     flex-direction: column;
@@ -513,21 +563,25 @@ div.pedidos-container{
     padding: 20px;
   }
 }
+
 .el-alert.el-alert--info.is-light {
   margin-bottom: 20px;
 }
-div.config-container{
+
+div.config-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  .config-left{
+
+  .config-left {
     flex-basis: 30%;
     border: 1px solid $grey-border;
     background-color: $primary-color;
     padding: 20px;
     height: 100%;
   }
-  .config-right{
+
+  .config-right {
     flex-basis: 65%;
     display: flex;
     flex-direction: column;
@@ -538,30 +592,36 @@ div.config-container{
   }
 
 }
-div.enderecos-container, div.pedidos-container, div.config-container{
+
+div.enderecos-container,
+div.pedidos-container,
+div.config-container {
   margin-top: 20px;
 
-  h3{
+  h3 {
     font-size: 1.6rem;
     margin-top: 0;
   }
+
   p {
     font-size: 1.4rem;
-  
+
   }
-  h1{
+
+  h1 {
     font-size: 5rem;
     font-weight: 300;
     margin-bottom: 0;
   }
-  h2{
+
+  h2 {
     font-size: 2rem;
     font-weight: 400;
     margin-top: 0;
     color: $admin-grey;
   }
 
-  .add-address-form{
+  .add-address-form {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -571,14 +631,14 @@ div.enderecos-container, div.pedidos-container, div.config-container{
     background-color: $primary-color;
     margin-bottom: 20px;
 
-    .address-form{
+    .address-form {
       width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
 
-      .form-group{
+      .form-group {
         width: 100%;
         display: flex;
         flex-direction: row;
@@ -600,6 +660,7 @@ div.enderecos-container, div.pedidos-container, div.config-container{
       height: 100%;
       padding: 20px;
     }
+
     .address-list-right {
       flex-basis: 65%;
       display: flex;
@@ -615,11 +676,11 @@ div.enderecos-container, div.pedidos-container, div.config-container{
         padding: 20px;
         margin-right: 20px;
 
-        h3{
+        h3 {
           display: flex;
           justify-content: space-between;
 
-          i{
+          i {
             margin-left: 5px;
             cursor: pointer;
           }
@@ -628,24 +689,27 @@ div.enderecos-container, div.pedidos-container, div.config-container{
     }
   }
 }
-div.dashboard-container{
+
+div.dashboard-container {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
   margin-top: 20px;
 
-  div.dashboard-left{
+  div.dashboard-left {
     flex-basis: 30%;
   }
-  div.dashboard-right{
+
+  div.dashboard-right {
     flex-basis: 65%;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
 
-    div.dashboard-enderecos, div.dashboard-pedidos{
+    div.dashboard-enderecos,
+    div.dashboard-pedidos {
       width: 100%;
       background-color: $primary-color;
       border: 1px solid $grey-border;
@@ -656,11 +720,13 @@ div.dashboard-container{
   }
 
 }
-h2{
-        font-size: 2rem;
-        font-weight: 400;
-        margin-top: 0;
-      }
+
+h2 {
+  font-size: 2rem;
+  font-weight: 400;
+  margin-top: 0;
+}
+
 .user-info {
   background-color: $primary-color;
   padding: 20px;
@@ -711,10 +777,11 @@ h2{
   border-radius: 10px;
 }
 
-.cta{
+.cta {
   margin-top: 20px;
 }
-.sair-text{
+
+.sair-text {
   text-align: center;
   font-size: 14px;
   font-weight: 400;
@@ -732,7 +799,7 @@ h2{
 .form-group {
   margin-bottom: 16px;
 }
-:deep(.el-table .cell){
+
+:deep(.el-table .cell) {
   word-break: normal;
-}
-</style>
+}</style>
