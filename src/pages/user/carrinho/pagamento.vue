@@ -130,22 +130,23 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                     <div class="card-item" v-for="product in products" :key="product">
                         <div class="card-item-inner">
                             <div class="card-item-about">
-                                <h3>{{ product.amount }} x {{ product.name }}</h3>
-                                <el-text type="info" size="small">{{ product.description }}</el-text>
+                                <h3 v-if="product.name">{{ product.amount }} x {{ product.name }}</h3>
+                                <h3 v-else>{{ product.amount }} x Móvel modelado</h3>
+                                <el-text type="info" size="small" v-if="product.description !== 'string' && product.description">{{ product.description }}</el-text>
                             </div>
                             <div class="card-item-price">
-                                <h4>R$ {{ formatPrice(product.value) }}</h4>
+                                <h4>{{ formatPrice(product.value) }}</h4>
                             </div>
                         </div>
                     </div>
                     <div class="card-item frete">
                         <el-text type="info" size="small">Frete: </el-text>
-                        <h4> {{ calcularFrete() != 0 ? "R$" + formatPrice(calcularFrete()) : "--" }}
+                        <h4> {{ calcularFrete() != 0 ? formatPrice(calcularFrete()) : "--" }}
                         </h4>
                     </div>
                     <div class="card-item subtotal">
                         <el-text type="info" size="medium">Total ({{ totalAmount() }} itens): </el-text>
-                        <h3> {{ totalPrice() != 0 ? "R$" + formatPrice(totalPrice()) : "--" }}
+                        <h3> {{ totalPrice() != 0 ? formatPrice(totalPrice()) : "--" }}
                         </h3>
                     </div>
 
@@ -228,22 +229,23 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                             <div class="card-item" v-for="product in products" :key="product">
                                 <div class="card-item-inner">
                                     <div class="card-item-about">
-                                        <h3>{{ product.amount }} x {{ product.name }}</h3>
+                                        <h3 v-if="product.name">{{ product.amount }} x {{ product.name }}</h3>
+                                        <h3 v-else>{{ product.amount }} x Móvel modelado</h3>
                                         <el-text type="info" size="small">{{ product.description }}</el-text>
                                     </div>
                                     <div class="card-item-price">
-                                        <h4>R$ {{ formatPrice(product.value) }}</h4>
+                                        <h4>{{ formatPrice(product.value) }}</h4>
                                     </div>
                                 </div>
                             </div>
                             <div class="card-item frete">
                                 <el-text type="info" size="small">Frete: </el-text>
-                                <h4> {{ calcularFrete() != 0 ? "R$" + formatPrice(calcularFrete()) : "--" }}
+                                <h4> {{ calcularFrete() != 0 ? formatPrice(calcularFrete()) : "--" }}
                                 </h4>
                             </div>
                             <div class="card-item subtotal">
                                 <el-text type="info" size="medium">Total ({{ totalAmount() }} itens): </el-text>
-                                <h3> {{ totalPrice() != 0 ? "R$" + formatPrice(totalPrice()) : "--" }}
+                                <h3> {{ totalPrice() != 0 ? formatPrice(totalPrice()) : "--" }}
                                 </h3>
                             </div>
                         </el-card>
@@ -301,7 +303,7 @@ export default {
                 value: 0,
                 quantity: 0,
                 imgUrl: "string",
-                description: "string",
+                description: "",
                 sectionProductCmpDtos: [],
             },
             product: {
@@ -530,7 +532,7 @@ export default {
         },
 
         calcularFrete() {
-            let frete = "15";
+            let frete = "15.00";
             /*if (this.products && this.products.length > 0) {
                 frete += this.products.length * 10;
             }*/
@@ -538,7 +540,7 @@ export default {
         },
 
         formatPrice(x) {
-            return x.toString().toLocaleString('pt-br', { style: 'currency', currency: 'BRL' });
+            return x.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         },
 
         nextStep() {

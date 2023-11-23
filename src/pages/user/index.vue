@@ -4,9 +4,9 @@
       <div class="hero">
         <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
         <div class="about">
-          <h2> Personni Móveis </h2>
+          <h2> {{ storeConfig.name }} </h2>
           <h1> Modelagem e personalização de móveis </h1>
-          <p> Bem-vindo à Personni móveis, onde a personalização e modelagem de móveis são a essência do nosso trabalho. Transformamos espaços com soluções sob medida, refletindo o estilo de cada cliente. </p>
+          <p> {{ storeConfig.aboutUs }} </p>
           <br>
           <router-link to="/modelar"><el-button class="cta" color="var(--cta-color)">Começar à modelar</el-button></router-link>
 
@@ -62,12 +62,18 @@
 
 <script>
 import axios from 'axios';
+import AuthService from '@/store/authService';
 
 export default {
   data() {
     return {
       categorias: [],
-      newestProducts: []
+      newestProducts: [],
+      storeConfig: {
+        name: '',
+        aboutUs: '',
+
+      },
     }
   },
   async created() {
@@ -75,6 +81,7 @@ export default {
     this.getMostRecentProducts();
     // Adquirindo categorias.
     this.getProductCategories();
+    this.getStoreConfig();
   },
   methods: {
     /** Retorna os produtos mais recentemente adicinados. */
@@ -99,7 +106,25 @@ export default {
         .catch(error => {
           console.error('Erro ao obter dados da API:', error);
         });
+    },
+    getStoreConfig() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.get(`http://localhost:8081/store`, config)
+        .then((response) => {
+        if (response.status === 200) {
+            this.storeConfig.name = response.data.storeName;
+            this.storeConfig.aboutUs = response.data.aboutUsInfo;
+
+
+        } else {
+            ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+        }
+    })
+    .catch((error) => {
+        console.error('Erro ao buscar dados da API:', error);
+    });
     }
+  
   }
 }
 </script>
@@ -280,7 +305,7 @@ div.content {
       margin: 2rem;
       padding: 2rem;
       transition: all 0.3s ease-in-out;
-      background-color: $tertiary-darker;
+      background-color: var(--tertiary-darker);
       height: 200px;
       width: 30vw;
 

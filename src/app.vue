@@ -26,7 +26,7 @@ export default {
     return {
       primaryColor: "#B68D40",
       secondaryColor: "#112620",
-      user: {
+      storeSettings: {
           primaryCollor: "",
           secondaryCollor: "",
       },
@@ -49,23 +49,30 @@ export default {
       axios.get(`http://localhost:8081/store`, config)
         .then((response) => {
         if (response.status === 200) {
-            this.user = response.data;
-          console.log(this.user.primaryCollor)
+            this.storeSettings = response.data;
 
-          if (this.user.primaryCollor === null || this.user.primaryCollor === '') {
-            this.user.primaryCollor = this.primaryColor;
+          if (this.storeSettings.primaryCollor === null || this.storeSettings.primaryCollor === '') {
+            this.storeSettings.primaryCollor = this.primaryColor;
           }
-          if (this.user.secondaryCollor === null || this.user.secondaryCollor === '') {
-            this.user.secondaryCollor = this.secondaryColor;
+          if (this.storeSettings.secondaryCollor === null || this.storeSettings.secondaryCollor === '') {
+            this.storeSettings.secondaryCollor = this.secondaryColor;
           }
+
+          console.log(this.storeSettings.primaryCollor);
+          console.log(this.storeSettings.secondaryCollor);
+
 
             document.documentElement.style.setProperty(
                 '--cta-color',
-                this.user.primaryCollor
+                this.storeSettings.primaryCollor
             );
             document.documentElement.style.setProperty(
                 '--tertiary-color',
-                this.user.secondaryCollor
+                this.storeSettings.secondaryCollor
+            );
+            document.documentElement.style.setProperty(
+                '--tertiary-darker',
+                this.darkenColor(this.storeSettings.secondaryCollor, 10)
             );
           
         } else {
@@ -105,6 +112,34 @@ export default {
         document.body.classList.remove('cmp-body');
       }
     }
+  },
+  methods: {
+    darkenColor(hex, percent) {
+    // Ensure the percent is within the valid range
+    percent = Math.max(0, Math.min(100, percent));
+
+    // Convert hex to RGB
+    let r = parseInt(hex.substring(1, 3), 16);
+    let g = parseInt(hex.substring(3, 5), 16);
+    let b = parseInt(hex.substring(5, 7), 16);
+
+    // Calculate the darkened RGB values
+    r = Math.round(r * (1 - percent / 100));
+    g = Math.round(g * (1 - percent / 100));
+    b = Math.round(b * (1 - percent / 100));
+
+    // Ensure the RGB values are within the valid range
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+
+    // Convert back to hex
+    const darkenedHex =
+        "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+      console.log(darkenedHex);
+
+    return darkenedHex;
+}
   }
   
 }

@@ -17,9 +17,13 @@ $admin-cta: $cta-color;
 $admin-primary: $tertiary-color;
 $text-color: #2c2c2c;
 
+$new-cta: #E94560;
+$new-tertiary: #16213E;
+
 :root{
     --cta-color: "";
     --tertiary-color: ""; 
+    --tertiary-darker: "";
 }
 
 // boilerplate

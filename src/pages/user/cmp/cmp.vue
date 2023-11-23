@@ -81,9 +81,32 @@
 
     </div>
 
+
     <div class="last-section" v-if="isLastSection">
 
       <h1>Revisar modelagem</h1>
+
+      <el-dialog
+                v-model="dialogVisibleResumo"
+                :title="currentOption.element + ': ' + currentOption.name"
+                width="40%"
+                :before-close="handleClose"
+              >
+                <div class="dialog-content">
+                  <div class="dialog-image" v-if="currentOption.img != ''">
+                        <el-image :src="currentOption.img"/>
+                  </div>
+                  <div class="dialog-image-placeholder" v-else>
+                    <img src="../../../assets/img/personniLogo-Grey.png"/>
+                  </div>
+                  <h3> {{ currentOption.description }} </h3>
+                </div>
+                <template #footer>
+                  <span class="dialog-footer">
+                    <h2>R$ {{ currentOption.price }}</h2>
+                  </span>
+                </template>
+              </el-dialog>
 
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="Visão em grid" name="first">
@@ -105,7 +128,7 @@
                     <div class="revisar-section-item-option">
                       <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
                       <h3 class="element-price">{{ element.price != 0 ? "R$ " +  element.price : "--" }}</h3>
-                      <el-icon class="option-dialog-button" @click="optionDialog(element.option)"><InfoFilled /></el-icon>
+                      <el-icon class="option-dialog-button" @click="optionDialogResumo(element)"><InfoFilled /></el-icon>
                     </div>
                   </div>
                 </div>
@@ -121,7 +144,7 @@
                       <div class="revisar-section-item-option">
                         <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
                         <h3 class="element-price">{{ element.price != 0 ? "R$ " + element.price : "--" }}</h3>
-                        <el-icon class="option-dialog-button" @click="optionDialog(option)"><InfoFilled /></el-icon>
+                        <el-icon class="option-dialog-button" @click="optionDialogResumo(element)"><InfoFilled /></el-icon>
                       </div>
                     </div>
                   </div>
@@ -230,6 +253,7 @@ export default {
         description: "",
         img: ""
       },
+      dialogVisibleResumo: false,
     };
   },
   async created() {
@@ -342,6 +366,14 @@ export default {
       this.currentOption.price = option.price
       this.currentOption.description = option.descriptions
       this.currentOption.img = option.img
+    },
+    optionDialogResumo(element) {
+      this.dialogVisibleResumo = true
+      this.currentOption.name = element.option
+      this.currentOption.element = element.element
+      this.currentOption.price = element.price
+      this.currentOption.description = option.descriptions
+      this.currentOption.img = element.img
     },
     encontrarElementoESeçãoPorOpção(optionIds) {
       const correspondencias = [];

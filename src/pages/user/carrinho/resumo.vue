@@ -43,7 +43,7 @@
                         src="../../../assets/img/personniLogo-Grey.png"
                         class="image"
                         />
-                        <h2> CMP </h2>
+                        <h2>Móvel modelado</h2>
                         <div class="quantidade">
                             <p>Quantidade</p>
                             <el-input-number v-model="cmp.amount" size="small" :min="0" :max="100" label="Quantidade" @input="updateCurrentProductCmp(cmp)"></el-input-number>
@@ -390,6 +390,7 @@ div.carrinho-content{
         .image{
             width: 150px;
             height: 150px;
+            object-fit: contain;
         }
         
         h2{
