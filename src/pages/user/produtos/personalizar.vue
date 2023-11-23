@@ -255,7 +255,7 @@ div.content {
             }
 
             label.el-radio-button:hover{
-                    background-color: $tertiary-darker;
+                    background-color: var(--tertiary-darker);
 
                     :deep(.el-radio-button__inner){
                     color: #fff;

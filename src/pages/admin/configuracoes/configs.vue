@@ -276,10 +276,6 @@ h1{
         color: var(--cta-color);
     }
 }
-body :deep(.el-popper.is-light) {
-  background-color: $primary-color !important;; 
-  border: none;
-}
 
 .avatar-uploader .avatar {
     width: 100px;
@@ -299,5 +295,13 @@ body :deep(.el-popper.is-light) {
 }
 .el-input_wrapper{
   border: 1px solid $grey-border;
+}
+</style>
+
+<style lang="scss">
+@import "@/assets/styles/scss/basics.scss";
+.el-popper {
+  background-color: $primary-color !important;; 
+  border: none;
 }
 </style>

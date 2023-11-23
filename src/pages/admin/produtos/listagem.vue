@@ -20,13 +20,13 @@
           </div>
         </template>
         </el-table-column>
-        <!-- <el-table-column prop="category.name" label="Categoria" sortable width="150">
+        <el-table-column prop="category.name" label="Categoria" sortable width="150">
         <template v-slot="scope">
           <div class="categoria">
             <h4>{{ scope.row.category.name}}</h4>
           </div>
         </template>
-      </el-table-column> -->
+      </el-table-column>
       <el-table-column prop="mainImg" label="Imagem" width="100" >
         <template v-slot="scope">
           <img :src="scope.row.mainImg"/>
@@ -49,7 +49,7 @@
       <el-table-column prop="quantity" sortable label="Estoque" width="100">
         <template v-slot="scope">
           <div class="estoque">
-            <el-text type="success" v-if="scope.row.quantity > 1">{{ scope.row.quantity }}</el-text>
+            <el-text type="success" v-if="scope.row.quantity >= 1">{{ scope.row.quantity }}</el-text>
             <el-text type="danger" v-else-if="scope.row.quantity == 0">0</el-text>
           </div>
         </template>

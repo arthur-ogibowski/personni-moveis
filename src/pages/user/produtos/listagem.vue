@@ -13,12 +13,11 @@
 
             <el-divider />
 
-            <el-button v-if="this.filterCategory != ''" @click="removeSelectedCategory()">Remover Categoria</el-button>
             <div class="catalogo-content">
               <div class="filters">
                 <div class="filters-item">
                   <el-divider content-position="center">Categorias</el-divider>
-                  <el-radio-group v-model="filterCategory" size="large">
+                  <el-radio-group @change="applyFilters" v-model="filterCategory" size="large">
                     <el-radio-button
                       v-for="category in categories"
                       :key="category.id"
@@ -31,7 +30,7 @@
 
               <div class="filters-item">
                   <el-divider content-position="center">Preço</el-divider>
-                  <el-radio-group @change="filterPrice" v-model="priceFilter" size="large">
+                  <el-radio-group @change="applyFilters" v-model="priceFilter" size="large">
                     <el-radio-button label="crescente">
                       Menor para maior 
                       <!-- Se filtro para ordenar pelo maior é selecionado -->
@@ -45,7 +44,7 @@
 
                 <div class="filters-item">
                   <el-divider content-position="center">Disponibilidade</el-divider>
-                  <el-radio-group @change="filterPrice" v-model="stockFilter" size="large">
+                  <el-radio-group @change="applyFilters" v-model="stockFilter" size="large">
                     <el-radio-button label="disponivel">
                       Disponível
                     </el-radio-button>
@@ -57,7 +56,7 @@
 
                 <div class="filters-item">
                   <el-divider content-position="center">Personalizável</el-divider>
-                  <el-radio-group @change="filterPrice" v-model="persoFilter" size="large">
+                  <el-radio-group @change="applyFilters" v-model="persoFilter" size="large">
                     <el-radio-button label="sim">
                       Sim
                     </el-radio-button>
@@ -66,13 +65,15 @@
                     </el-radio-button>
                   </el-radio-group>
                 </div>
+
+                <el-button class="cta" @click="removeFilters">Remover Filtros</el-button>
               
               
             </div>
 
 
               <div class="produtos-listing">
-                <div class="produto-card" v-for="product in getFilteredProducts()" :key="product">
+                <div class="produto-card" v-for="product in filteredProducts" :key="product">
                   <router-link :to='"/produtos/" + product.productId'>
                     <el-card :body-style="{ padding: '0px' }">
                         <el-image v-if="product.mainImg"
@@ -116,9 +117,9 @@ export default {
       return{
         categories: [],
         products: [],
+        filteredProducts: [],
         loading: true,
-        // Filtros:
-        filterCategory: '',
+        filterCategory: null,
         productSearchInput: '',
         priceFilter: null,
         stockFilter: null,
@@ -142,8 +143,8 @@ export default {
     if (this.$route.query.category) {
       axios.get("http://localhost:8081/category/products-in-category/" + this.$route.query.category)
         .then(response => {
-          this.product = [];
           response.data.forEach(product => this.products.push(product));
+          this.filteredProducts = this.products;
           this.$forceUpdate();
         })
         setTimeout(() => {
@@ -155,6 +156,7 @@ export default {
       axios.get('http://localhost:8081/products')
       .then(response => {
         this.products = response.data;
+        this.filteredProducts = this.products;
         setTimeout(() => {
           loading.close()
         }, 250)
@@ -165,66 +167,59 @@ export default {
     }
   },
   methods: {
-    filtrarPorCategoria(categoryId) {
-      const loading = ElLoading.service({
-            lock: true,
-            text: 'Filtrando...',
-            background: 'rgba(0, 0, 0, 0.7)'
-      });
-      axios.get("http://localhost:8081/category/products-in-category/" + categoryId)
-        .then(response => {
-          this.product = [];
-          response.data.forEach(product => this.products.push(product));
-          console.log(this.products);
-          this.$forceUpdate();
-
-          setTimeout(() => {
-            loading.close()
-          }, 250)
-
-        })
-        .catch(error => {
-          console.error('Erro ao obter dados da API:', error);
-        });
-    },
-    /** Filtra produtos com base no input do usuário. */
     inputSearch(searchInput, products) {
       return products.filter(product => product.name.toUpperCase().includes(searchInput.toUpperCase()));
     },
-    /** Filtra os produtos com base na categoria selecionada. Se nehuma foi selecionada, retorna todos produtos. */
-    filterByCategory(selectedCategory, products) {
-      return products.filter(product => selectedCategory == '' || product.categoryId == selectedCategory);
-    },
-    /** Aplica todos os filtros e retorna os produtos. */
-    getFilteredProducts() {
-      const filteredByCategory = this.filterByCategory(this.filterCategory, this.products);
-      return this.inputSearch(this.productSearchInput, filteredByCategory);
-    },
-    /** Remove a categoria selecionada no momento. */
-    removeSelectedCategory() {
-      this.filterCategory = '';
-    },
-    filterPrice() {
+    filterPrice(result) {
       if (this.priceFilter == 'crescente') {
-        this.products.sort((a, b) => a.value - b.value);
+        return result.slice().sort((a, b) => a.value - b.value);
       } else if (this.priceFilter == 'decrescente') {
-        this.products.sort((a, b) => b.value - a.value);
+        return result.slice().sort((a, b) => b.value - a.value);
+      } else {
+        return result.slice();
       }
     },
-    filterStock(){
+    filterStock(result) {
       if (this.stockFilter == 'disponivel') {
-        this.products = this.products.filter(product => product.quantity > 0);
+        return result.slice().filter(product => product.quantity > 0);
       } else if (this.stockFilter == 'fora') {
-        this.products = this.products.filter(product => product.quantity == 0);
-      }  
+        return result.slice().filter(product => product.quantity == 0);
+      } else {
+        return result.slice();
+      }
     },
-    filterPerso(){
+    filterPerso(result) {
       if (this.persoFilter == 'sim') {
-        this.products = this.products.filter(product => product.editable == true);
+        return result.slice().filter(product => product.editable == true);
       } else if (this.persoFilter == 'nao') {
-        this.products = this.products.filter(product => product.editable == false);
-      }  
+        return result.slice().filter(product => product.editable == false);
+      } else {
+        return result.slice();
+      }
     },
+    filterByCategory(selectedCategory, result) {
+      return result.filter(product => selectedCategory == '' || product.categoryId == selectedCategory);
+    },
+
+
+    applyFilters() {
+      let result = this.products;
+
+      result = this.filterPrice(result); 
+      result = this.filterStock(result);
+      result = this.filterPerso(result); 
+      result = this.filterByCategory(this.filterCategory, result);
+
+      this.filteredProducts = result;
+    },
+    removeFilters() {
+      this.priceFilter = null;
+      this.stockFilter = null;
+      this.persoFilter = null;
+      this.filterCategory = null;
+      this.filteredProducts = this.products;
+    },
+
     /** Remove filtro de preço após filtro ser selecionado. */
     removePriceFilter() {
       this.priceFilter = null;
