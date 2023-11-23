@@ -27,6 +27,7 @@ const AuthService = {
     // Se ainda não tem token (user não logado) redireciona para fazer login.
     if (!this.hasUserLoggedIn()) {
       router.replace('/login');
+      return true;
     }
   },
 
