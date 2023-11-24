@@ -305,7 +305,10 @@ export default {
                 ElMessage.error('Para ser cadastrado, o produto deve ter uma categoria selecionada!');
                 return;
             }
-
+            if (isNaN(this.product.value) || this.product.value < 1) {
+                ElMessage.error('Para que o produto seja criado, é necessário que seu "Preço" seja um valor numérico maior que 0');
+                return;
+            }
             if (this.product.value != '') {
                 this.product.value = this.product.value.replace(/\./g, '').replace(',', '.');
             }
