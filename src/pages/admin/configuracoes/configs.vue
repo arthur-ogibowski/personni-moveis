@@ -45,13 +45,13 @@
           <el-input v-model="user.storePhone"></el-input>
         </el-form-item>
         <el-form-item label="Endereço da Empresa">
-          <!--<vue-google-autocomplete
+          <vue-google-autocomplete
             id="address-input"
             placeholder=""
             v-on:placechanged="getAddressData"
             :options="options"
             class="el-input el-input_wrapper"
-          ></vue-google-autocomplete>-->
+          ></vue-google-autocomplete>
         <div id="infowindow-content">
           <span id="place-name" class="title"></span><br />
           <span id="place-address"></span>
@@ -81,11 +81,9 @@
   import { ElMessage, ElLoading } from 'element-plus';
   import AuthService from '@/store/authService';
   import imgConverter from '@/store/imgConverter.js';
-  
-  // import VueGoogleAutocomplete from "vue-google-autocomplete";
+
   
   export default {
-    // components: { VueGoogleAutocomplete },
     data() {
       return {
         user: {
@@ -107,12 +105,6 @@
       }
     },
     mounted() {
-
-      // const mapsScript = document.createElement('script');
-      // mapsScript.src = 'https://maps.googleapis.com/maps/api/js?key=AIzaSyAN8WuBocaymoMHLv-iSkench1O6hVrOVY&libraries=places';
-      // document.body.appendChild(mapsScript);
-
-      
 
         // this.user.storeId = 1;
         const config = { headers: { Authorization: AuthService.getToken() } };
@@ -278,7 +270,7 @@ h1{
 }
 
 .avatar-uploader .avatar {
-    width: 100px;
+    width: 100%;
     height: 100px;
     display: block;
     min-width: 100px;

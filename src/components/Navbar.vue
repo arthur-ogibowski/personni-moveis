@@ -7,7 +7,7 @@
     active-text-color="var(--tertiary-color)"
     @select="handleSelect"
   >
-    <el-menu-item><router-link to="/"><img style="width: 200px;" src="../assets/img/personniLogo-Gold.png"/></router-link></el-menu-item>
+    <el-menu-item><router-link to="/"><img style="width: 150px;" :src="storeConfig.logo"/></router-link></el-menu-item>
     <div class="flex-grow" />
     <el-menu-item v-if="isUserSysColaborator()"><router-link to="/admin">Admin</router-link></el-menu-item>
     <el-menu-item><router-link to="/produtos">Catálogo</router-link></el-menu-item>
@@ -21,11 +21,15 @@
 import AuthService from '@/store/authService';
 import cartService from '@/store/cartService';
 import jwtDecode from 'jwt-decode';
+import axios from 'axios';
 
 export default {
   data() {
     return {
       cartItemsCounter: cartService.amountOfProductsInCart(),
+      storeConfig: {
+        logo: '',
+      },
     };
   },
   computed: {
@@ -35,8 +39,25 @@ export default {
   },
   created() {
     this.getAmountOfProductsInCart();
+    this.getStoreConfig();
   },
   methods: {
+    getStoreConfig() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.get(`http://localhost:8081/store`, config)
+        .then((response) => {
+        if (response.status === 200) {
+            this.storeConfig.logo = response.data.storeLogoPath
+
+
+        } else {
+            ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+        }
+    })
+    .catch((error) => {
+        console.error('Erro ao buscar dados da API:', error);
+    });
+    },
     /** Cria o eventListner e atualiza a quantidade de itens no icone do carrinho. */
     getAmountOfProductsInCart() {
       window.addEventListener('cartUpdated', () => {
@@ -69,11 +90,13 @@ export default {
   z-index: 2;
   padding-right: 10px;
   text-transform: uppercase;
-  height: 75px;
+  height: 75px !important;
+  border-bottom: 0 !important;
 }
 .cta{
   margin: 0 20px;
 }
+
 
 @media (max-width: 768px) {
   .el-menu{

@@ -8,11 +8,17 @@
 
         <div class="main-single">
             <div class="image-container">
+                <div v-if="images[0].img">
                 <el-carousel :interval="5000" arrow="always" :autoplay="false" ref="carousel" >
                   <el-carousel-item v-for="image in images" :key="image" :name="parseInt(image.productImgId)">
                     <el-image style="width: 500px; height: 500px; cursor: pointer;" :src="image.img" :fit="fit" @click="showImageZoom = true; dialogImage = image.img" />
                   </el-carousel-item>
                 </el-carousel>
+                </div>
+
+                <div v-else>
+                    <img style="width: 500px; height: 500px" :src="storeConfig.placeholder" class="placeholder"/>
+                </div>
 
                 <el-dialog v-model="showImageZoom" width="50%" center>
                   <el-image :src="dialogImage" alt="Zoomed Image" style="width: 750px; height: 750px;" />
@@ -60,7 +66,8 @@
 import cartService from '@/store/cartService.js';
 import axios from 'axios';
 import { ElLoading } from 'element-plus';
-import { ElMessage } from 'element-plus'
+import { ElMessage } from 'element-plus';
+import AuthService from '@/store/authService.js';
 
 export default {
     data(){
@@ -69,6 +76,9 @@ export default {
             images: [],
             showImageZoom: false,
             dialogImage: '',
+            storeConfig: {
+                placeholder: '',
+            },
         }
     },
     async created() {
@@ -77,6 +87,7 @@ export default {
             text: 'Carregando produto...',
             background: 'rgba(0, 0, 0, 0.7)'
         });
+        this.getStoreConfig();
         const id = this.$route.params.id;
         if (id != null) {
             axios.get(`http://localhost:8081/products/${this.$route.params.id}`)
@@ -112,7 +123,22 @@ export default {
         changeImage(id){
             console.log(id)
             this.$refs.carousel.setActiveItem(parseInt(id) - 1);
-        }
+        },
+        getStoreConfig() {
+            const config = { headers: { Authorization: AuthService.getToken() } };
+            axios.get(`http://localhost:8081/store`, config)
+            .then((response) => {
+            if (response.status === 200) {
+                this.storeConfig.placeholder = response.data.storePlaceholdeImgPath
+
+            } else {
+                ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao buscar dados da API:', error);
+            });
+        },
 
     }
 }
@@ -244,5 +270,11 @@ div.container {
     }
 }
 
-
+.placeholder{
+    width: 500px;
+    height: 500px;
+    border: 1px solid $grey-border;
+    object-fit: none;
+    background-color: $primary-color;
+}
 </style>

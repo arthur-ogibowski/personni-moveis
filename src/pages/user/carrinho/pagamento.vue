@@ -6,7 +6,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
     <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="var(--tertiary-color)"
         active-text-color="var(--tertiary-color)" @select="handleSelect">
         <el-menu-item><router-link to="/"><img style="width: 200px;"
-                    src="../../../assets/img/personniLogo-Green.png" /></router-link></el-menu-item>
+                    :src="storeConfig.logo" /></router-link></el-menu-item>
 
         <el-steps align-center :active="currentStep" finish-status="success" simple class="checkout-steps">
             <el-step title="Endereço de entrega" :icon="LocationFilled" />
@@ -353,6 +353,9 @@ export default {
             selectedAddress: null,
             selectAddress: "",
             addressChoice: 'existingAddress',
+            storeConfig: {
+                logo: '',
+            },
         };
     },
     computed: {
@@ -373,7 +376,7 @@ export default {
             background: 'rgba(0, 0, 0, 0.7)'
         });
         // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
-
+        this.getStoreConfig();
         this.regularProducts = cartService.getCartItems();
         this.cmpProducts = cartService.getCmpItems();
 
@@ -629,6 +632,21 @@ export default {
                     console.error('Erro ao carregar endereços:', error);
                 });
         },
+        getStoreConfig() {
+          const config = { headers: { Authorization: AuthService.getToken() } };
+          axios.get(`http://localhost:8081/store`, config)
+            .then((response) => {
+            if (response.status === 200) {
+                this.storeConfig.logo = response.data.storeLogoPath
+
+            } else {
+                ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+            }
+        })
+        .catch((error) => {
+            console.error('Erro ao buscar dados da API:', error);
+        });
+        },
     },
 }
 </script>
@@ -639,6 +657,7 @@ export default {
 .el-menu {
     display: flex;
     justify-content: space-between;
+    height: 100px;
 }
 
 .checkout-steps {
