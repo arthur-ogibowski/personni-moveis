@@ -2,7 +2,7 @@
    <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="var(--tertiary-color)"
         active-text-color="var(--tertiary-color)" @select="handleSelect">
         <el-menu-item><router-link to="/"><img style="width: 200px;"
-                    src="../../../assets/img/personniLogo-Green.png" /></router-link></el-menu-item>
+                    :src="storeConfig.logo" /></router-link></el-menu-item>
 
         <h1> Modelagem de móveis </h1>
     </el-menu>
@@ -23,12 +23,16 @@
 
 <script>
 import axios from 'axios';
-import { ElLoading } from 'element-plus'
+import { ElLoading, ElMessage } from 'element-plus'
+import AuthService from '@/store/authService.js';
 
 export default {
   data() {
     return {
-      categorias: []
+      categorias: [],
+      storeConfig: {
+        logo: '',
+      },
     }
   },
   async created() {
@@ -49,6 +53,20 @@ export default {
         .catch(error => {
           console.error('Erro ao obter dados da API:', error);
       });
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.get(`http://localhost:8081/store`, config)
+      .then((response) => {
+      if (response.status === 200) {
+          this.storeConfig.logo = response.data.storeLogoPath
+      
+      } else {
+          ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+          }
+      })
+      .catch((error) => {
+          console.error('Erro ao buscar dados da API:', error);
+      });
+        
     }
 }
 </script>
@@ -57,6 +75,7 @@ export default {
 @import '@/assets/styles/scss/basics.scss';
 .el-menu{
   justify-content: space-between;
+  height: 100px;
   h1 {
   font-size: 32px;
   font-weight: 300;

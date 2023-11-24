@@ -1,8 +1,8 @@
 <template>
   <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="var(--tertiary-color)"
         active-text-color="var(--tertiary-color)" @select="handleSelect">
-        <el-menu-item><router-link to="/"><img style="width: 200px;"
-                    src="../../../assets/img/personniLogo-Green.png" /></router-link></el-menu-item>
+        <el-menu-item><router-link to="/"><img style="width: 200px; height: 120px;"
+                    :src="storeConfig.logo" /></router-link></el-menu-item>
 
         <h1> Modelagem de móveis </h1>
     </el-menu>
@@ -35,7 +35,7 @@
                         <el-image :src="option.img"/>
                       </div>
                       <div class="option-image-placeholder" v-else>
-                        <img src="../../../assets/img/personniLogo-Grey.png"/>
+                        <img :src="storeConfig.placeholder"/>
                       </div>
                       <el-icon class="option-dialog-button" @click="optionDialog(option)"><InfoFilled /></el-icon>
                       <div class="option-info">
@@ -59,7 +59,7 @@
                         <el-image :src="currentOption.img"/>
                   </div>
                   <div class="dialog-image-placeholder" v-else>
-                    <img src="../../../assets/img/personniLogo-Grey.png"/>
+                    <img :src="storeConfig.placeholder"/>
                   </div>
                   <h3> {{ currentOption.description }} </h3>
                 </div>
@@ -97,7 +97,7 @@
                         <el-image :src="currentOption.img"/>
                   </div>
                   <div class="dialog-image-placeholder" v-else>
-                    <img src="../../../assets/img/personniLogo-Grey.png"/>
+                    <img :src="storeConfig.placeholder"/>
                   </div>
                   <h3> {{ currentOption.description }} </h3>
                 </div>
@@ -123,7 +123,7 @@
                           <el-image :src="element.img"/>
                     </div>
                     <div class="element-image-main" v-else>
-                          <img src="../../../assets/img/personniLogo-Grey.png"/>
+                          <img :src="storeConfig.placeholder"/>
                     </div>
                     <div class="revisar-section-item-option">
                       <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
@@ -139,7 +139,7 @@
                             <el-image :src="element.img"/>
                       </div>
                       <div class="element-image" v-else>
-                            <img src="../../../assets/img/personniLogo-Grey.png"/>
+                            <img :src="storeConfig.placeholder"/>
                       </div>
                       <div class="revisar-section-item-option">
                         <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
@@ -179,7 +179,7 @@
                     <el-image :src="scope.row.image"/>
                   </div>
                   <div v-else class="table-image">
-                    <img src="../../../assets/img/personniLogo-Grey.png"/>
+                    <img :src="storeConfig.placeholder"/>
                   </div>
                 </div>
               </template>
@@ -221,6 +221,7 @@ import axios from 'axios';
 import { ElLoading } from 'element-plus'
 import { ElMessage } from 'element-plus'
 import cartService from '@/store/cartService';
+import AuthService from '@/store/authService.js';
 
 export default {
   data() {
@@ -254,6 +255,10 @@ export default {
         img: ""
       },
       dialogVisibleResumo: false,
+      storeConfig: {
+        logo: '',
+        placeholder: '',
+      },
     };
   },
   async created() {
@@ -262,6 +267,7 @@ export default {
             text: 'Carregando modelagem...',
             background: '#ffffff'
       });
+    this.getStoreConfig();
     const id = this.$route.params.id;
     axios.get(`http://localhost:8081/category/` + id)
       .then((response) => {
@@ -506,6 +512,22 @@ export default {
       window.print();
       this.columnWidth = "*"
     },
+    getStoreConfig() {
+            const config = { headers: { Authorization: AuthService.getToken() } };
+            axios.get(`http://localhost:8081/store`, config)
+            .then((response) => {
+            if (response.status === 200) {
+                this.storeConfig.logo = response.data.storeLogoPath
+                this.storeConfig.placeholder = response.data.storePlaceholdeImgPath
+            
+            } else {
+                ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao buscar dados da API:', error);
+            });
+        },
 
 
   },
@@ -565,6 +587,8 @@ h2{
 }
 .el-menu{
   justify-content: space-between;
+  height: 100px;
+  border-bottom: 0 !important;
   h1 {
   font-size: 32px;
   font-weight: 300;
@@ -617,7 +641,7 @@ h2{
             display: flex;
             justify-content: center;
             align-items: center;
-            background-color: #EBEBEB;
+            background-color: $primary-color;
           }
 
           .option-info{
@@ -673,7 +697,7 @@ h2{
         margin: 0 10px 10px 0;
         padding: 10px;
         min-width: 150px;
-        background-color: #EBEBEB;
+        background-color: $primary-color;
 
         h4{
           margin-top: 0;

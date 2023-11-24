@@ -1,10 +1,10 @@
 
 <template>
   <div class="container">
-    <img src="../../assets/img/personniLogo-Green.png" alt="Personni Móveis" class="logo"/>
+    <div class="logo-container"><img :src="storeConfig.logo" class="logo"/></div>
     <div class="login-container">
       <div class="side-image">
-        <img src="../../assets/img/personni.png" alt="Personni Móveis" class="img-item"/>
+        <img src="../../assets/img/personni.png" class="img-item"/>
       </div>
     <div class="dialog">
           <h1>Crie sua conta</h1>
@@ -36,19 +36,26 @@
 <script>
 import axios from 'axios';
 import { ElMessage } from 'element-plus';
+import AuthService from '@/store/authService.js';
 
 export default {
     data() {
         return {
             cadastro:{
-            name: "",
-            email: "",
-            cpf: "",
-            phoneNumber: "",
-            password: "",
-        },
-            carregando: false
+              name: "",
+              email: "",
+              cpf: "",
+              phoneNumber: "",
+              password: "",
+            },
+            carregando: false,
+            storeConfig: {
+              logo: '',
+            },
         }
+    },
+    created() {
+      this.getStoreConfig();
     },
     methods: {
         cadastrarUsuario() {
@@ -64,7 +71,22 @@ export default {
         .catch(error => {
           console.error('Erro ao realizar cadastro:', error);
         })
-    }
+    },
+    getStoreConfig() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.get(`http://localhost:8081/store`, config)
+        .then((response) => {
+        if (response.status === 200) {
+            this.storeConfig.logo = response.data.storeLogoPath
+
+        } else {
+            ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+        }
+    })
+    .catch((error) => {
+        console.error('Erro ao buscar dados da API:', error);
+    });
+    },
   }
 };
 </script>
@@ -80,9 +102,10 @@ div.container{
   background-color: #CECECE;
   padding-top: 0;
   padding-bottom: 0;
-  .logo{
+  .logo-container{
     width: 25rem;
     margin-bottom: 20px;
+    height: 15rem;
   }
 }
 

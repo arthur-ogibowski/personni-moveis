@@ -81,7 +81,7 @@
                           class="image"
                         />
                         <div v-else>
-                          <img src="../../../assets/img/personniLogo-Grey.png" class="image placeholder"/>
+                          <img :src="storeConfig.placeholder" class="image placeholder"/>
                           </div>
                         <div style="padding: 14px">
                           <div class="card-bottom">
@@ -110,7 +110,8 @@
 
 <script>
 import axios from 'axios';
-import { ElLoading } from 'element-plus';
+import { ElLoading, ElMessage } from 'element-plus';
+import AuthService from '@/store/authService.js';
 
 export default {
     data() {
@@ -124,6 +125,9 @@ export default {
         priceFilter: null,
         stockFilter: null,
         persoFilter: null,
+        storeConfig: {
+          placeholder: '',
+        },
       }
     },
   async created() {
@@ -132,6 +136,7 @@ export default {
           text: 'Carregando catálogo...',
           background: 'rgba(0, 0, 0, 0.7)'
     });
+    this.getStoreConfig();
     axios.get('http://localhost:8081/category')
       .then(response => {
         this.categories = response.data;
@@ -197,8 +202,13 @@ export default {
         return result.slice();
       }
     },
-    filterByCategory(selectedCategory, result) {
-      return result.filter(product => selectedCategory == '' || product.categoryId == selectedCategory);
+    filterByCategory(result) {
+      if (this.filterCategory == null) {
+        return result.slice();
+      }
+      else{
+        return result.slice().filter(product => this.filterCategory == '' || product.categoryId == this.filterCategory);
+      }
     },
 
 
@@ -208,7 +218,7 @@ export default {
       result = this.filterPrice(result); 
       result = this.filterStock(result);
       result = this.filterPerso(result); 
-      result = this.filterByCategory(this.filterCategory, result);
+      result = this.filterByCategory(result);
 
       this.filteredProducts = result;
     },
@@ -223,7 +233,22 @@ export default {
     /** Remove filtro de preço após filtro ser selecionado. */
     removePriceFilter() {
       this.priceFilter = null;
-    }
+    },
+    getStoreConfig() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.get(`http://localhost:8081/store`, config)
+        .then((response) => {
+        if (response.status === 200) {
+            this.storeConfig.placeholder = response.data.storePlaceholdeImgPath
+
+        } else {
+            ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+        }
+    })
+    .catch((error) => {
+        console.error('Erro ao buscar dados da API:', error);
+    });
+    },
   },
 }
 </script>

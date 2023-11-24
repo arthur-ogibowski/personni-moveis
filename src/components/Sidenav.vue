@@ -8,7 +8,7 @@
 
             <div class="menu-items">         
               
-              <router-link to="/"><h1><img src="../assets/img/personniLogo-White.png" alt="Personni Móveis" class="img-item"/></h1></router-link>
+              <router-link to="/"><h1><img :src="storeConfig.altLogo" class="img-item"/></h1></router-link>
 
               <router-link to="/admin">
                 <el-menu-item index="0">
@@ -63,7 +63,21 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { ElMessage } from 'element-plus';
+import AuthService from '@/store/authService.js';
+
 export default {
+  data() {
+    return {
+      storeConfig: {
+        altLogo: '',
+      },
+    }
+  },
+  created() {
+    this.getStoreConfig();
+  },
 methods: {
   currentPageMenuIndex() {
     const path = this.$route.path;
@@ -80,7 +94,23 @@ methods: {
     } else if (path.includes('/admin/configuracoes')) {
       return '5';
     }
-  }
+  },
+  getStoreConfig() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.get(`http://localhost:8081/store`, config)
+      .then((response) => {
+      if (response.status === 200) {
+          this.storeConfig.altLogo = response.data.storeSecondaryImgPath
+
+      } else {
+          ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+          }
+      })
+      .catch((error) => {
+          console.error('Erro ao buscar dados da API:', error);
+      });
+  },
+
 },
 }
 </script>
