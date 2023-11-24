@@ -15,7 +15,11 @@
             <div class="listagem-produtos">
                 <div class="produto-card" v-for="product in cartProducts" :key="product">
                     <el-card class="carrinho-item" shadow="never">
-                        <img :src=product.mainImg
+                        <img v-if="product.mainImg" :src=product.mainImg
+                        class="image"
+                        />
+                        <img v-else
+                        :src="storeConfig.placeholder"
                         class="image"
                         />
                         <h2> {{ product.name }} </h2>
@@ -40,7 +44,7 @@
                 <div class="produto-card" v-for="cmp in cmpProducts" :key="cmp">
                     <el-card class="carrinho-item" shadow="never">
                         <img
-                        src="../../../assets/img/personniLogo-Grey.png"
+                        :src="storeConfig.placeholder"
                         class="image"
                         />
                         <h2>Móvel modelado</h2>
@@ -87,7 +91,9 @@
 
 <script>
 import cartService from '@/store/cartService.js';
-import { ElLoading, ElMessageBox } from 'element-plus';
+import { ElLoading, ElMessageBox, ElMessage } from 'element-plus';
+import AuthService from '@/store/authService.js';
+import axios from 'axios';
 
 export default {
     data() {
@@ -105,6 +111,9 @@ export default {
             products: [],
             totalProducts: "", // preco dos itens padrao do carrinho
             totalCmps: "", // preco dos itens modelados do carrinho
+            storeConfig: {
+                placeholder: '',
+            },
         }
     },
     created() {
@@ -116,6 +125,7 @@ export default {
         // Inicializa lista de produtos do carrinho (em tela) com os produtos adicionados no localstorage.
         this.getCartProductsFromLocalStorage();
         this.getCartCmpProductsFromLocalStorage();
+        this.getStoreConfig();
 
         this.products = this.cartProducts.concat(this.cmpProducts);
         setTimeout(() => {
@@ -211,6 +221,21 @@ export default {
             // remove da lista em tela.
             const itemIndex = this.cmpProducts.findIndex((item) => item.id === cmp.id);
             this.cmpProducts.splice(itemIndex, 1);
+        },
+        getStoreConfig() {
+            const config = { headers: { Authorization: AuthService.getToken() } };
+            axios.get(`http://localhost:8081/store`, config)
+            .then((response) => {
+            if (response.status === 200) {
+                this.storeConfig.placeholder = response.data.storePlaceholdeImgPath
+            
+            } else {
+                ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+                }
+            })
+            .catch((error) => {
+                console.error('Erro ao buscar dados da API:', error);
+            });
         },
     },
 
