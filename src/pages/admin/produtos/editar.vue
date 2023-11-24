@@ -222,6 +222,7 @@
 
 <script>
 import AuthService from '@/store/authService.js';
+import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import { ElMessage, ElLoading } from 'element-plus';
 import imgConverter from '@/store/imgConverter.js';
@@ -258,6 +259,20 @@ export default {
         // Adquire dados.
         this.getProduct();
         this.getCategories();
+
+    const token = AuthService.getToken();
+
+        if (token) {
+        const usuario = jwtDecode(token);
+
+        if (usuario) {
+            if (usuario.userRole === 'COLABORATOR' || usuario.userRole === 'ADMIN') {
+            // Usuário tem permissão de colab ou admin, continue carregando a página
+            } else if (usuario.userRole === 'USER') {
+            this.$router.push("/"); // Para voltar à página anterior
+            }
+        }
+        }
     },
     methods: {
         PrincipalImgRemove() {

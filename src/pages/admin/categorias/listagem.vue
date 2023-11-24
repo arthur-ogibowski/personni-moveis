@@ -50,6 +50,9 @@
 <script>
 import axios from 'axios'
 import { ElMessage, ElMessageBox, ElLoading } from 'element-plus';
+import AuthService from '@/store/authService.js';
+import jwtDecode from 'jwt-decode';
+
 export default {
   data() {
     return {
@@ -75,6 +78,20 @@ export default {
       .catch(error => {
         console.error('Erro ao obter dados da API:', error);
       });
+
+    const token = AuthService.getToken();
+
+    if (token) {
+      const usuario = jwtDecode(token);
+
+      if (usuario) {
+        if (usuario.userRole === 'COLABORATOR' || usuario.userRole === 'ADMIN') {
+          // Usuário tem permissão de colab ou admin, continue carregando a página
+        } else if (usuario.userRole === 'USER') {
+          this.$router.push("/"); // Para voltar à página anterior
+        }
+      }
+    }
   },
   mounted() {
     //this.categorias = Object.values(this.getCategorias())
