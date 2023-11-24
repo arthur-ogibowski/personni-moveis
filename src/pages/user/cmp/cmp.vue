@@ -71,7 +71,7 @@
                 <el-button class="cta" color="var(--cta-color)" style="visibility: hidden;" type="primary"
                   @click="previousSection" v-else></el-button>
                 <el-button class="cta" color="var(--cta-color)" type="primary" @click="nextSection"
-                  :disabled="isCurrentElementMandatory && !this.selected[currentSection.id]">
+                  :disabled="isCurrentElementMandatory">
                   Próximo passo <el-icon>
                     <CaretRight />
                   </el-icon>
@@ -348,19 +348,23 @@ export default {
       // Verifica se a seção não é 'Revisar' e se há uma opção selecionada para a seção atual
       if (currentSection.name !== 'Revisar' && this.selected[currentSection.id]) {
 
-        // Verifica se pelo menos uma opção em qualquer elemento é obrigatória
-        const isMandatoryOptionSelected = currentSection.elementCmps.some(element => {
-          const selectedOptionId = this.selected[element.id];
-          return element.mandatory && selectedOptionId !== undefined;
-        });
+        // Verifica se todas as opções obrigatórias foram selecionadas para elementos obrigatórios
+        const areAllMandatoryOptionsSelected = currentSection.elementCmps
+          .filter((element) => element.mandatory)
+          .every((mandatoryElement) => {
+            const selectedOptionId = this.selected[mandatoryElement.id];
+            return mandatoryElement.optionCmps.some((mandatoryOption) => mandatoryOption.id === selectedOptionId);
+          });
 
-        // Se pelo menos uma opção obrigatória foi selecionada, retorna falso
-        return !isMandatoryOptionSelected;
+        return !areAllMandatoryOptionsSelected;
       }
 
       // Se a seção for 'Revisar' ou nenhum elemento foi selecionado, não é obrigatório
       return true;
     },
+
+
+
 
 
 
