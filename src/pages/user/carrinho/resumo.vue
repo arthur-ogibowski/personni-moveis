@@ -71,15 +71,15 @@
                         <h2>Resumo</h2>
                     </div>
                     <div class="card-item count-products">
-                        <el-text type="info" size="small">Móveis prontos / personalizados ({{ cartProducts.length }} ite{{ cartProducts.length == 1 ? "m" : "ns" }}): </el-text><h4>{{ totalProducts != 0 ? "R$ " + formatPrice(totalProducts) : "--" }}
+                        <el-text type="info" size="small">Móveis prontos / personalizados ({{ cartProducts.length }} ite{{ cartProducts.length == 1 ? "m" : "ns" }}): </el-text><h4>{{ calcularTotalProdutosProntos() != 0 ? formatPrice(calcularTotalProdutosProntos()) : "--" }}
                         </h4>
                     </div>
                     <div class="card-item count-products">
-                        <el-text type="info" size="small">Móveis modelados: ({{ cmpProducts.length }} ite{{ cmpProducts.length == 1 ? "m" : "ns" }}): </el-text><h4> {{ totalCmps != 0 ? "R$ " + formatPrice(totalCmps) : "--" }}
+                        <el-text type="info" size="small">Móveis modelados: ({{ cmpProducts.length }} ite{{ cmpProducts.length == 1 ? "m" : "ns" }}): </el-text><h4> {{ calcularTotalProdutosCmp() != 0 ? "R$ " + formatPrice(calcularTotalProdutosCmp()) : "--" }}
                         </h4>
                     </div>
                     <div class="card-item subtotal">
-                        <el-text type="info" size="medium">Subotal ({{ products.length }} itens): </el-text><h3>{{ formatPrice(calcularTotal()) }}</h3>
+                        <el-text type="info" size="medium">Subtotal ({{ products.length }} itens): </el-text><h3>{{ formatPrice(calcularTotal()) }}</h3>
                     </div>
 
                     <router-link to="/checkout"><el-button class="cta" color="var(--cta-color)">Ir para o pagamento <el-icon><ArrowRightBold /></el-icon></el-button></router-link>
@@ -109,8 +109,8 @@ export default {
             ],
             cmpProducts: [],
             products: [],
-            totalProducts: "", // preco dos itens padrao do carrinho
-            totalCmps: "", // preco dos itens modelados do carrinho
+            totalProducts: 0, // preco dos itens padrao do carrinho
+            totalCmps: 0, // preco dos itens modelados do carrinho
             storeConfig: {
                 placeholder: '',
             },
@@ -135,8 +135,12 @@ export default {
     methods: {
         // Produto.
         calcularTotal() {
-            this.totalProducts = cartService.totalCartValue();
-            return this.totalProducts;
+            // this.totalProducts = cartService.totalCartValue();
+            // return this.totalProducts;
+            const totalProdutosProntos = this.calcularTotalProdutosProntos();
+            const totalProdutosCmp = this.calcularTotalProdutosCmp();
+
+            return totalProdutosProntos + totalProdutosCmp;
         },
         totalProductOptions() {
             this.cartProducts = cartService.productCartValue();
@@ -149,6 +153,27 @@ export default {
         getCartProductsFromLocalStorage() {
             this.cartProducts = cartService.getCartItems();
         },
+
+        calcularTotalProdutosProntos() {
+            let totalProdutosProntos = 0;
+
+            for (const produto of this.cartProducts) {
+                totalProdutosProntos += produto.value * produto.amount;
+            }
+
+            return totalProdutosProntos;
+        },
+
+        calcularTotalProdutosCmp() {
+            let totalProdutosCmp = 0;
+
+            for (const produto of this.cmpProducts) {
+                totalProdutosCmp += produto.value * produto.amount;
+            }
+
+            return totalProdutosCmp;
+        },
+
         /** Remove todos os itens do carrinho (no local storage e na lista em tela). */
         removeAll() {
             ElMessageBox.confirm('Tem certeza que deseja esvaziar o carrinho?', 'Confirmação', {
@@ -177,7 +202,6 @@ export default {
         formatPrice(x) {
             // to BRL
             return x.toLocaleString('pt-br',{style: 'currency', currency: 'BRL'});
-        
         },
         removeOneProduct(product) {
             cartService.removeFromCart(product);
@@ -196,6 +220,13 @@ export default {
                 this.removeOneProduct(product);
             } else {
                 // Senão, só faz atualização dos novos valores.
+                // // product.value = cartService.totalProductValue(product);
+                // product.amount = Math.floor(product.amount); // Certifique-se de que a quantidade seja um número inteiro
+
+                // // Adiciona o valor do produto ao total acumulado no componente
+                // product.totalAmount = product.amount * product.value;
+                // this.totalProductsAmount = cartService.totalProductValue();
+
                 cartService.updateCart(this.cartProducts);
             }
         },

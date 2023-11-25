@@ -143,12 +143,19 @@ export default {
         this.removeAllFromCmpCart();
     },
     /** Calcula total dos valores no carrinho */
+    // totalCartValue() {
+    //     return (this.productCartvalue() + this.cmpCartValue()) || 0;
+    // },
     totalCartValue() {
-        return (this.productCartvalue() + this.cmpCartValue()) || 0;
+        return this.productCartvalue() + this.cmpCartValue() || 0;
     },
     /** Total dos produtos. */
+    // Conta o valor total dos produtos
     productCartvalue() {
-        //return;
+        const prontos = this.getCartItems();
+        return prontos.reduce((total, product) => {
+            return total + this.totalProductValue(product);
+        }, 0);
     },
     totalProductOptions(product) {
         let totalOptions = 0;
@@ -163,9 +170,23 @@ export default {
         }
         return totalOptions;
     },
+
+
+    // ESTOU AQUI
+    totalProductValue(product) {
+        return product.value + this.totalProductOptions(product);
+    },
+    
+    totalCmpValue(cmp) {
+        return this.totalcmpOptions(cmp);
+    },
+
     /** Total dos cmps. */
     cmpCartValue() {
-        
+        const modelados = this.getCmpItems();
+        return modelados.reduce((total, cmp) => {
+            return total + this.totalCmpValue(cmp);
+        }, 0);
     },
     totalcmpOptions(cmp) {
         let totalOptionPrice = 0;
