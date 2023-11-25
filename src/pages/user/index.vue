@@ -13,7 +13,6 @@
         </div>
       </div>
 
-  
       <div class="novidades">
         <h2> Novidades </h2>
         <div class="block text-center">
@@ -51,7 +50,7 @@
 
       <div class="localizacao">
         <h2> Localização </h2>
-        <img src="../../assets/img/map.png"/>
+        <div ref="map" style="height: 500px; width: 100%;"></div>
       </div>
 
       
@@ -63,7 +62,6 @@
 <script>
 import axios from 'axios';
 import AuthService from '@/store/authService';
-
 export default {
   data() {
     return {
@@ -72,18 +70,89 @@ export default {
       storeConfig: {
         name: '',
         aboutUs: '',
-
+        addressId: '',
       },
+      apiKey: "AIzaSyAN8WuBocaymoMHLv-iSkench1O6hVrOVY",
+      map: null,
     }
   },
-  async created() {
+  created() {
     // Adquirindo produtos para o carousel.
     this.getMostRecentProducts();
     // Adquirindo categorias.
     this.getProductCategories();
+  },
+  async mounted() {
+    this.initMap();
     this.getStoreConfig();
   },
+  watch: {
+    storeConfig: {
+      handler: function (val, oldVal) {
+        
+        this.getPlaceDetailsAndAddMarker(this.storeConfig.addressId, this.apiKey);
+      },
+      deep: true
+    }
+  },
   methods: {
+    initMap() {
+      const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=`+ this.apiKey +`&callback=initGoogleMap`;
+      script.defer = true;
+      script.async = true;
+      document.head.appendChild(script);
+      window.initGoogleMap = this.createMap;
+    },
+    createMap() {
+      this.map = new window.google.maps.Map(this.$refs.map, {
+        center: { lat: 37.7749, lng: -122.4194 }, 
+        zoom: 13,
+      });
+
+      // You can add additional features or markers here
+    },
+    async getPlaceDetailsAndAddMarker(placeId, apiKey) {
+      const placeDetails = await this.getPlaceDetails(placeId, apiKey);
+
+      if (placeDetails) {
+        const location = placeDetails.geometry.location;
+        const marker = new google.maps.Marker({
+          position: { lat: location.lat, lng: location.lng },
+          map: this.map,
+          title: placeDetails.name,
+        });
+      
+        // Optional: You can also open an info window with additional details
+        const infowindow = new google.maps.InfoWindow({
+          content: `<strong>${this.storeConfig.name}</strong><br>${placeDetails.formatted_address}`,
+        });
+      
+        marker.addListener('click', () => {
+          infowindow.open(this.map, marker);
+        });
+      
+        // Center the map on the marker
+        this.map.setCenter(marker.getPosition());
+      }
+    },
+    async getPlaceDetails(placeId, apiKey) {
+      const apiUrl = 'https://maps.googleapis.com/maps/api/place/details/json';
+
+      const params = {
+        place_id: placeId,
+        key: apiKey,
+      };
+
+      try {
+        const response = await axios.get(apiUrl, { params });
+        const placeDetails = response.data.result;
+        return placeDetails;
+      } catch (error) {
+        console.error('Error fetching place details:', error);
+        return null;
+      }
+    },
     /** Retorna os produtos mais recentemente adicinados. */
     getMostRecentProducts(amount) {
       // Configuração do parâmetro opcional para qtde de produtos.
@@ -114,6 +183,7 @@ export default {
         if (response.status === 200) {
             this.storeConfig.name = response.data.storeName;
             this.storeConfig.aboutUs = response.data.aboutUsInfo;
+            this.storeConfig.addressId = response.data.addressMeta;
 
 
         } else {
