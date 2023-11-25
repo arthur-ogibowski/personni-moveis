@@ -441,7 +441,7 @@ export default {
         });
     },
 
-      getAddressToEdit(address) {
+    getAddressToEdit(address) {
       const config = { headers: { Authorization: AuthService.getToken() } };
       axios.get(`http://localhost:8081/users/get-user-address/${address.addressId}`, config)
         .then(response => {
@@ -454,20 +454,24 @@ export default {
         });
     },
 
-      saveEditedAddress() {
+    saveEditedAddress() {
       const config = { headers: { Authorization: AuthService.getToken() } };
       const addressId = this.editedAddress.addressId;
       console.log(addressId);
 
-      axios.put(`http://localhost:8081/users/edit-user-address/${addressId}`, this.editedAddress, config)
+      axios.put(`http://localhost:8081/users/edit-user-address/`, this.editedAddress, config)
         .then(response => {
           ElMessage.success('Endereço editado com sucesso!');
           this.showEditAddressForm = false;
+          setTimeout(() => {
+              window.location.reload();
+            }, 2000);
         })
         .catch(error => {
           ElMessage.error('Erro ao editar endereço');
         });
     },
+
 
     updateUserInfo() {
       const config = { headers: { Authorization: AuthService.getToken() } };
@@ -836,4 +840,5 @@ h2 {
 
 :deep(.el-table .cell) {
   word-break: normal;
-}</style>
+}
+</style>
