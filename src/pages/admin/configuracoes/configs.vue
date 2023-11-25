@@ -45,17 +45,8 @@
           <el-input v-model="user.storePhone"></el-input>
         </el-form-item>
         <el-form-item label="Endereço da Empresa">
-          <vue-google-autocomplete
-            id="address-input"
-            placeholder=""
-            v-on:placechanged="getAddressData"
-            :options="options"
-            class="el-input el-input_wrapper"
-          ></vue-google-autocomplete>
-        <div id="infowindow-content">
-          <span id="place-name" class="title"></span><br />
-          <span id="place-address"></span>
-        </div>
+          <el-autocomplete v-model="user.storeAddress" :fetch-suggestions="fetchPredictions" @select="handleSelect" :debounce="500">
+          </el-autocomplete>
         </el-form-item>
         <h2>Configurações do site</h2>
         <el-form-item label="Cor principal do Site">
@@ -89,6 +80,7 @@
         user: {
           storeId: "1",
           storeName: "Personni móveis",
+          addressMeta: "",
           storeLogoPath: null,
           storeSecondaryImgPath: null,
           storePlaceholdeImgPath: null,
@@ -99,6 +91,7 @@
           primaryCollor: "#B68D40",
           secondaryCollor: "#112620",
         },
+        predictions: [],
         options: {
           types: ["geocode"]
         },
@@ -107,7 +100,7 @@
     mounted() {
 
         // this.user.storeId = 1;
-        const config = { headers: { Authorization: AuthService.getToken() } };
+      const config = { headers: { Authorization: AuthService.getToken() } };
       // Fazer uma solicitação GET para buscar dados do usuário por ID
       axios.get(`http://localhost:8081/store`, config)
         .then((response) => {
@@ -124,34 +117,51 @@
         } else {
             ElMessage.error('Erro ao buscar dados da API:', response.statusText);
         }
+
         
     })
     .catch((error) => {
         console.error('Erro ao buscar dados da API:', error);
     });
     },
-    computed: {
-      /*autocomplete() {
-        const autocomplete = new google.maps.places.Autocomplete(
-          input,
-          options
-        );
-        autocomplete.addListener("place_changed", () => {
-          const place = autocomplete.getPlace();
-          if (!place.geometry || !place.geometry.location) {
-            return;
-          }
-          this.user.storeAddress = place.formatted_address;
-        });
-        
-      }*/
-    },
     methods: {
-      getAddressData(place) {
-        // Handle the selected place data
-        console.log(place);
+      onInput() {
+      if (this.user.storeAddress.length > 0) {
+        this.fetchPredictions(this.user.storeAddress);
+      } else {
+        this.predictions = [];
+      }
+      },
+      fetchPredictions(queryString, cb) {
+        if (queryString) {
+          const apiKey = 'AIzaSyAN8WuBocaymoMHLv-iSkench1O6hVrOVY';
+          const apiUrl = 'https://maps.googleapis.com/maps/api/place/autocomplete/json';
+
+          console.log(apiUrl + "?input=" + queryString + "&language=pt_BR&key=" + apiKey)
+          axios.get(apiUrl + "?input=" + queryString + "&language=pt_BR&key=" + apiKey)
+            .then(response => {
+              this.predictions = response.data.predictions;
+              // loop through predictions and made a new array of objects with label and value only
+              this.predictions = this.predictions.map(prediction => {
+                return { id: prediction.place_id, value: prediction.description };
+              });
+              console.log('Previsões:', this.predictions);
+              cb(this.predictions);
+            })
+            .catch(error => {
+              console.error('Error fetching predictions:', error);
+            });
+        }
+        else {
+          cb([])
+        }
+      },
+      handleSelect(item) {
+        this.user.storeAddress = item.value;
+        this.user.addressMeta = item.id;
       },
 
+      
       async handleImageChange(file, option) {
             try {
                 // Adquire imagem como string base64.
@@ -287,6 +297,9 @@ h1{
 }
 .el-input_wrapper{
   border: 1px solid $grey-border;
+}
+:deep(.el-autocomplete){
+  width: 100%;
 }
 </style>
 

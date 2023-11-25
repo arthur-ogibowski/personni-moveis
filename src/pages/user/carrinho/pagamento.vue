@@ -141,7 +141,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                     </div>
                     <div class="card-item frete">
                         <el-text type="info" size="small">Frete: </el-text>
-                        <h4> {{ calcularFrete() != 0 ? formatPrice(calcularFrete()) : "--" }}
+                        <h4> {{ frete != 0 ? formatPrice(frete) : "--" }}
                         </h4>
                     </div>
                     <div class="card-item subtotal">
@@ -240,7 +240,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                             </div>
                             <div class="card-item frete">
                                 <el-text type="info" size="small">Frete: </el-text>
-                                <h4> {{ calcularFrete() != 0 ? formatPrice(calcularFrete()) : "--" }}
+                                <h4> {{ frete != 0 ? formatPrice(frete) : "--" }}
                                 </h4>
                             </div>
                             <div class="card-item subtotal">
@@ -356,6 +356,8 @@ export default {
             storeConfig: {
                 logo: '',
             },
+            apiKey: "AIzaSyAN8WuBocaymoMHLv-iSkench1O6hVrOVY",
+            frete: 0,
         };
     },
     computed: {
@@ -365,6 +367,14 @@ export default {
     segundos() {
       return this.tempoRestante % 60;
     },
+  },
+  mounted() {
+    const script = document.createElement('script');
+      script.src = `https://maps.googleapis.com/maps/api/js?key=`+ this.apiKey +`&callback=initGoogleMap`;
+      script.defer = true;
+      script.async = true;
+      document.head.appendChild(script);
+    
   },
     created() {
         // Usuário deve estar logado para acessar checkout.
@@ -401,6 +411,35 @@ export default {
                 }
             }, 1000);
         },
+        calcularFrete() {
+            let base = 15;
+            let frete = base;
+            /*const service = new window.google.maps.DistanceMatrixService();
+            service.getDistanceMatrix(
+              {
+                origins: this.storeConfig.address,
+                destinations: this.selectedAddress.street + ", " + this.selectedAddress.number + " - " + this.selectedAddress.city + " - " + this.selectedAddress.state,
+                travelMode: 'DRIVING',
+              },
+              (response, status) => {
+                if (status === 'OK') {
+                  const result = response.rows[0].elements[0];
+                
+                  // Convert distance to kilometers
+                  const distanceInKm = result.distance.value / 1000;
+                
+                  this.distanceResult = {
+                    distance: distanceInKm.toFixed(2), // Round to 2 decimal places
+                    duration: result.duration.text,
+                  };
+                  console.log(this.distanceResult.distance)
+                } else {
+                  console.error('Error calculating distance:', status);
+                }
+              }
+            );*/
+             this.frete = frete;
+        },
 
         beforeDestroy() {
             clearInterval(this.temporizador);
@@ -429,7 +468,7 @@ export default {
             });
             const config = {
                 headers: { Authorization: AuthService.getToken() },
-                params: { shipmentFee: Number(this.calcularFrete()) }
+                params: { shipmentFee: Number(this.frete) }
             }
             const getReqProduct = [];
             const getReqCmp = [];
@@ -542,14 +581,6 @@ export default {
             });
         },
 
-        calcularFrete() {
-            let frete = "15.00";
-            /*if (this.products && this.products.length > 0) {
-                frete += this.products.length * 10;
-            }*/
-            return frete;
-        },
-
         formatPrice(x) {
             return x.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         },
@@ -557,6 +588,9 @@ export default {
         nextStep() {
             if (this.addressChoice === 'newAddress' && !this.addressAdded) {
                 this.addAddress();
+            }
+            if (this.currentStep == 0){
+                this.frete = this.calcularFrete();
             }
             this.currentStep++;
         },
@@ -578,7 +612,7 @@ export default {
             }
 
             this.productsCmp.value = total;
-            total += parseInt(this.calcularFrete())
+            total += parseInt(this.frete)
             return this.formatPrice(total);
         },
         // Calculo dos produtos e personalizações.
