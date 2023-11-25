@@ -34,11 +34,15 @@ const AuthService = {
   // Nas seguintes funções, em todas checagens em que é necessário identificar o role (papel do usuário), retornará
   // true para usuários admin, porque admin pode fazer tudo.
 
-  /** Se usuário tem permissão de colab, retorna true */
+  /** Se usuário tem permissão de colab ou ADMIN, retorna true */
   isUserColaborator() {
     if(this.getToken()) {
       const usuario = jwtDecode(this.getToken());
-      console.log('Informações do usuário:', usuario);
+      if (usuario && usuario.userRole === 'COLABORATOR' || usuario.userRole === 'ADMIN') {
+        return true;
+      } else {
+        return false;
+      }
     }
     return false;
   }

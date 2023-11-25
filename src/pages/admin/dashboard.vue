@@ -77,25 +77,15 @@ export default {
         
     },
     created() {
+        if (!AuthService.isUserColaborator()) {
+            this.$router.replace('/');
+        }
+
         const loading = ElLoading.service({
             lock: true,
             text: 'Carregando dados do usuário...',
             background: 'rgba(0, 0, 0, 0.7)'
-      });
-      
-    const token = AuthService.getToken();
-
-    if (token) {
-      const usuario = jwtDecode(token);
-
-      if (usuario) {
-        if (usuario.userRole === 'COLABORATOR' || usuario.userRole === 'ADMIN') {
-          // Usuário tem permissão de colab ou admin, continue carregando a página
-        } else if (usuario.userRole === 'USER') {
-          this.$router.push("/"); // Para voltar à página anterior
-        }
-      }
-    }
+        });
 
         axios.get('http://localhost:8081/category')
                 .then(response => {
