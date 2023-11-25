@@ -81,7 +81,7 @@
               <div v-for="address in addresses" :key="address.addressId" class="address-summary">
                 <h3>{{ address.addressNickname }} <span><el-icon @click="deleteAddress(address)">
                       <Delete />
-                    </el-icon> <el-icon @click="showEditAddressForm = true">
+                    </el-icon> <el-icon @click="showEditAddressForm = true; getAddressToEdit(address)">
                       <Edit />
                     </el-icon></span></h3>
                 <p class="dados-endereco">{{ address.street }}</p>
@@ -172,7 +172,7 @@
               <h2 class="info-item title">CEP: </h2>
               <el-input v-model="editedAddress.cep"></el-input>
             </div>
-            <el-button type="primary" @click="saveAddress">Salvar</el-button>
+            <el-button type="primary" @click="saveEditedAddress">Salvar</el-button>
           </div>
 
         </div>
@@ -314,6 +314,10 @@ export default {
     formatPrice(price) {
       return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
     },
+    showEditAddress(address) {
+      this.getAddressToEdit(address.addressId);
+      this.showEditAddressForm = true;
+    },
     getUserInfo() {
       const config = { headers: { Authorization: AuthService.getToken() } };
 
@@ -436,6 +440,38 @@ export default {
           console.error('Erro:', error);
         });
     },
+
+    getAddressToEdit(address) {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.get(`http://localhost:8081/users/get-user-address/${address.addressId}`, config)
+        .then(response => {
+          console.log("Resposta ao editar endereço:", response.data);
+          this.editedAddress = response.data;
+          this.showEditAddressForm = true;
+        })
+        .catch(error => {
+          ElMessage.error('Erro ao obter dados do endereço para edição');
+        });
+    },
+
+    saveEditedAddress() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      const addressId = this.editedAddress.addressId;
+      console.log(addressId);
+
+      axios.put(`http://localhost:8081/users/edit-user-address/`, this.editedAddress, config)
+        .then(response => {
+          ElMessage.success('Endereço editado com sucesso!');
+          this.showEditAddressForm = false;
+          setTimeout(() => {
+              window.location.reload();
+            }, 2000);
+        })
+        .catch(error => {
+          ElMessage.error('Erro ao editar endereço');
+        });
+    },
+
 
     updateUserInfo() {
       const config = { headers: { Authorization: AuthService.getToken() } };
@@ -804,4 +840,5 @@ h2 {
 
 :deep(.el-table .cell) {
   word-break: normal;
-}</style>
+}
+</style>
