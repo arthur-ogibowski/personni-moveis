@@ -5,8 +5,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
 <template>
     <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="var(--tertiary-color)"
         active-text-color="var(--tertiary-color)" @select="handleSelect">
-        <el-menu-item><router-link to="/"><img style="width: 200px;"
-                    :src="storeConfig.logo" /></router-link></el-menu-item>
+        <el-menu-item><router-link to="/"><img style="width: 200px;" :src="storeConfig.logo" /></router-link></el-menu-item>
 
         <el-steps align-center :active="currentStep" finish-status="success" simple class="checkout-steps">
             <el-step title="Endereço de entrega" :icon="LocationFilled" />
@@ -23,49 +22,52 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                 <h1>Endereço de entrega</h1>
                 <el-radio-group v-model="addressChoice">
                     <el-radio border size="large" label="existingAddress">Escolher endereço cadastrado</el-radio>
-                    <el-radio-group v-if="addressChoice === 'existingAddress'" v-model="selectAddress" class="existing-address-radio">
+                    <el-radio-group v-if="addressChoice === 'existingAddress'" v-model="selectAddress"
+                        class="existing-address-radio">
                         <div v-for="address in userAddresses" :key="address.addressId">
-                            <el-radio border size="default" :label="address.addressNickname" @change="selectExistingAddress(address)">
+                            <el-radio border size="default" :label="address.addressNickname"
+                                @change="selectExistingAddress(address)">
                             </el-radio>
                         </div>
                     </el-radio-group>
-                    <el-radio border size="large" label="newAddress" @change="clearSelectedAddress">Cadastrar novo endereço</el-radio>
+                    <el-radio border size="large" label="newAddress" @change="clearSelectedAddress">Cadastrar novo
+                        endereço</el-radio>
                 </el-radio-group>
 
-      <el-form :model="endereco" label-position="top" v-if="addressChoice === 'newAddress'">
-        <el-col :span="10">
-          <el-form-item label="Apelido">
-            <el-input v-model="endereco.addressNickname" required></el-input>
-          </el-form-item>
-          <el-form-item label="CEP">
-            <el-input placeholder="#####-###" v-model="endereco.cep" required @blur="consultarCEP"
-              v-mask="'#####-###'" maxlength="9"></el-input>
-          </el-form-item>
-      </el-col>
-      <el-alert type="info" v-if="!cepExists" show-icon :closable="false">
-        <p>O endereço será automaticamente preenchido assim que o CEP for validado.</p>
-      </el-alert>
+                <el-form :model="endereco" label-position="top" v-if="addressChoice === 'newAddress'">
+                    <el-col :span="10">
+                        <el-form-item label="Apelido">
+                            <el-input v-model="endereco.addressNickname" required></el-input>
+                        </el-form-item>
+                        <el-form-item label="CEP">
+                            <el-input placeholder="#####-###" v-model="endereco.cep" required @blur="consultarCEP"
+                                v-mask="'#####-###'" maxlength="9"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-alert type="info" v-if="!cepExists" show-icon :closable="false">
+                        <p>O endereço será automaticamente preenchido assim que o CEP for validado.</p>
+                    </el-alert>
 
-      <div class="after-cep" v-loading="cepLoading">
-        <el-form-item label="Rua">
-          <el-input v-model="endereco.street" :disabled="!cepExists" required></el-input>
-        </el-form-item>
-        <div class="small-inputs">
-          <el-form-item label="Número">
-            <el-input v-model="endereco.number" :disabled="!cepExists" required></el-input>
-          </el-form-item>
-          <el-form-item label="Complemento (Opcional)">
-            <el-input v-model="endereco.details" :disabled="!cepExists"></el-input>
-          </el-form-item>
-          <el-form-item label="Cidade">
-            <el-input v-model="endereco.city" :disabled="!cepExists" required></el-input>
-          </el-form-item>
-          <el-form-item label="Estado">
-            <el-input v-model="endereco.state" :disabled="!cepExists" required></el-input>
-          </el-form-item>
-        </div>
-      </div>
-    </el-form>
+                    <div class="after-cep" v-loading="cepLoading">
+                        <el-form-item label="Rua">
+                            <el-input v-model="endereco.street" :disabled="!cepExists" required></el-input>
+                        </el-form-item>
+                        <div class="small-inputs">
+                            <el-form-item label="Número">
+                                <el-input v-model="endereco.number" :disabled="!cepExists" required></el-input>
+                            </el-form-item>
+                            <el-form-item label="Complemento (Opcional)">
+                                <el-input v-model="endereco.details" :disabled="!cepExists"></el-input>
+                            </el-form-item>
+                            <el-form-item label="Cidade">
+                                <el-input v-model="endereco.city" :disabled="!cepExists" required></el-input>
+                            </el-form-item>
+                            <el-form-item label="Estado">
+                                <el-input v-model="endereco.state" :disabled="!cepExists" required></el-input>
+                            </el-form-item>
+                        </div>
+                    </div>
+                </el-form>
 
                 <div class="actions">
                     <router-link to="/carrinho"><el-button type="info" plain><el-icon>
@@ -132,7 +134,9 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                             <div class="card-item-about">
                                 <h3 v-if="product.name">{{ product.amount }} x {{ product.name }}</h3>
                                 <h3 v-else>{{ product.amount }} x Móvel modelado</h3>
-                                <el-text type="info" size="small" v-if="product.description !== 'string' && product.description">{{ product.description }}</el-text>
+                                <el-text type="info" size="small"
+                                    v-if="product.description !== 'string' && product.description">{{ product.description
+                                    }}</el-text>
                             </div>
                             <div class="card-item-price">
                                 <h4>{{ formatPrice(product.value) }}</h4>
@@ -169,20 +173,20 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                 </div>
                                 <div class="card-item">
                                     <template v-if="selectedAddress">
-                                    <h4>{{ selectedAddress.name }}</h4>
-                                    <h4>{{ selectedAddress.street }} {{ selectedAddress.number }}</h4>
-                                    <h4>{{ selectedAddress.cep }}</h4>
-                                    <h4>{{ selectedAddress.district }}</h4>
-                                    <h4>{{ selectedAddress.city }}, {{ selectedAddress.state }}</h4>
-                                </template>
-                                <!-- Display the new address if entered -->
-                                <template v-else-if="endereco.cep">
-                                    <h4>{{ endereco.name }}</h4>
-                                    <h4>{{ endereco.street }} {{ endereco.number }}</h4>
-                                    <h4>{{ endereco.cep }}</h4>
-                                    <h4>{{ endereco.district }}</h4>
-                                    <h4>{{ endereco.city }}, {{ endereco.state }}</h4>
-                                </template>
+                                        <h4>{{ selectedAddress.name }}</h4>
+                                        <h4>{{ selectedAddress.street }} {{ selectedAddress.number }}</h4>
+                                        <h4>{{ selectedAddress.cep }}</h4>
+                                        <h4>{{ selectedAddress.district }}</h4>
+                                        <h4>{{ selectedAddress.city }}, {{ selectedAddress.state }}</h4>
+                                    </template>
+                                    <!-- Display the new address if entered -->
+                                    <template v-else-if="endereco.cep">
+                                        <h4>{{ endereco.name }}</h4>
+                                        <h4>{{ endereco.street }} {{ endereco.number }}</h4>
+                                        <h4>{{ endereco.cep }}</h4>
+                                        <h4>{{ endereco.district }}</h4>
+                                        <h4>{{ endereco.city }}, {{ endereco.state }}</h4>
+                                    </template>
                                 </div>
                             </el-card>
 
@@ -263,15 +267,16 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
             <div class="final-step" v-if="currentStep == 3">
                 <h1>Pedido concluído</h1>
                 <h2>Tempo Restante: {{ minutos }}:{{ segundos < 10 ? '0' : '' }}{{ segundos }} minutos</h2>
-                <h2>Não saia dessa tela</h2>
-                <img v-if="QrCode != null" :src=QrCode>
-                <div class="mega-icon">
-                    <el-icon color="#67c23a">
-                        <SuccessFilled />
-                    </el-icon>
-                </div>
+                        <h2>Não saia dessa tela</h2>
+                        <img v-if="QrCode != null" :src=QrCode>
+                        <div class="mega-icon">
+                            <el-icon color="#67c23a">
+                                <SuccessFilled />
+                            </el-icon>
+                        </div>
 
-                <router-link to="/"><el-text tag="ins" type="info">Voltar para a página inicial</el-text></router-link>
+                        <router-link to="/"><el-text tag="ins" type="info">Voltar para a página
+                                inicial</el-text></router-link>
 
 
             </div>
@@ -362,21 +367,21 @@ export default {
         };
     },
     computed: {
-    minutos() {
-      return Math.floor(this.tempoRestante / 60);
+        minutos() {
+            return Math.floor(this.tempoRestante / 60);
+        },
+        segundos() {
+            return this.tempoRestante % 60;
+        },
     },
-    segundos() {
-      return this.tempoRestante % 60;
+    mounted() {
+        const script = document.createElement('script');
+        script.src = `https://maps.googleapis.com/maps/api/js?key=` + this.apiKey + `&callback=initGoogleMap`;
+        script.defer = true;
+        script.async = true;
+        document.head.appendChild(script);
+
     },
-  },
-  mounted() {
-    const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=`+ this.apiKey +`&callback=initGoogleMap`;
-      script.defer = true;
-      script.async = true;
-      document.head.appendChild(script);
-    
-  },
     created() {
         // Usuário deve estar logado para acessar checkout.
         if (AuthService.shouldRedirectToLogin(this.$router)) {
@@ -421,18 +426,20 @@ export default {
             let storeState = null;
             console.log(totalAmount)
 
-
             if (this.endereco.state != "") {
                 state = this.endereco.state;
-            }
-            else {
+            } else {
                 state = this.selectedAddress.state;
             }
 
-
-            if (this.storeConfig.address != "") {
-                storeState = this.storeConfig.address.split(",")[1].trim();
-                storeState = storeState.split("-")[1].trim();
+            if (this.storeConfig.address != null && this.storeConfig.address !== "") {
+                const addressParts = this.storeConfig.address.split(",");
+                if (addressParts.length > 1) {
+                    storeState = addressParts[1].trim();
+                    if (storeState.includes("-")) {
+                        storeState = storeState.split("-")[1].trim();
+                    }
+                }
             }
 
             if (state == storeState) {
@@ -441,11 +448,10 @@ export default {
 
             base += totalAmount * 80;
             base -= totalAmount * 80 * 0.05;
-            
-
 
             this.frete = base;
         },
+
 
         beforeDestroy() {
             clearInterval(this.temporizador);
@@ -575,22 +581,22 @@ export default {
             const config = { headers: { Authorization: AuthService.getToken() } };
 
             axios.post('http://localhost:8081/users/create-new-address', this.endereco, config)
-            .then((response) => {
-            ElMessage.success('Endereço adicionado com sucesso.');
-            
-            this.addressAdded = true;
-            // Atualize a lista de endereços do usuário após adicionar um novo endereço
-            // this.loadUserAddresses();
+                .then((response) => {
+                    ElMessage.success('Endereço adicionado com sucesso.');
 
-            // reload
-            // setTimeout(() => {
-            //     window.location.reload();
-            // }, 2000);
-            })
-            .catch((error) => {
-                ElMessage.error('Erro ao adicionar endereço.');
-                console.error('Erro:', error);
-            });
+                    this.addressAdded = true;
+                    // Atualize a lista de endereços do usuário após adicionar um novo endereço
+                    // this.loadUserAddresses();
+
+                    // reload
+                    // setTimeout(() => {
+                    //     window.location.reload();
+                    // }, 2000);
+                })
+                .catch((error) => {
+                    ElMessage.error('Erro ao adicionar endereço.');
+                    console.error('Erro:', error);
+                });
         },
 
         formatPrice(x) {
@@ -598,7 +604,7 @@ export default {
         },
 
         nextStep() {
-            if (this.currentStep == 0){
+            if (this.currentStep == 0) {
                 if (this.addressChoice === 'newAddress' && !this.addressAdded) {
                     this.addAddress();
                 }
@@ -606,7 +612,7 @@ export default {
                     ElMessage.error('Selecione um endereço.');
                     return;
                 }
-               this.calcularFrete();
+                this.calcularFrete();
             }
             this.currentStep++;
         },
@@ -628,7 +634,7 @@ export default {
             }
 
             this.productsCmp.value = total;
-            
+
             total += this.frete
             console.log(total)
             return this.formatPrice(total);
@@ -685,20 +691,20 @@ export default {
                 });
         },
         getStoreConfig() {
-          const config = { headers: { Authorization: AuthService.getToken() } };
-          axios.get(`http://localhost:8081/store`, config)
-            .then((response) => {
-            if (response.status === 200) {
-                this.storeConfig.logo = response.data.storeLogoPath
-                this.storeConfig.address = response.data.storeAddress
+            const config = { headers: { Authorization: AuthService.getToken() } };
+            axios.get(`http://localhost:8081/store`, config)
+                .then((response) => {
+                    if (response.status === 200) {
+                        this.storeConfig.logo = response.data.storeLogoPath
+                        this.storeConfig.address = response.data.storeAddress
 
-            } else {
-                ElMessage.error('Erro ao receber config da empresa:', response.statusText);
-            }
-        })
-        .catch((error) => {
-            console.error('Erro ao buscar dados da API:', error);
-        });
+                    } else {
+                        ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Erro ao buscar dados da API:', error);
+                });
         },
     },
 }
@@ -1040,5 +1046,4 @@ input[type="radio"]:checked+.radio-button::before {
             color: green;
         }
     }
-}
-</style>
+}</style>
