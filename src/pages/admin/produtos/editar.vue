@@ -222,6 +222,7 @@
 
 <script>
 import AuthService from '@/store/authService.js';
+import jwtDecode from 'jwt-decode';
 import axios from 'axios';
 import { ElMessage, ElLoading } from 'element-plus';
 import imgConverter from '@/store/imgConverter.js';
@@ -258,6 +259,20 @@ export default {
         // Adquire dados.
         this.getProduct();
         this.getCategories();
+
+    const token = AuthService.getToken();
+
+        if (token) {
+        const usuario = jwtDecode(token);
+
+        if (usuario) {
+            if (usuario.userRole === 'COLABORATOR' || usuario.userRole === 'ADMIN') {
+            // Usuário tem permissão de colab ou admin, continue carregando a página
+            } else if (usuario.userRole === 'USER') {
+            this.$router.push("/"); // Para voltar à página anterior
+            }
+        }
+        }
     },
     methods: {
         PrincipalImgRemove() {
@@ -334,6 +349,11 @@ export default {
                 ElMessage.error('Para que o produto esteja "disponível", é necessário ter ao menos "1" em estoque');
                 return;
             }
+            // Produto deve ter valor numerico maior que 0 em preço.
+            if (isNaN(this.product.value) || this.product.value < 1) {
+                ElMessage.error('Para que o produto seja editado, é necessário que seu "Preço" seja um valor numérico maior que 0');
+                return;
+            }
             // Filtra as imagens que não têm um productImgId definido (são novas).
             const novasImagens = this.images.filter(img => img.productImgId === null || img.productImgId === 0);
 
@@ -368,7 +388,7 @@ export default {
                 // iniciar fluxo de envio de emails aos clientes que estavam na lista de espera pelo produto.
                 if (this.product.quantity > 0 && this.product.available && this.productWasUnavailable()) {
                     const productUrl = `${window.location.origin}/produtos/${this.product.productId}`;
-                    console.log("trigger")
+                    //console.log("trigger")
                     // axios.post(`http://localhost:8081/products/notify-clients-email/${this.product.productId}/${productUrl}`)
                     //     .then(reponse => {
                     //         // Não faz nada.

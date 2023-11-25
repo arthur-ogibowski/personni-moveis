@@ -378,7 +378,9 @@ export default {
   },
     created() {
         // Usuário deve estar logado para acessar checkout.
-        AuthService.shouldRedirectToLogin(this.$router);
+        if (AuthService.shouldRedirectToLogin(this.$router)) {
+            return;
+        }
 
         const loading = ElLoading.service({
             lock: true,
@@ -448,8 +450,7 @@ export default {
         //     this.selectedAddress = address;
         // },
         selectExistingAddress(address) {
-            console.log('Selected Address:', address);
-            this.selectedAddress = { ...address };
+            this.selectedAddress = Object.assign({}, address);
         },
         clearSelectedAddress() {
             this.selectedAddress = null;
@@ -491,9 +492,11 @@ export default {
                 ));
             }
             // Monta dto para processamento do pedido no back.
+            console.log(this.selectedAddress);
             const ordersReq = {
                 requestProduct: getReqProduct,
                 requestCmp: getReqCmp,
+                shipmentFee: Number(this.calcularFrete()),
                 deliveryAddress: this.addressChoice === 'existingAddress' ? this.selectedAddress : this.endereco,
             }
 

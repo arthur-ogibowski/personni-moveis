@@ -1,65 +1,59 @@
 <template>
   <el-menu mode="horizontal" :ellipsis="false" background-color="#FEFEFE" text-color="var(--tertiary-color)"
-        active-text-color="var(--tertiary-color)" @select="handleSelect">
-        <el-menu-item><router-link to="/"><img style="width: 200px; height: 120px;"
-                    :src="storeConfig.logo" /></router-link></el-menu-item>
+    active-text-color="var(--tertiary-color)" @select="handleSelect">
+    <el-menu-item><router-link to="/"><img style="width: 200px; height: 120px;"
+          :src="storeConfig.logo" /></router-link></el-menu-item>
 
-        <h1> Modelagem de móveis </h1>
-    </el-menu>
-    <div class="steps-container">
-      <h2 v-if="!isLastSection">{{ "Passo " + (currentSection + 1) + " de " + categoria.sectionCmps.length}}</h2>
-      <h2 v-else>{{ "Passo " + (currentSection + 1) + " de " + categoria.sectionCmps.length + ": Revisar modelagem" }}</h2>
-      <el-steps align-center :active="currentSection" finish-status="success">
+    <h1> Modelagem de móveis </h1>
+  </el-menu>
+  <div class="steps-container">
+    <h2 v-if="!isLastSection">{{ "Passo " + (currentSection + 1) + " de " + categoria.sectionCmps.length }}</h2>
+    <h2 v-else>{{ "Passo " + (currentSection + 1) + " de " + categoria.sectionCmps.length + ": Revisar modelagem" }}</h2>
+    <el-steps align-center :active="currentSection" finish-status="success">
       <el-step v-for="section in categoria.sectionCmps" :key="section.id" :title="section.name" />
     </el-steps>
-    </div>
+  </div>
   <div class="container">
 
     <div class="cmp-container" v-if="!isLastSection">
       <div class="cmp-sections">
         <el-form :model="selected">
           <div class="section" v-for="section in categoria.sectionCmps" :key="section.id">
-            <div class="inner-section" v-if="currentSection == categoria.sectionCmps.indexOf(section) && section.name !== 'Revisar'">
+            <div class="inner-section"
+              v-if="currentSection == categoria.sectionCmps.indexOf(section) && section.name !== 'Revisar'">
               <h1>{{ section.name }}</h1>
               <div class="section-elements">
                 <div v-for="element in section.elementCmps" :key="element.id" class="ml-4 element-item">
-                  <h2>Escolher {{ element.name.toLowerCase() }}   <span v-if="!element.mandatory" style="font-size: 12px;">(Opcional)</span></h2>
+                  <h2>Escolher {{ element.name.toLowerCase() }} <span v-if="!element.mandatory"
+                      style="font-size: 12px;">(Opcional)</span></h2>
                   <el-radio-group v-model="selected[element.id]">
-                    <el-radio-button
-                      v-for="option in element.optionCmps"
-                      :key="option.id"
-                      size="large"
-                      @change="resumoCmp"
-                      :label="option.id">
+                    <el-radio-button v-for="option in element.optionCmps" :key="option.id" size="large"
+                      @change="resumoCmp" :label="option.id">
                       <div class="option-image" v-if="option.img != ''">
-                        <el-image :src="option.img"/>
+                        <el-image :src="option.img" />
                       </div>
                       <div class="option-image-placeholder" v-else>
-                        <img :src="storeConfig.placeholder"/>
+                        <img :src="storeConfig.placeholder" />
                       </div>
-                      <el-icon class="option-dialog-button" @click="optionDialog(option)"><InfoFilled /></el-icon>
+                      <el-icon class="option-dialog-button" @click="optionDialog(option)">
+                        <InfoFilled />
+                      </el-icon>
                       <div class="option-info">
-                       <div class="option-name">{{ option.name }}</div>
-                       <div class="option-price">{{ option.price != 0 ? "R$ " + option.price : "--" }}</div>
+                        <div class="option-name">{{ option.name }}</div>
+                        <div class="option-price">{{ option.price != 0 ? "R$ " + option.price : "--" }}</div>
                       </div>
                     </el-radio-button>
                   </el-radio-group>
                 </div>
               </div>
 
-
-              <el-dialog
-                v-model="dialogVisible"
-                :title="currentOption.name"
-                width="40%"
-                :before-close="handleClose"
-              >
+              <el-dialog v-model="dialogVisible" :title="currentOption.name" width="40%" :before-close="handleClose">
                 <div class="dialog-content">
                   <div class="dialog-image" v-if="currentOption.img != ''">
-                        <el-image :src="currentOption.img"/>
+                    <el-image :src="currentOption.img" />
                   </div>
                   <div class="dialog-image-placeholder" v-else>
-                    <img :src="storeConfig.placeholder"/>
+                    <img :src="storeConfig.placeholder" />
                   </div>
                   <h3> {{ currentOption.description }} </h3>
                 </div>
@@ -70,9 +64,18 @@
                 </template>
               </el-dialog>
               <div class="actions">
-                <el-button class="cta" color="var(--cta-color)" type="primary" @click="previousSection" v-if="currentSection !== 0"><el-icon><CaretLeft /></el-icon> Voltar</el-button>
-                <el-button class="cta" color="var(--cta-color)" style="visibility: hidden;" type="primary" @click="previousSection" v-else></el-button>
-                <el-button class="cta" color="var(--cta-color)" type="primary" @click="nextSection">Próximo passo <el-icon><CaretRight /></el-icon></el-button>
+                <el-button class="cta" color="var(--cta-color)" type="primary" @click="previousSection"
+                  v-if="currentSection !== 0"><el-icon>
+                    <CaretLeft />
+                  </el-icon> Voltar</el-button>
+                <el-button class="cta" color="var(--cta-color)" style="visibility: hidden;" type="primary"
+                  @click="previousSection" v-else></el-button>
+                <el-button class="cta" color="var(--cta-color)" type="primary" @click="nextSection"
+                  :disabled="isCurrentElementMandatory">
+                  Próximo passo <el-icon>
+                    <CaretRight />
+                  </el-icon>
+                </el-button>
               </div>
             </div>
           </div>
@@ -86,27 +89,23 @@
 
       <h1>Revisar modelagem</h1>
 
-      <el-dialog
-                v-model="dialogVisibleResumo"
-                :title="currentOption.element + ': ' + currentOption.name"
-                width="40%"
-                :before-close="handleClose"
-              >
-                <div class="dialog-content">
-                  <div class="dialog-image" v-if="currentOption.img != ''">
-                        <el-image :src="currentOption.img"/>
-                  </div>
-                  <div class="dialog-image-placeholder" v-else>
-                    <img :src="storeConfig.placeholder"/>
-                  </div>
-                  <h3> {{ currentOption.description }} </h3>
-                </div>
-                <template #footer>
-                  <span class="dialog-footer">
-                    <h2>R$ {{ currentOption.price }}</h2>
-                  </span>
-                </template>
-              </el-dialog>
+      <el-dialog v-model="dialogVisibleResumo" :title="currentOption.element + ': ' + currentOption.name" width="40%"
+        :before-close="handleClose">
+        <div class="dialog-content">
+          <div class="dialog-image" v-if="currentOption.img != ''">
+            <el-image :src="currentOption.img" />
+          </div>
+          <div class="dialog-image-placeholder" v-else>
+            <img :src="storeConfig.placeholder" />
+          </div>
+          <h3> {{ currentOption.description }} </h3>
+        </div>
+        <template #footer>
+          <span class="dialog-footer">
+            <h2>R$ {{ currentOption.price }}</h2>
+          </span>
+        </template>
+      </el-dialog>
 
       <el-tabs v-model="activeName" class="demo-tabs" @tab-click="handleClick">
         <el-tab-pane label="Visão em grid" name="first">
@@ -116,35 +115,68 @@
               <div class="revisar-section-section">
 
                 <h2>{{ optionInfo.section }}</h2>
-              <div class="revisar-main-section">
-                <div v-for="element in optionInfo.elements" :key="element">
-                  <div v-if="element.index == 1" class="revisar-section-item main">
-                    <div class="element-image-main" v-if="element.img">
-                          <el-image :src="element.img"/>
-                    </div>
-                    <div class="element-image-main" v-else>
-                          <img :src="storeConfig.placeholder"/>
-                    </div>
-                    <div class="revisar-section-item-option">
-                      <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
-                      <h3 class="element-price">{{ element.price != 0 ? "R$ " +  element.price : "--" }}</h3>
-                      <el-icon class="option-dialog-button" @click="optionDialogResumo(element)"><InfoFilled /></el-icon>
-                    </div>
-                  </div>
-                </div>
-                <div class="revisar-secondary-section">
+                <div class="revisar-main-section">
                   <div v-for="element in optionInfo.elements" :key="element">
-                    <div v-if="element.index > 1" class="revisar-section-item">
-                      <div class="element-image" v-if="element.img">
-                            <el-image :src="element.img"/>
+                    <div v-if="element.index == 1" class="revisar-section-item main">
+                      <div class="element-image-main" v-if="element.img">
+                        <el-image :src="element.img" />
                       </div>
-                      <div class="element-image" v-else>
-                            <img :src="storeConfig.placeholder"/>
+                      <div class="element-image-main" v-else>
+                        <img :src="storeConfig.placeholder" />
                       </div>
                       <div class="revisar-section-item-option">
-                        <div><h4>{{element.element}}</h4><h3 class="element-option">{{ element.option }}</h3></div>
+                        <div>
+                          <h4>{{ element.element }}</h4>
+                          <h3 class="element-option">{{ element.option }}</h3>
+                        </div>
                         <h3 class="element-price">{{ element.price != 0 ? "R$ " + element.price : "--" }}</h3>
-                        <el-icon class="option-dialog-button" @click="optionDialogResumo(element)"><InfoFilled /></el-icon>
+                        <el-icon class="option-dialog-button" @click="optionDialogResumo(element)">
+                          <InfoFilled />
+                        </el-icon>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="revisar-secondary-section">
+                    <div v-for="element in optionInfo.elements" :key="element">
+                      <div v-if="element.index == 1" class="revisar-section-item main">
+                        <div class="element-image-main" v-if="element.img">
+                          <el-image :src="element.img" />
+                        </div>
+                        <div class="element-image" v-else>
+                          <img :src="storeConfig.placeholder" />
+                        </div>
+                        <div class="revisar-section-item-option">
+                          <div>
+                            <h4>{{ element.element }}</h4>
+                            <h3 class="element-option">{{ element.option }}</h3>
+                          </div>
+                          <h3 class="element-price">{{ element.price != 0 ? "R$ " + element.price : "--" }}</h3>
+                          <el-icon class="option-dialog-button" @click="optionDialogResumo(element)">
+                            <InfoFilled />
+                          </el-icon>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="revisar-secondary-section">
+                      <div v-for="element in optionInfo.elements" :key="element">
+                        <div v-if="element.index > 1" class="revisar-section-item">
+                          <div class="element-image" v-if="element.img">
+                            <el-image :src="element.img" />
+                          </div>
+                          <div class="element-image" v-else>
+                            <img src="../../../assets/img/personniLogo-Grey.png" />
+                          </div>
+                          <div class="revisar-section-item-option">
+                            <div>
+                              <h4>{{ element.element }}</h4>
+                              <h3 class="element-option">{{ element.option }}</h3>
+                            </div>
+                            <h3 class="element-price">{{ element.price != 0 ? "R$ " + element.price : "--" }}</h3>
+                            <el-icon class="option-dialog-button" @click="optionDialogResumo(element)">
+                              <InfoFilled />
+                            </el-icon>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -152,11 +184,10 @@
               </div>
             </div>
           </div>
-        </div>
 
         </el-tab-pane>
         <el-tab-pane label="Visão em tabela" name="second">
-         <!-- element plus table, loops through selectedOptionsInfo, has a rowspan of elements.length, while showing all secoes.elements-->
+          <!-- element plus table, loops through selectedOptionsInfo, has a rowspan of elements.length, while showing all secoes.elements-->
           <el-table stripe="true" :data="tableData" style="width: 100%;" class="admin-table">
             <el-table-column prop="section" label="Seção" sortable :width="columnWidth">
               <template v-slot="scope">
@@ -175,11 +206,11 @@
             <el-table-column prop="img" label="Imagem" sortable :width="columnWidth">
               <template v-slot="scope">
                 <div class="nome">
-                  <div v-if="scope.row.image"  class="table-image">
-                    <el-image :src="scope.row.image"/>
+                  <div v-if="scope.row.image" class="table-image">
+                    <el-image :src="scope.row.image" />
                   </div>
                   <div v-else class="table-image">
-                    <img :src="storeConfig.placeholder"/>
+                    <img :src="storeConfig.placeholder" />
                   </div>
                 </div>
               </template>
@@ -200,19 +231,24 @@
             </el-table-column>
           </el-table>
 
-        <el-button @click="imprimirTabela">Imprimir</el-button>
+          <el-button @click="imprimirTabela">Imprimir</el-button>
         </el-tab-pane>
       </el-tabs>
-        <div class="preco-final">
-          <h3>Preço final:</h3> <h2>R$ {{ products_cmp.value }}</h2>
-        </div>
-        <div class="revisar-actions">
-          <el-button class="cta" color="var(--cta-color)" type="primary" @click="previousSection" v-if="isLastSection"><el-icon><CaretLeft /></el-icon> Voltar</el-button>    
-          <el-button class="cta" color="var(--cta-color)" size="large" type="primary" @click="criarCMP" v-if="isLastSection">Adicionar ao carrinho</el-button>
-        </div>
+      <div class="preco-final">
+        <h3>Preço final:</h3>
+        <h2>R$ {{ products_cmp.value }}</h2>
       </div>
-    
-    
+      <div class="revisar-actions">
+        <el-button class="cta" color="var(--cta-color)" type="primary" @click="previousSection"
+          v-if="isLastSection"><el-icon>
+            <CaretLeft />
+          </el-icon> Voltar</el-button>
+        <el-button class="cta" color="var(--cta-color)" size="large" type="primary" @click="criarCMP"
+          v-if="isLastSection">Adicionar ao carrinho</el-button>
+      </div>
+    </div>
+
+
   </div>
 </template>
 
@@ -228,12 +264,12 @@ export default {
     return {
       testImage: "@assets/img/cadeira1.png",
       currentSection: 0,
-      selected: [], 
+      selected: [],
       tableData: [],
-      selectedOptionsInfo: [], 
+      selectedOptionsInfo: [],
       sectionAllSelected: false,
       activeName: 'first',
-      columnWidth:"*",
+      columnWidth: "*",
       products_cmp: {
         id: 0,
         value: 0,
@@ -263,10 +299,10 @@ export default {
   },
   async created() {
     const loading = ElLoading.service({
-            lock: true,
-            text: 'Carregando modelagem...',
-            background: '#ffffff'
-      });
+      lock: true,
+      text: 'Carregando modelagem...',
+      background: '#ffffff'
+    });
     this.getStoreConfig();
     const id = this.$route.params.id;
     axios.get(`http://localhost:8081/category/` + id)
@@ -303,9 +339,35 @@ export default {
       });
 
 
-      
+
   },
   computed: {
+    isCurrentElementMandatory() {
+      const currentSection = this.categoria.sectionCmps[this.currentSection];
+
+      // Verifica se a seção não é 'Revisar' e se há uma opção selecionada para a seção atual
+      if (currentSection.name !== 'Revisar' && this.selected[currentSection.id]) {
+
+        // Verifica se todas as opções obrigatórias foram selecionadas para elementos obrigatórios
+        const areAllMandatoryOptionsSelected = currentSection.elementCmps
+          .filter((element) => element.mandatory)
+          .every((mandatoryElement) => {
+            const selectedOptionId = this.selected[mandatoryElement.id];
+            return mandatoryElement.optionCmps.some((mandatoryOption) => mandatoryOption.id === selectedOptionId);
+          });
+
+        return !areAllMandatoryOptionsSelected;
+      }
+
+      // Se a seção for 'Revisar' ou nenhum elemento foi selecionado, não é obrigatório
+      return true;
+    },
+
+
+
+
+
+
     isLastSection() {
       // make tableData
       this.tableData = [];
@@ -320,7 +382,7 @@ export default {
           });
         });
       });
-      return this.currentSection === this.categoria.sectionCmps.length -1;
+      return this.currentSection === this.categoria.sectionCmps.length - 1;
     },
   },
   methods: {
@@ -333,16 +395,16 @@ export default {
         type: 'success',
         duration: 3000
       })
-      setTimeout (() => {
+      setTimeout(() => {
         this.$router.push('/carrinho');
       }, 250);
     },
     nextSection() {
       this.currentSection += 1;
       const loading = ElLoading.service({
-            lock: true,
-            text: 'Carregando próxima seção...',
-            background: 'rgba(0, 0, 0, 0.7)'
+        lock: true,
+        text: 'Carregando próxima seção...',
+        background: 'rgba(0, 0, 0, 0.7)'
       });
       setTimeout(() => {
         this.scrollToTop();
@@ -352,9 +414,9 @@ export default {
     previousSection() {
       this.currentSection -= 1;
       const loading = ElLoading.service({
-            lock: true,
-            text: 'Carregando seção anterior...',
-            background: 'rgba(0, 0, 0, 0.7)'
+        lock: true,
+        text: 'Carregando seção anterior...',
+        background: 'rgba(0, 0, 0, 0.7)'
       });
       setTimeout(() => {
         this.scrollToTop();
@@ -387,9 +449,9 @@ export default {
         for (const element of section.elementCmps) {
           for (const optionId of optionIds) {
             const option = element.optionCmps.find((opt) => opt.id === optionId);
-              if (option) {
-                correspondencias.push({ section: section, element: element, option: option });
-              }
+            if (option) {
+              correspondencias.push({ section: section, element: element, option: option });
+            }
           }
         }
       }
@@ -402,92 +464,92 @@ export default {
 
       if (correspondencias.length > 0) {
         const selectedOptionsInfo = []; // Array para armazenar as informações de cada opção escolhida
-        
-      correspondencias.forEach(({ section, element, option }) => {
-        // Verifique se a seção já existe na lista de seções
-        const existingSection = this.products_cmp.sectionProductCmpDtos.find(sec => sec.sectionId === section.id);
 
-        if (existingSection) {
-          const existingElement = existingSection.elementProductCmpDtos.find(ele => ele.id === element.id);
+        correspondencias.forEach(({ section, element, option }) => {
+          // Verifique se a seção já existe na lista de seções
+          const existingSection = this.products_cmp.sectionProductCmpDtos.find(sec => sec.sectionId === section.id);
 
-          if (existingElement) {
-            // Se o elemento já existe, substitua a opção existente
-            existingElement.optionProductCmpDto = {
-              "id": option.id,
-              "name": option.name,
-              "price": option.price,
-              "img": option.img,
-              "descriptions": option.descriptions,
-              "elementCmpId": 0
-            };
+          if (existingSection) {
+            const existingElement = existingSection.elementProductCmpDtos.find(ele => ele.id === element.id);
+
+            if (existingElement) {
+              // Se o elemento já existe, substitua a opção existente
+              existingElement.optionProductCmpDto = {
+                "id": option.id,
+                "name": option.name,
+                "price": option.price,
+                "img": option.img,
+                "descriptions": option.descriptions,
+                "elementCmpId": 0
+              };
+            } else {
+              // Caso contrário, crie um novo objeto para o elemento e a opção
+              const elementObj = {
+                "id": element.id,
+                "name": element.name,
+                "imgUrl": "string",
+                "type": "string",
+                "sectionCmpId": 0,
+                "index": element.index,
+                "optionProductCmpDto": {
+                  "id": option.id,
+                  "name": option.name,
+                  "price": option.price,
+                  "img": option.img,
+                  "descriptions": option.descriptions,
+                  "elementCmpId": 0
+                }
+              };
+
+              existingSection.elementProductCmpDtos.push(elementObj);
+            }
           } else {
-            // Caso contrário, crie um novo objeto para o elemento e a opção
-            const elementObj = {
-              "id": element.id,
-              "name": element.name,
+            // Se a seção não existir, crie uma nova seção com o elemento e a opção
+            const sectionObj = {
+              "sectionId": section.id,
+              "name": section.name,
               "imgUrl": "string",
-              "type": "string",
-              "sectionCmpId": 0,
-              "index": element.index,
-              "optionProductCmpDto": {
-                "id": option.id,
-                "name": option.name,
-                "price": option.price,
-                "img": option.img,
-                "descriptions": option.descriptions,
-                "elementCmpId": 0
-              }
+              "categoryId": 0,
+              "elementProductCmpDtos": [{
+                "id": element.id,
+                "name": element.name,
+                "imgUrl": "string",
+                "type": "string",
+                "sectionCmpId": 0,
+                "index": element.index,
+                "optionProductCmpDto": {
+                  "id": option.id,
+                  "name": option.name,
+                  "price": option.price,
+                  "img": option.img,
+                  "descriptions": option.descriptions,
+                  "elementCmpId": 0
+                }
+              }]
             };
 
-            existingSection.elementProductCmpDtos.push(elementObj);
+            this.products_cmp.sectionProductCmpDtos.push(sectionObj);
           }
-        } else {
-          // Se a seção não existir, crie uma nova seção com o elemento e a opção
-          const sectionObj = {
-            "sectionId": section.id,
-            "name": section.name,
-            "imgUrl": "string",
-            "categoryId": 0,
-            "elementProductCmpDtos": [{
-              "id": element.id,
-              "name": element.name,
-              "imgUrl": "string",
-              "type": "string",
-              "sectionCmpId": 0,
-              "index": element.index,
-              "optionProductCmpDto": {
-                "id": option.id,
-                "name": option.name,
-                "price": option.price,
-                "img": option.img,
-                "descriptions": option.descriptions,
-                "elementCmpId": 0
-              }
-            }]
+
+          if (!selectedOptionsInfo.find((sec) => sec.section === section.name)) {
+            selectedOptionsInfo.push({
+              section: section.name,
+              elements: [],
+            });
+          }
+
+          // push element to elements array
+          const elementInfo = {
+            element: element.name,
+            index: element.index,
+            option: option.name,
+            price: option.price,
+            img: option.img,
           };
 
-          this.products_cmp.sectionProductCmpDtos.push(sectionObj);
-        }
-          
-        if (!selectedOptionsInfo.find((sec) => sec.section === section.name)) {
-          selectedOptionsInfo.push({ 
-            section: section.name,
-            elements: [],
-          });
-        }
+          selectedOptionsInfo[selectedOptionsInfo.length - 1].elements.push(elementInfo);
 
-        // push element to elements array
-        const elementInfo = {
-          element: element.name,
-          index: element.index,
-          option: option.name,
-          price: option.price,
-          img: option.img,
-        };
 
-        selectedOptionsInfo[selectedOptionsInfo.length - 1].elements.push(elementInfo);
-          
-          
 
 
 
@@ -495,16 +557,16 @@ export default {
           //selectedOptionsInfo.push(optionInfo);
 
           //selectedOptionsInfo.push(optionInfo);
-      });
+        });
 
-      // Atualize o valor total
-      this.products_cmp.value = this.products_cmp.sectionProductCmpDtos.reduce((total, section) => {
-        return total + section.elementProductCmpDtos.reduce((eleTotal, element) => {
-          return eleTotal + element.optionProductCmpDto.price;
+        // Atualize o valor total
+        this.products_cmp.value = this.products_cmp.sectionProductCmpDtos.reduce((total, section) => {
+          return total + section.elementProductCmpDtos.reduce((eleTotal, element) => {
+            return eleTotal + element.optionProductCmpDto.price;
+          }, 0);
         }, 0);
-      }, 0);
 
-      this.selectedOptionsInfo = selectedOptionsInfo;
+        this.selectedOptionsInfo = selectedOptionsInfo;
       }
     },
     imprimirTabela() {
@@ -513,21 +575,21 @@ export default {
       this.columnWidth = "*"
     },
     getStoreConfig() {
-            const config = { headers: { Authorization: AuthService.getToken() } };
-            axios.get(`http://localhost:8081/store`, config)
-            .then((response) => {
-            if (response.status === 200) {
-                this.storeConfig.logo = response.data.storeLogoPath
-                this.storeConfig.placeholder = response.data.storePlaceholdeImgPath
-            
-            } else {
-                ElMessage.error('Erro ao receber config da empresa:', response.statusText);
-                }
-            })
-            .catch((error) => {
-                console.error('Erro ao buscar dados da API:', error);
-            });
-        },
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.get(`http://localhost:8081/store`, config)
+        .then((response) => {
+          if (response.status === 200) {
+            this.storeConfig.logo = response.data.storeLogoPath
+            this.storeConfig.placeholder = response.data.storePlaceholdeImgPath
+
+          } else {
+            ElMessage.error('Erro ao receber config da empresa:', response.statusText);
+          }
+        })
+        .catch((error) => {
+          console.error('Erro ao buscar dados da API:', error);
+        });
+    },
 
 
   },
@@ -546,28 +608,34 @@ export default {
   color: var(--cta-color);
 }*/
 
-.container, .cmp-container{
+.container,
+.cmp-container {
   background-color: #FFFFFF !important;
   padding-top: 0;
-  h1{
-  font-size: 32px;
-  font-weight: 300;
-  color: $text-color;
-  margin-top: 5%;
+
+  h1 {
+    font-size: 32px;
+    font-weight: 300;
+    color: $text-color;
+    margin-top: 5%;
+  }
 }
-}
+
 :deep(.el-step__icon-inner.is-status) {
   transform: translate(-5px, -6px);
 }
+
 :deep(.el-icon svg) {
   height: 25px;
   width: 25px;
 }
-.el-steps{
+
+.el-steps {
   background-color: transparent !important;
   width: 40%;
 }
-.steps-container{
+
+.steps-container {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
   padding-bottom: 10px;
@@ -575,65 +643,68 @@ export default {
   display: flex;
   justify-content: space-between;
 
-  h2{
+  h2 {
     padding-left: 20px;
   }
 }
 
-h2{
+h2 {
   font-size: 20px;
   font-weight: 400;
   margin-bottom: 10px;
 }
-.el-menu{
+
+.el-menu {
   justify-content: space-between;
   height: 100px;
   border-bottom: 0 !important;
+
   h1 {
-  font-size: 32px;
-  font-weight: 300;
-  color: $text-color;
-  margin-right: 5%;
-  margin-bottom: 0;
-}
+    font-size: 32px;
+    font-weight: 300;
+    color: $text-color;
+    margin-right: 5%;
+    margin-bottom: 0;
+  }
 }
 
-.cmp-container{
+.cmp-container {
   display: flex;
   flex-direction: row;
   justify-content: center;
   background-color: $secondary-color;
 
-  .cmp-sections{
+  .cmp-sections {
     width: 70%;
     height: 100%;
     border-radius: 10px;
     padding: 20px;
 
-    .inner-section{
+    .inner-section {
       display: flex;
       flex-direction: column;
 
-      h1{
+      h1 {
         font-size: 8rem;
         text-align: center;
         font-weight: 300;
       }
-      .section-elements{
+
+      .section-elements {
         display: flex;
         flex-direction: column;
         flex-wrap: wrap;
 
-        .element-item{
+        .element-item {
           margin: 20px;
 
-          .el-image{
+          .el-image {
             width: 100px;
             height: 100px;
             margin-bottom: 10px;
           }
 
-          .option-image-placeholder{
+          .option-image-placeholder {
             width: 100px;
             height: 100px;
             margin: 5px;
@@ -644,18 +715,19 @@ h2{
             background-color: $primary-color;
           }
 
-          .option-info{
+          .option-info {
             display: flex;
             flex-direction: column;
             text-transform: none;
 
-            .option-name{
+            .option-name {
               font-size: 14px;
               font-weight: 600;
               white-space: normal;
               margin-bottom: 5px;
             }
-            .option-price{
+
+            .option-price {
               font-size: 12px;
               font-weight: 400;
               white-space: normal;
@@ -665,16 +737,16 @@ h2{
       }
 
 
-      div.actions{
+      div.actions {
         display: flex;
         justify-content: space-between;
         margin-top: 20px;
       }
     }
-    
+
   }
 
-  .resumo{
+  .resumo {
     width: 30%;
     height: 100%;
     border-radius: 10px;
@@ -682,7 +754,7 @@ h2{
     padding: 20px;
     background-color: #f5f5f5;
 
-    h2{
+    h2 {
       font-size: 20px;
       color: var(--cta-color);
     }
@@ -693,23 +765,24 @@ h2{
       flex-direction: row;
       flex-wrap: wrap;
 
-      .resumo-section-item{
+      .resumo-section-item {
         margin: 0 10px 10px 0;
         padding: 10px;
         min-width: 150px;
         background-color: $primary-color;
 
-        h4{
+        h4 {
           margin-top: 0;
           margin-bottom: 10px;
-          font-size:  14px;
+          font-size: 14px;
         }
-        p{
+
+        p {
           font-size: 12px;
         }
 
 
-        .resumo-section-item-option{
+        .resumo-section-item-option {
           display: flex;
           justify-content: space-between;
 
@@ -718,17 +791,20 @@ h2{
     }
   }
 }
-.revisar-actions{
-    display: flex;
-    justify-content: space-between;
-    margin-top: 20px;
-  }
-.revisar-section{
+
+.revisar-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.revisar-section {
 
   display: flex;
   justify-content: center;
   flex-direction: column;
-  h2{
+
+  h2 {
     font-size: 36px;
     width: 150px;
     text-align: start;
@@ -737,11 +813,12 @@ h2{
     font-family: josefin;
   }
 
-  .revisar-section-section{
+  .revisar-section-section {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
+
   .revisar-main-section {
     display: flex;
     flex-direction: row;
@@ -750,7 +827,7 @@ h2{
     //border: 1px solid $admin-grey;
     padding: 10px 0 10px 10px;
 
-    .revisar-section-item{
+    .revisar-section-item {
       margin: 0 10px 0 0;
       padding: 0;
       min-width: 80px;
@@ -762,13 +839,14 @@ h2{
       outline: 1.5px solid $admin-grey-lighter;
 
 
-      .element-option{
+      .element-option {
         font-size: 14px;
         font-weight: 400;
         color: var(--el-color-success);
 
       }
-      .element-price{
+
+      .element-price {
         font-size: 12px;
         font-weight: 400;
         min-width: 50px;
@@ -776,14 +854,14 @@ h2{
         color: $text-color;
       }
 
-      .el-image{
+      .el-image {
         width: 180px;
-        height: 180px; 
+        height: 180px;
 
-        .el-image__error{
+        .el-image__error {
           min-height: 180px;
           min-width: 180px;
-          
+
         }
       }
 
@@ -801,36 +879,39 @@ h2{
         align-self: center;
       }
 
-      h4{
+      h4 {
         margin-top: 0;
         margin-bottom: 10px;
-        font-size:  12px;
+        font-size: 12px;
         text-align: left;
         color: $text-color;
         font-weight: 400;
       }
+
       .el-text {
         max-width: 50%;
         word-break: normal;
       }
-      p{
+
+      p {
         font-size: 12px;
       }
 
 
 
-      .revisar-section-item-option{
+      .revisar-section-item-option {
         display: flex;
         justify-content: space-between;
         align-items: flex-end;
         margin-left: 20px;
         width: 100%;
+
         :deep(.el-text) {
-              align-self: end !important;
+          align-self: end !important;
         }
 
-        i.option-dialog-button{
-        position: relative !important;
+        i.option-dialog-button {
+          position: relative !important;
           align-self: baseline !important;
           color: $admin-grey;
           margin: 5px 5px 0px 0px;
@@ -838,7 +919,7 @@ h2{
       }
     }
 
-    .main{
+    .main {
       width: 380px;
       height: 180px;
       flex-direction: row;
@@ -852,124 +933,140 @@ h2{
     flex-wrap: wrap;
     height: 180px;
 
-    .revisar-section-item{
+    .revisar-section-item {
       padding: 0;
       min-width: 250px;
       margin: 5px;
       height: 80px;
       display: flex;
-       justify-content: flex-start;
+      justify-content: flex-start;
       flex-direction: row;
       outline: 1.5px solid $admin-grey-lighter;
       align-content: center;
     }
 
-    div.element-image, .el-image{
+    div.element-image,
+    .el-image {
       width: 80px !important;
       height: 80px !important;
-      min-width: 80px !important; 
+      min-width: 80px !important;
 
-      .el-image__error{
+      .el-image__error {
         min-height: 80px !important;
         min-width: 80px !important;
 
       }
     }
-    .revisar-section-item-option{
+
+    .revisar-section-item-option {
       display: flex;
       justify-content: space-between;
       margin-left: 20px;
       margin-right: 0;
       align-items: flex-end !important;
+
       :deep(.el-text) {
-            align-self: end !important;
+        align-self: end !important;
       }
     }
   }
 }
 
 
-div.el-radio-group{
+div.el-radio-group {
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
   border: 1px solid $secondary-color;
-  :deep(.el-radio-button){
+
+  :deep(.el-radio-button) {
     margin: 10px;
     transition: all 0.2s ease-in-out;
-    &:hover{
+
+    &:hover {
       transform: scale(1.1);
     }
-  };
+  }
+
+  ;
+
   :deep(span.el-radio-button__inner) {
     padding: 10px 0;
     width: 120px;
     background-color: transparent;
     color: var(--el-text-color-regular) !important;
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
 
   }
+
   :deep(.el-radio-button.is-active > .el-radio-button__inner) {
     transition: 0.1s;
     background-color: transparent !important;
     outline: 2px solid var(--cta-color) !important;
     color: $text-color !important;
 
+  }
 }
-}
+
 .preco-final {
   display: flex;
   align-items: baseline;
-   justify-content: flex-end;
+  justify-content: flex-end;
 
   h2 {
     margin-left: 10px;
     font-size: 20px;
   }
-  h3{
+
+  h3 {
     font-weight: 400;
   }
 }
 
-.el-text--success{
+.el-text--success {
   font-size: 18px;
 }
+
 :deep(.el-step__head.is-success) {
   height: 24px;
 }
 
-.el-table{
+.el-table {
 
-  .el-image, img{
-  width: 100px;
+  .el-image,
+  img {
+    width: 100px;
   }
 }
-.option-dialog-button{
+
+.option-dialog-button {
   position: absolute;
   right: 0;
   top: 0;
   z-index: 5;
 }
+
 .dialog-content {
   display: flex;
   flex-direction: row;
 
-  .el-image{
+  .el-image {
     width: 160px;
     height: 160px;
     margin-right: 20px;
   }
-  img{
+
+  img {
     width: 100%;
     height: 160px;
     margin-right: 20px;
   }
 
-  h3{
+  h3 {
     font-weight: 400;
     font-size: 14px;
   }

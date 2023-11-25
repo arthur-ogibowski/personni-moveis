@@ -175,7 +175,21 @@ export default {
             , // Inicialize como nulo até carregar os dados da API
         };
     },
+    created() {
+    const token = AuthService.getToken();
 
+    if (token) {
+      const usuario = jwtDecode(token);
+
+      if (usuario) {
+        if (usuario.userRole === 'COLABORATOR' || usuario.userRole === 'ADMIN') {
+          // Usuário tem permissão de colab ou admin, continue carregando a página
+        } else if (usuario.userRole === 'USER') {
+          this.$router.push("/"); // Para voltar à página anterior
+        }
+      }
+    }
+    },
     methods: {
         deleteCascade(Seccao, Elemento, Option) {
             // Encontre a categoria

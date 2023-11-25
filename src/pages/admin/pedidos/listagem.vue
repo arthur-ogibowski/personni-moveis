@@ -26,6 +26,13 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="user.name" label="Cliente" sortable width="*">
+            <template v-slot="scope">
+              <div class="client_name">
+                <h3>{{ scope.row.user.email }}</h3>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="status" label="Status" sortable width="*">
             <template v-slot="scope">
               <div class="status">
@@ -33,90 +40,115 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="date" label="date" sortable width="*">
+            <template v-slot="scope">
+              <div class="date">
+                <h3>{{ scope.row.date }}</h3>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column label="Ações" prop="id"> 
             <template #default="scope"> 
-              <el-icon class="table-edit" size="20" color="#A8A8A8" @click="redirectToEditCategory(scope)"><Edit/></el-icon>
-              <el-icon class="table-delete" size="20" color="#F56C6C" plain @click="showDeleteMessage(scope.row.id)"><Delete/></el-icon> 
+              <el-button plain @click="showDetailsModal(scope)">Detalhes</el-button>
             </template>
           </el-table-column>
           <!--<el-pagination layout="prev, pager, next" :total="this.categorias.length" @current-change="setPage">
-      </el-pagination>-->
-    </el-table> 
+          </el-pagination>-->
+      </el-table> 
     </div>
-</template>
 
+    <el-dialog v-model="showModal" title="Pedido do cliente">
+        <h2> Pedido realizado por: </h2> <h3>{{ order.user.name }}</h3>
+        <h2> E-mail: </h2> <h3>{{ order.user.email }}</h3>
+        <h2>Produtos comprados:</h2>
+        <div v-for="item in order.orderItems" v-bind:key="item">
+          <div v-for="product in item.products" v-bind:key="product">
+            <h3>{{ product.name }} - valor do produto: {{ product.value }}</h3>
+          </div>
+        </div>
+        <h2>total da compra: {{ order.totalPrice }}</h2>
+        <h2>Endereço: {{ order.address }}</h2>
+        <p>{{ order }}</p>
+      
+    </el-dialog>
+</template>
 
 <script>
 import { ElLoading } from 'element-plus';
 import axios from 'axios';
+import AuthService from '@/store/authService.js';
+import jwtDecode from 'jwt-decode';
+
 export default {
     data() {
     return {
       pedidos: [],
+      order: null,
       page: 1,
       pageSize: 10,
       pedidosSearch: '',
+      showModal: false,
     }
   },
   created() {
-    const loading = ElLoading.service({
-            lock: true,
-            text: 'Carregando pedidos...',
-            background: 'rgba(0, 0, 0, 0.7)'
+    this.getOrders();
+    const token = AuthService.getToken();
+
+    if (token) {
+      const usuario = jwtDecode(token);
+
+      if (usuario) {
+        if (usuario.userRole === 'COLABORATOR' || usuario.userRole === 'ADMIN') {
+          // Usuário tem permissão de colab ou admin, continue carregando a página
+        } else if (usuario.userRole === 'USER') {
+          this.$router.push("/"); // Para voltar à página anterior
+        }
+      }
+    }
+  },
+
+  methods: {
+    getOrders() {
+      const loading = ElLoading.service({
+        lock: true,
+        text: 'Carregando pedidos...',
+        background: 'rgba(0, 0, 0, 0.7)'
       });
-    axios.get('http://localhost:8081/orders')
-      .then(response => {
+      axios.get('http://localhost:8081/orders')
+        .then(response => {
+          // Transforma datas para formato dia/mes/ano.
+          response.data = response.data.map(order => {
+          const dataArray = order.date;
+          const data = new Date(dataArray[0], dataArray[1] - 1, dataArray[2]);
+          const day = data.getDate();
+          const month = data.getMonth() + 1; // Meses em JavaScript são indexados de 0 a 11
+          const year = data.getFullYear();
+          // Atribuir a string formatada de volta a order.date
+          order.date = `${day}/${month}/${year}`;
+          return order;
+        });
+        // Fazendo set dos valores na lista de pedidos em tela.
         this.pedidos = response.data;
         setTimeout(() => {
             loading.close()
           }, 250)
-      })
-      .catch(error => {
-        console.error('Erro ao obter dados da API:', error);
-      });
-  },
-
-  methods: {
-    /*setPage(page) {
-      this.page = page
-    },*/
-    redirectToEditCategory(scope) {
-      return this.$router.push(`/admin/categorias/${scope.row.id}`);
+        })
+        .catch(error => {
+          console.error('Erro ao obter dados da API:', error);
+        });
     },
     filteredList() {
 
+    },
+    showDetailsModal(scope) {
+      this.showModal = true;
+      this.order = this.pedidos.find(o => o.orderId === scope.row.orderId);
     },
     formatPrice(x) {
       if (x.toString().match(/\.\d{2}$/)) {
         x = x.toString().replace(/\./g, ',');
       }
       return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-    },
-    showDeleteMessage(scope) {
-      ElMessageBox.confirm('Tem certeza que deseja remover a categoria?', 'Confirmação', {
-        confirmButtonText: 'Sim',
-        cancelButtonText: 'Não', // Nesse caso não faz nada.
-        type: 'warning',
-      })
-      .then(() => {
-        // Usuário marcou sim -> deletar produto e atualizar tabela.
-        this.deleteCategory(scope);
-        // Atualiza lista de produtos.
-        const excludedCategoryId = scope.row.id;
-        this.pedidos = this.pedidos.filter(pedidos => pedidos.id != excludedCategoryId);
-      })
-      .catch(() => {
-        // Nada é feito na seleção do 'não'.
-      });
-    },
-    deleteCategory(id) {
-      axios.delete(`http://localhost:8081/category/${id}`)
-      .then(response => {
-        ElMessage.success('Categoria deletada com Sucesso!')  
-      })
-      .catch(error => {
-        ElMessage.error('Erro ao deletar Categoria');
-      });
     },
   },
 

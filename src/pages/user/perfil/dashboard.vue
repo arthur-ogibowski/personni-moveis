@@ -299,7 +299,10 @@ export default {
     };
   },
   created() {
-    AuthService.shouldRedirectToLogin(this.$router);
+    if (AuthService.shouldRedirectToLogin(this.$router)) {
+      // Interrompe carregamento da tela já que usuário não logou ainda, senão erros aparecem em tela.
+      return;
+    }
     this.getUserInfo();
     this.loadAddresses();
     this.updateUserInfo();
@@ -442,7 +445,6 @@ export default {
           this.editUser = response.data;
         })
         .catch((error) => {
-          ElMessage.error('Erro ao carregar os dados do usuário.');
           console.error('Erro:', error);
         });
     },

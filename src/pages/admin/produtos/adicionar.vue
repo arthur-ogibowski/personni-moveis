@@ -217,6 +217,8 @@
 import axios from 'axios';
 import { ElMessage, ElLoading } from 'element-plus'
 import imgConverter from '@/store/imgConverter.js';
+import AuthService from '@/store/authService';
+import jwtDecode from 'jwt-decode';
 
 export default {
     data() {
@@ -262,6 +264,20 @@ export default {
         setTimeout(() => {
             loading.close()
         }, 250)
+
+        const token = AuthService.getToken();
+
+        if (token) {
+        const usuario = jwtDecode(token);
+
+        if (usuario) {
+            if (usuario.userRole === 'COLABORATOR' || usuario.userRole === 'ADMIN') {
+            // Usuário tem permissão de colab ou admin, continue carregando a página
+            } else if (usuario.userRole === 'USER') {
+            this.$router.push("/"); // Para voltar à página anterior
+            }
+        }
+        }
     },
 
     methods: {
@@ -305,7 +321,10 @@ export default {
                 ElMessage.error('Para ser cadastrado, o produto deve ter uma categoria selecionada!');
                 return;
             }
-
+            if (isNaN(this.product.value) || this.product.value < 1) {
+                ElMessage.error('Para que o produto seja criado, é necessário que seu "Preço" seja um valor numérico maior que 0');
+                return;
+            }
             if (this.product.value != '') {
                 this.product.value = this.product.value.replace(/\./g, '').replace(',', '.');
             }
