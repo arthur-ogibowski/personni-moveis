@@ -146,7 +146,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                     </div>
                     <div class="card-item subtotal">
                         <el-text type="info" size="medium">Total ({{ totalAmount() }} itens): </el-text>
-                        <h3> {{ totalPrice() != 0 ? formatPrice(totalPrice()) : "--" }}
+                        <h3> {{ totalPrice() != 0 ? totalPrice() : "--" }}
                         </h3>
                     </div>
 
@@ -211,8 +211,8 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                         </el-icon> Frete</h2>
                                 </div>
                                 <div class="card-item">
-                                    <h3>R$ 15,00</h3>
-                                    <h4>Entrega em até 3 dias úteis</h4>
+                                    <h3>{{ formatPrice(frete) }}</h3>
+                                    <h4>Entrega em até 5 dias úteis</h4>
                                 </div>
                             </el-card>
                         </div>
@@ -355,6 +355,7 @@ export default {
             addressChoice: 'existingAddress',
             storeConfig: {
                 logo: '',
+                address: '',
             },
             apiKey: "AIzaSyAN8WuBocaymoMHLv-iSkench1O6hVrOVY",
             frete: 0,
@@ -414,33 +415,36 @@ export default {
             }, 1000);
         },
         calcularFrete() {
-            let base = 15;
-            let frete = base;
-            /*const service = new window.google.maps.DistanceMatrixService();
-            service.getDistanceMatrix(
-              {
-                origins: this.storeConfig.address,
-                destinations: this.selectedAddress.street + ", " + this.selectedAddress.number + " - " + this.selectedAddress.city + " - " + this.selectedAddress.state,
-                travelMode: 'DRIVING',
-              },
-              (response, status) => {
-                if (status === 'OK') {
-                  const result = response.rows[0].elements[0];
-                
-                  // Convert distance to kilometers
-                  const distanceInKm = result.distance.value / 1000;
-                
-                  this.distanceResult = {
-                    distance: distanceInKm.toFixed(2), // Round to 2 decimal places
-                    duration: result.duration.text,
-                  };
-                  console.log(this.distanceResult.distance)
-                } else {
-                  console.error('Error calculating distance:', status);
-                }
-              }
-            );*/
-             this.frete = frete;
+            let base = 150;
+            let totalAmount = this.totalAmount();
+            let state = null;
+            let storeState = null;
+            console.log(totalAmount)
+
+
+            if (this.endereco.state != "") {
+                state = this.endereco.state;
+            }
+            else {
+                state = this.selectedAddress.state;
+            }
+
+
+            if (this.storeConfig.address != "") {
+                storeState = this.storeConfig.address.split(",")[1].trim();
+                storeState = storeState.split("-")[1].trim();
+            }
+
+            if (state == storeState) {
+                base = 100;
+            }
+
+            base += totalAmount * 80;
+            base -= totalAmount * 80 * 0.05;
+            
+
+
+            this.frete = base;
         },
 
         beforeDestroy() {
@@ -457,8 +461,13 @@ export default {
         },
         totalAmount() {
             let total = 0;
-            const amounTotal = cartService.getCartItems().forEach(prod => total += prod.amount);
-            return amounTotal;
+            // enumerate products
+            if (this.products && this.products.length > 0) {
+                total += this.products.reduce((total, product) => {
+                    return total + product.amount;
+                }, 0);
+            }
+            return total;
         },
         /** Faz pedidos e retorna qrcode pix. */
         makeOrder() {
@@ -496,7 +505,7 @@ export default {
             const ordersReq = {
                 requestProduct: getReqProduct,
                 requestCmp: getReqCmp,
-                shipmentFee: Number(this.calcularFrete()),
+                shipmentFee: Number(this.frete),
                 deliveryAddress: this.addressChoice === 'existingAddress' ? this.selectedAddress : this.endereco,
             }
 
@@ -589,11 +598,15 @@ export default {
         },
 
         nextStep() {
-            if (this.addressChoice === 'newAddress' && !this.addressAdded) {
-                this.addAddress();
-            }
             if (this.currentStep == 0){
-                this.frete = this.calcularFrete();
+                if (this.addressChoice === 'newAddress' && !this.addressAdded) {
+                    this.addAddress();
+                }
+                if (this.selectAddress == "" && this.addressChoice != 'newAddress') {
+                    ElMessage.error('Selecione um endereço.');
+                    return;
+                }
+               this.calcularFrete();
             }
             this.currentStep++;
         },
@@ -615,7 +628,9 @@ export default {
             }
 
             this.productsCmp.value = total;
-            total += parseInt(this.frete)
+            
+            total += this.frete
+            console.log(total)
             return this.formatPrice(total);
         },
         // Calculo dos produtos e personalizações.
@@ -675,6 +690,7 @@ export default {
             .then((response) => {
             if (response.status === 200) {
                 this.storeConfig.logo = response.data.storeLogoPath
+                this.storeConfig.address = response.data.storeAddress
 
             } else {
                 ElMessage.error('Erro ao receber config da empresa:', response.statusText);
