@@ -187,7 +187,7 @@
           </div>
           <div class="pedidos-right">
             <el-table :data="pedidosAll" class="perfil-table" style="width: 100%">
-              <el-table-column prop="orderId" label="#" width="300" />
+              <el-table-column prop="date" label="Data" width="300" />
               <el-table-column prop="status" label="Status" width="*">
                 <template #default="{ row }">
                   <!-- Mockando o campo status com um texto padrão -->
@@ -200,11 +200,36 @@
                 </template>
               </el-table-column>
               <el-table-column prop="" label="Detalhes" width="180">
-                <el-button plain>Detalhes</el-button>
+                <template #default="scope"> 
+              <el-button plain @click="showDetailsModal(scope)">Detalhes</el-button>
+            </template>
               </el-table-column>
             </el-table>
           </div>
         </div>
+
+        <el-dialog v-model="showModal">
+          <template #header>
+            <h2 class="pedidoId">Pedido <span>#{{ order.orderId }}</span></h2>
+          </template>
+
+            <div class="clientInfo">
+              <h2> Dados do cliente: </h2>
+              <h3>{{ order.user.name }}</h3>
+              <h3>{{ order.user.email }}</h3>
+              <h3>{{ order.user.deliveryAddress }}</h3>
+            </div>
+            <div class="orderInfo">
+            <h2>Produtos:</h2>
+            <div v-for="item in order.orderItems" v-bind:key="item">
+              <div v-for="product in item.products" v-bind:key="product">
+                <h3>{{ item.selectedAmountOfProducts }}x - {{ product.name }} ({{ formatPrice(product.value) }})</h3>
+              </div>
+            </div>
+            <h2 class="total">Total: <span>{{ formatPrice(order.totalPrice) }}</span></h2>
+          </div>
+
+        </el-dialog>
       </el-tab-pane>
 
 
@@ -261,6 +286,7 @@ export default {
   data() {
     return {
       user: {},
+      showModal: false,
       enderecosDash: [],
       pedidosDash: [],
       pedidosAll: [],
@@ -314,6 +340,10 @@ export default {
     formatPrice(price) {
       return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
     },
+    showDetailsModal(scope) {
+      this.showModal = true;
+      this.order = this.pedidosAll.find(o => o.orderId === scope.row.orderId);
+      },
     showEditAddress(address) {
       this.getAddressToEdit(address.addressId);
       this.showEditAddressForm = true;
@@ -589,6 +619,7 @@ div.pedidos-container {
     border: 1px solid $grey-border;
     background-color: $primary-color;
     padding: 20px;
+    height: 100%;
   }
 
   .pedidos-right {
