@@ -100,12 +100,12 @@ export default {
 
 @media (max-width: 768px) {
   .el-menu{
-    height: 50px;
+    height: 100% !important;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
-    height: 100%;
+    flex-wrap: wrap;
     padding-bottom: 2rem;
     padding-right: 0;
   }
