@@ -22,7 +22,7 @@
           <el-table-column prop="totalPrice" label="Valor" sortable width="*">
             <template v-slot="scope">
               <div class="totalPrice">
-                <h3>R$ {{ formatPrice(scope.row.totalPrice) }}</h3>
+                <h3>{{ formatPrice(scope.row.totalPrice) }}</h3>
               </div>
             </template>
           </el-table-column>
@@ -40,7 +40,7 @@
               </div>
             </template>
           </el-table-column>
-          <el-table-column prop="date" label="date" sortable width="*">
+          <el-table-column prop="date" label="Data" sortable width="*">
             <template v-slot="scope">
               <div class="date">
                 <h3>{{ scope.row.date }}</h3>
@@ -57,18 +57,26 @@
       </el-table> 
     </div>
 
-    <el-dialog v-model="showModal" title="Pedido do cliente">
-        <h2> Pedido realizado por: </h2> <h3>{{ order.user.name }}</h3>
-        <h2> E-mail: </h2> <h3>{{ order.user.email }}</h3>
-        <h2>Produtos comprados:</h2>
+    <el-dialog v-model="showModal">
+      <template #header>
+        <h2 class="pedidoId">Pedido <span>#{{ order.orderId }}</span></h2>
+      </template>
+        
+        <div class="clientInfo">
+          <h2> Dados do cliente: </h2>
+          <h3>{{ order.user.name }}</h3>
+          <h3>{{ order.user.email }}</h3>
+          <h3>{{ order.user.deliveryAddress }}</h3>
+        </div>
+        <div class="orderInfo">
+        <h2>Produtos:</h2>
         <div v-for="item in order.orderItems" v-bind:key="item">
           <div v-for="product in item.products" v-bind:key="product">
-            <h3>{{ product.name }} - valor do produto: {{ product.value }}</h3>
+            <h3>{{ item.selectedAmountOfProducts }}x - {{ product.name }} ({{ formatPrice(product.value) }})</h3>
           </div>
         </div>
-        <h2>total da compra: {{ order.totalPrice }}</h2>
-        <h2>Endereço: {{ order.address }}</h2>
-        <p>{{ order }}</p>
+        <h2 class="total">Total: <span>{{ formatPrice(order.totalPrice) }}</span></h2>
+      </div>
       
     </el-dialog>
 </template>
@@ -145,16 +153,49 @@ export default {
       this.order = this.pedidos.find(o => o.orderId === scope.row.orderId);
     },
     formatPrice(x) {
-      if (x.toString().match(/\.\d{2}$/)) {
-        x = x.toString().replace(/\./g, ',');
-      }
-      return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      return x.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     },
   },
 
 }
 </script>
 
-<style>
+<style scoped lang="scss">
+.clientInfo, .orderInfo{
+  h2{
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-top: 20px;
+    margin-bottom: 0;
+  }
+  h3{
+    font-size: 2rem;
+    font-weight: 400;
+    margin-top: 10px !important;
+    margin-bottom: 0;
+  }
+  h2.total{
+    font-weight: 400;
+    font-size: 2rem;
+    text-align: end !important;
+
+    span{
+      font-weight: 800;
+      font-size: 2.5rem;
+    }
+  }
+}
+.pedidoId {
+  margin: 0;
+  padding: 0;
+  font-size: 3rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+
+  span{
+    color: var(--cta-color);
+    font-weight: 700;
+  }
+}
 
 </style>

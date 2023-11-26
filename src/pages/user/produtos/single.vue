@@ -35,6 +35,7 @@
                 <h2 style="font-size: 4rem; font-weight: 400;">{{  product.name }}</h2>
                 <el-text v-if="product.quantity > 0" class="mx-1" type="success" size="large">Disponível</el-text>
                 <el-text v-else class="mx-1" type="danger" size="large">Fora de estoque</el-text>
+                <el-text v-if="product.quantity > 0" class="mx-1" type="info" size="large">{{ product.quantity }} em estoque</el-text>
                 <h3 style="font-size: 2.5rem; font-weight: 400;">{{ formatPrice(product.value) }}</h3>
                 <p style="font-size: 1.6rem; ont-weight: 400;">{{ product.description }}</p>
                 <div class="info-box-action" v-if="product.quantity > 0">

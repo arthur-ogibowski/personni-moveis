@@ -135,7 +135,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                 <el-text type="info" size="small" v-if="product.description !== 'string' && product.description">{{ product.description }}</el-text>
                             </div>
                             <div class="card-item-price">
-                                <h4>{{ formatPrice(product.value) }}</h4>
+                                <h4>{{ formatPrice(product.value * product.amount) }}</h4>
                             </div>
                         </div>
                     </div>
@@ -234,7 +234,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                         <el-text type="info" size="small">{{ product.description }}</el-text>
                                     </div>
                                     <div class="card-item-price">
-                                        <h4>{{ formatPrice(product.value) }}</h4>
+                                        <h4>{{ formatPrice(product.value * product.amount) }}</h4>
                                     </div>
                                 </div>
                             </div>
