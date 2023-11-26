@@ -346,14 +346,17 @@ export default {
       const currentSection = this.categoria.sectionCmps[this.currentSection];
 
       // Verifica se a seção não é 'Revisar' e se há uma opção selecionada para a seção atual
-      if (currentSection.name !== 'Revisar' && this.selected[currentSection.id]) {
+      if (currentSection.name !== 'Revisar') {
 
         // Verifica se todas as opções obrigatórias foram selecionadas para elementos obrigatórios
         const areAllMandatoryOptionsSelected = currentSection.elementCmps
           .filter((element) => element.mandatory)
           .every((mandatoryElement) => {
-            const selectedOptionId = this.selected[mandatoryElement.id];
-            return mandatoryElement.optionCmps.some((mandatoryOption) => mandatoryOption.id === selectedOptionId);
+            // Verifica se todas as opções obrigatórias foram selecionadas para este elemento
+            return mandatoryElement.optionCmps.every((mandatoryOption) => {
+              // Verifica se a opção obrigatória está presente nas opções selecionadas
+              return this.selected.includes(mandatoryOption.id);
+            });
           });
 
         return !areAllMandatoryOptionsSelected;
@@ -362,6 +365,7 @@ export default {
       // Se a seção for 'Revisar' ou nenhum elemento foi selecionado, não é obrigatório
       return true;
     },
+
 
 
 

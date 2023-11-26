@@ -72,7 +72,7 @@
                             </el-input-number>
                           </el-form-item>
 
-                          <el-checkbox v-model="element.mandatory" label="Obrigatório" checked="true" size="large" />
+                          <el-checkbox v-model="element.mandatory" label="Obrigatório" size="large" />
                         </div>
                       </div>
                       <div class="element-options">
