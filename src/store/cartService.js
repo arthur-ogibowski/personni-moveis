@@ -49,9 +49,11 @@ export default {
     
             if (options && options.length > 0) {
                 options.forEach((option) => {
+                    product.custom = true;
                     totalPrice += option.price;
                 });
             }
+
     
             return totalPrice;
         };

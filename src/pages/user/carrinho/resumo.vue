@@ -22,7 +22,10 @@
                         :src="storeConfig.placeholder"
                         class="image"
                         />
-                        <h2> {{ product.name }} </h2>
+                        <div>
+                            <h2> {{ product.name }} </h2>
+                            <el-text v-if="product.custom" type="success"> Personalizado </el-text>
+                        </div>
                         <div class="quantidade">
                             <p>Quantidade</p>
                             <el-input-number v-model="product.amount" size="small" :min="0" :max="product.quantity" label="Quantidade" @input="updateCurrentProduct(product)"></el-input-number>
@@ -104,7 +107,8 @@ export default {
                     name: '',
                     value: null,
                     mainImg: '',
-                    amount: 1
+                    amount: 1,
+                    custom: null,
                 }
             ],
             cmpProducts: [],
