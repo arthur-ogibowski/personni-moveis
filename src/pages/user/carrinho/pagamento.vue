@@ -507,12 +507,34 @@ export default {
                 ));
             }
             // Monta dto para processamento do pedido no back.
-            console.log(this.selectedAddress);
+
+            const deliveryAddress = {
+                addressNickname: 'casa',
+                cep: '80240320',
+                state: 'PR',
+                city: 'Curitiba',
+                district: 'Centro',
+                street: 'Rua Leôncio Correia',
+                number: '123',
+                details: 'Algumas observações'
+            };
+
+            const formatString = "CEP: %s, Cidade: %s, Bairro: %s, Rua: %s, Número: %s, Observações: %s";
+
+            const formattedString = formatString.replace(/%s/g, match => {
+            // Substitua cada %s pelos valores correspondentes do objeto deliveryAddress
+                return deliveryAddress[match.toLowerCase()]; // Considerando que as chaves são minúsculas no objeto
+            });
+
+            console.log(formattedString);
+            
+            // CEP: %s, Cidade: %s, Bairro : %s, Rua: %s, Número: %s, Observações: %s
+
             const ordersReq = {
                 requestProduct: getReqProduct,
                 requestCmp: getReqCmp,
                 shipmentFee: Number(this.frete),
-                deliveryAddress: this.addressChoice === 'existingAddress' ? this.selectedAddress : this.endereco,
+                deliveryAddress: this.addressChoice === 'existingAddress' ? this.selectedAddress : formattedString,
             }
 
             if (this.addressChoice === 'newAddress') {
