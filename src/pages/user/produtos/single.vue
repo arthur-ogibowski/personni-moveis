@@ -158,6 +158,7 @@ div.container {
 
     p {
         color: $user-grey;
+        word-break: break-word;
     }
     div.main-single{
         display: flex;
@@ -270,6 +271,9 @@ div.container {
         
     }
 }
+:deep(.el-table .cell){
+            word-break: normal;
+        }
 
 .placeholder{
     width: 500px;
@@ -277,5 +281,100 @@ div.container {
     border: 1px solid $grey-border;
     object-fit: none;
     background-color: $primary-color;
+}
+
+@media (max-width: 768px) {
+    div.container {
+        div.main-single{
+            flex-direction: column;
+            align-items: center;
+            margin-top: 0;
+
+            div.image-container{
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+
+                div.el-carousel{
+                    width: 300px;
+                    height: 300px;
+                    border: 1px solid $grey-border;
+
+                    :deep(.el-carousel__button){
+                        display: none;
+                    }
+
+                    :deep(.el-carousel__container){
+                        height: 300px;
+                    }
+
+                    div.el-carousel__item{
+                        width: 300px;
+                        height: 300px;
+                        background: black;
+                        //transform: none ; 
+                    }
+                    :deep(.el-image){
+                        width: 300px !important;
+                        height: 300px !important;
+                    }
+
+
+                }
+                .secondary-image-list{
+                    width: 100%;
+                    justify-content: center;
+                }
+            }
+            :deep(.el-dialog){
+                width: 400px;
+                height: 400px;
+
+                .el-image{
+                    width: 300px !important;
+                    height: 300px !important;
+                }
+            }
+            div.info-box{
+                width: 100%;
+                align-items: center;
+                padding: 1rem;
+                margin-top: 1rem;
+
+                h2{
+                    font-size: 2rem;
+                }
+                h3{
+                    font-size: 1.5rem;
+                }
+                .el-text{
+                    font-size: 1.2rem;
+                }
+                p{
+                    font-size: 1rem;
+                    width: 100%;
+                    word-break: break-word;
+                }
+                div.info-box-action{
+                    width: 100%;
+                    max-width: 100%;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+
+                    button {
+                        width: 100%;
+                        margin: 0.5rem 0;
+                    }
+
+                    h1{
+                        width: 100%;
+                        text-align: center;
+                    }
+                }
+            }
+        }
+
+    }
 }
 </style>

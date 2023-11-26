@@ -420,36 +420,20 @@ export default {
             }, 1000);
         },
         calcularFrete() {
-            let base = 150;
-            let totalAmount = this.totalAmount();
-            let state = null;
-            let storeState = null;
-            console.log(totalAmount)
 
-            if (this.endereco.state != "") {
-                state = this.endereco.state;
-            } else {
-                state = this.selectedAddress.state;
+            let totalPrice = 0;
+            // Se houverem produtos no carrinho, soma ao valor do total.
+            if (this.products && this.products.length > 0) {
+                totalPrice += this.totalProducts();
+            }
+            // Se houverem cpms, soma ao valor do total.
+            if (this.productCmps && this.productCmps.length > 0) {
+                totalPrice += this.totalCmps();
             }
 
-            if (this.storeConfig.address != null && this.storeConfig.address !== "") {
-                const addressParts = this.storeConfig.address.split(",");
-                if (addressParts.length > 1) {
-                    storeState = addressParts[1].trim();
-                    if (storeState.includes("-")) {
-                        storeState = storeState.split("-")[1].trim();
-                    }
-                }
-            }
+            let frete = parseInt(totalPrice) * 0.1;
 
-            if (state == storeState) {
-                base = 100;
-            }
-
-            base += totalAmount * 80;
-            base -= totalAmount * 80 * 0.05;
-
-            this.frete = base;
+            this.frete = frete;
         },
 
 
