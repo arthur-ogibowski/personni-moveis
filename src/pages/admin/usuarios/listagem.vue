@@ -19,8 +19,8 @@
 
         </el-table-column>
         <el-table-column label="Ações" prop="userId"> 
-          <template #default="scope">  
-            <el-icon class="table-edit" color="#A8A8A8"  ><Edit/><router-link :to="{path: '/admin/usuarios/' + scope.row.userId}"></router-link></el-icon>
+          <template #default="scope"> 
+            <el-icon class="table-edit" size="20" color="#A8A8A8" @click="redirectToEditCategory(scope)"><Edit/></el-icon>
           </template>
         </el-table-column>
         <!--<el-pagination layout="prev, pager, next" :total="this.categorias.length" @current-change="setPage">
@@ -67,6 +67,9 @@ computed: {
   },
 },
 methods: {
+  redirectToEditCategory(scope) {
+      return this.$router.push(`/admin/usuarios/${scope.row.userId}`);
+    },
   /*setPage(page) {
     this.page = page
   },*/
