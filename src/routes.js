@@ -29,11 +29,15 @@ import AdminConfig from '@/pages/admin/configuracoes/configs.vue';
 
 import Login from '@/pages/login/login.vue';
 import Cadastro from '@/pages/login/cadastro.vue';
+import Valida from '@/pages/login/valida.vue';
+import AtualizaSenha from '@/pages/login/novaSenha.vue';
 import RecuperarSenha from '@/pages/login/recuperarSenha.vue';
 
 export const routes = [
   { path: '/login', component: Login},
   { path: '/login/cadastro', component: Cadastro },
+  { path: '/validated-account', component: Valida, props: route => ({ token: route.query.token }) },
+  { path: '/update-password', component: AtualizaSenha, props: route => ({ token: route.query.token }) },
   { path: '/login/recuperar-senha', component: RecuperarSenha },
 
   { path: '/', component: Index },

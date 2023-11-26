@@ -25,7 +25,7 @@
                 <el-input type="password" v-model="cadastro.password" size="medium" placeholder="Senha" />
               </el-form-item>
             </div>
-                <el-button color="var(--cta-color)" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="cadastrarUsuario()">Criar Conta</el-button>
+                <el-button color="var(--cta-color)" class="cta" size="large" :loading-icon="Eleme" :loading="carregando" v-on:click="sendConfirmationEmail()">Criar Conta</el-button>
         </div>
       </div>
       <h2><router-link class="voltar" to="/login"><el-icon><ArrowLeftBold /></el-icon> Voltar para login</router-link></h2>
@@ -34,9 +34,9 @@
 </template>
 
 <script>
-import axios from 'axios';
-import { ElMessage } from 'element-plus';
 import AuthService from '@/store/authService.js';
+import axios from 'axios';
+import { ElMessage, ElLoading } from 'element-plus';
 
 export default {
     data() {
@@ -58,20 +58,30 @@ export default {
       this.getStoreConfig();
     },
     methods: {
-        cadastrarUsuario() {
-            axios.post('http://localhost:8081/users/create-account', this.cadastro)
-            .then(response => {
-          if (response.status === 201) {
-            ElMessage.success('Cadastro realizado com sucesso!');
-            this.$router.push('/login');
-          } else {
-            console.error('Erro ao realizar cadastro. Código de status:', response.status);
-          }
-        })
-        .catch(error => {
-          console.error('Erro ao realizar cadastro:', error);
-        })
-    },
+      /**
+       * Envia email para user validar sua conta de email.
+       */
+      sendConfirmationEmail() {
+        const loading = ElLoading.service({
+            lock: true,
+            text: 'Enviado e-mail de confirmação para sua conta',
+            background: 'rgba(0, 0, 0, 0.7)'
+        });
+
+        axios.post('http://localhost:8081/users/validate-account', this.cadastro)
+          .then(response => {
+            ElMessage({
+              message: 'E-mail enviado!',
+              type: 'success',
+            })
+            this.$router.replace('/');
+            loading.close()
+          })
+          .catch(error => {
+            console.log(error);
+            loading.close()
+          });
+      },
     getStoreConfig() {
       const config = { headers: { Authorization: AuthService.getToken() } };
       axios.get(`http://localhost:8081/store`, config)

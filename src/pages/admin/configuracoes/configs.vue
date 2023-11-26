@@ -80,17 +80,17 @@
       return {
         user: {
           storeId: "1",
-          storeName: "Personni móveis",
+          storeName: "",
           addressMeta: "",
           storeLogoPath: null,
           storeSecondaryImgPath: null,
           storePlaceholdeImgPath: null,
-          storeEmail: "personni@gmail.com",
-          aboutUsInfo: "Bem-vindo à Personni móveis, onde a personalização e modelagem de móveis são a essência do nosso trabalho. Transformamos espaços com soluções sob medida, refletindo o estilo de cada cliente. ",
+          storeEmail: "",
+          aboutUsInfo: "",
           storeAddress: "",
-          storePhone: "41 99999-9999",
-          primaryCollor: "#B68D40",
-          secondaryCollor: "#112620",
+          storePhone: "",
+          primaryCollor: "",
+          secondaryCollor: "",
         },
         predictions: [],
         options: {
