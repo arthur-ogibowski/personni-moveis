@@ -134,6 +134,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                             <div class="card-item-about">
                                 <h3 v-if="product.name">{{ product.amount }} x {{ product.name }}</h3>
                                 <h3 v-else>{{ product.amount }} x Móvel modelado</h3>
+                                <el-text v-if="product.custom" type="success"> Personalizado </el-text>
                                 <el-text type="info" size="small"
                                     v-if="product.description !== 'string' && product.description">{{ product.description
                                     }}</el-text>
@@ -235,7 +236,8 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                     <div class="card-item-about">
                                         <h3 v-if="product.name">{{ product.amount }} x {{ product.name }}</h3>
                                         <h3 v-else>{{ product.amount }} x Móvel modelado</h3>
-                                        <el-text type="info" size="small">{{ product.description }}</el-text>
+                                        <el-text v-if="product.custom" type="success"> Personalizado </el-text>
+                                        <el-text type="info" size="small" v-if="product.description != 'string' && product.description != ''">{{ product.description }}</el-text>
                                     </div>
                                     <div class="card-item-price">
                                         <h4>{{ formatPrice(product.value * product.amount) }}</h4>

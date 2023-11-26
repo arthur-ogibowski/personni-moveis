@@ -88,6 +88,7 @@ export default {
           }
         })
         .catch(error => {
+          ElMessage.error('Erro ao fazer login. Verifique suas credenciais.');
           console.error('Erro ao fazer login:', error);
         })
     },
