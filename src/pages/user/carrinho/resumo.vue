@@ -24,8 +24,28 @@
                         />
                         <div>
                             <h2> {{ product.name }} </h2>
-                            <el-text v-if="product.custom" type="success"> Personalizado </el-text>
+                            <el-text v-if="product.custom" type="success">  Personalizado <el-icon class="option-dialog-button" @click="optionDialog(product)"><InfoFilled /></el-icon> </el-text>
                         </div>
+                        <el-dialog v-model="dialogVisible" :title="currentOption.name[0]" width="40%" :before-close="handleClose">
+                            <div class="dialog-content">
+                                <div v-for="(name, index) in currentOption.name" :key="index">
+                                    <!-- <div class="dialog-image" v-if="currentOption.img[index] !== ''">
+                                        <el-image :src="currentOption.img[index]" />
+                                    </div>
+                                    <div class="dialog-image-placeholder" v-else>
+                                        <img :src="storeConfig.placeholder" />
+                                    </div> -->
+                                    <h3>{{ currentOption.description[index] }}</h3>
+                                    <h2>R$ {{ currentOption.price[index] }}</h2>
+                                </div>
+                            </div>
+                            <template #footer>
+                                <span class="dialog-footer">
+                                    <!-- Se quiser mostrar apenas o preço da primeira opção, descomente a linha abaixo -->
+                                    <!-- <h2>R$ {{ currentOption.price[0] }}</h2> -->
+                                </span>
+                            </template>
+                        </el-dialog>
                         <div class="quantidade">
                             <p>Quantidade</p>
                             <el-input-number v-model="product.amount" size="small" :min="0" :max="product.quantity" label="Quantidade" @input="updateCurrentProduct(product)"></el-input-number>
@@ -111,6 +131,13 @@ export default {
                     custom: null,
                 }
             ],
+            currentOption: { // Adicione esta linha para inicializar currentOption
+                name: '',
+                price: null,
+                description: '',
+                // img: '',
+            },
+            dialogVisible: false,
             cmpProducts: [],
             products: [],
             totalProducts: 0, // preco dos itens padrao do carrinho
@@ -137,6 +164,50 @@ export default {
         }, 250)
     },
     methods: {
+        optionDialog(product) {
+            console.log(product);
+            this.dialogVisible = true;
+
+            // Reinicializa a variável currentOption como um objeto
+            this.currentOption = {
+                name: [],
+                price: [],
+                description: [],
+                img: [],
+            };
+
+            // Verifica se há seções
+            if (product.sections && product.sections.length > 0) {
+                // Itera sobre todas as seções
+                product.sections.forEach(section => {
+                    // Verifica se há opções dentro da seção
+                    if (section.options && section.options.length > 0) {
+                        // Itera sobre todas as opções da seção
+                        section.options.forEach(option => {
+                            // Adiciona os dados na variável currentOption
+                            this.currentOption.name.push(option.name || ''); // Substitua por sua lógica real
+                            this.currentOption.price.push(option.price || null); // Substitua por sua lógica real
+                            this.currentOption.description.push(option.description || ''); // Substitua por sua lógica real
+                            this.currentOption.img.push(option.mainImg || ''); // Substitua por sua lógica real
+                        });
+                    }
+                });
+            }
+
+            // Se não houver opções válidas, define valores padrão ou deixe em branco
+            if (this.currentOption.name.length === 0) {
+                this.currentOption.name.push(''); // ou deixe como um array vazio, dependendo do comportamento desejado
+            }
+            if (this.currentOption.price.length === 0) {
+                this.currentOption.price.push(null);
+            }
+            if (this.currentOption.description.length === 0) {
+                this.currentOption.description.push('');
+            }
+            if (this.currentOption.img.length === 0) {
+                this.currentOption.img.push('');
+            }
+        },
         // Produto.
         calcularTotal() {
             // this.totalProducts = cartService.totalCartValue();
