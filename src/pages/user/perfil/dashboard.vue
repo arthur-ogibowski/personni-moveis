@@ -71,7 +71,7 @@
 
       <el-tab-pane label="Endereços" name="enderecos">
         <div class="enderecos-container">
-          <div v-if="!showAddAddressForm && !showUserConfigs" class="address-list">
+          <div v-if="!showAddAddressForm && !showUserConfigs && !showEditAddressForm" class="address-list">
             <div class="address-list-left">
               <h1>Meus endereços</h1>
               <h2>Adicione, edite ou exclua seus endereços.</h2>
@@ -172,7 +172,7 @@
               <h2 class="info-item title">CEP: </h2>
               <el-input v-model="editedAddress.cep"></el-input>
             </div>
-            <el-button type="primary" @click="saveEditedAddress">Salvar</el-button>
+            <el-button type="primary" @click="saveEditedAddress(editedAddress)">Salvar</el-button>
           </div>
 
         </div>
@@ -217,7 +217,7 @@
               <h2> Dados do cliente: </h2>
               <h3>{{ order.user.name }}</h3>
               <h3>{{ order.user.email }}</h3>
-              <h3>{{ order.user.deliveryAddress }}</h3>
+              <h3>{{ order.deliveryAddress }}</h3>
             </div>
             <div class="orderInfo">
             <h2>Produtos:</h2>
@@ -484,12 +484,12 @@ export default {
         });
     },
 
-    saveEditedAddress() {
+    saveEditedAddress(address) {
       const config = { headers: { Authorization: AuthService.getToken() } };
-      const addressId = this.editedAddress.addressId;
+      const addressId = address.addressId;
       console.log(addressId);
 
-      axios.put(`http://localhost:8081/users/edit-user-address/`, this.editedAddress, config)
+      axios.put(`http://localhost:8081/users/edit-user-address/`, address, config)
         .then(response => {
           ElMessage.success('Endereço editado com sucesso!');
           this.showEditAddressForm = false;
@@ -871,5 +871,41 @@ h2 {
 
 :deep(.el-table .cell) {
   word-break: normal;
+}
+.clientInfo, .orderInfo{
+  h2{
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-top: 20px;
+    margin-bottom: 0;
+  }
+  h3{
+    font-size: 2rem;
+    font-weight: 400;
+    margin-top: 10px !important;
+    margin-bottom: 0;
+  }
+  h2.total{
+    font-weight: 400;
+    font-size: 2rem;
+    text-align: end !important;
+
+    span{
+      font-weight: 800;
+      font-size: 2.5rem;
+    }
+  }
+}
+.pedidoId {
+  margin: 0;
+  padding: 0;
+  font-size: 3rem;
+  font-weight: 400;
+  margin-bottom: 1rem;
+
+  span{
+    color: var(--cta-color);
+    font-weight: 700;
+  }
 }
 </style>

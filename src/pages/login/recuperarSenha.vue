@@ -14,7 +14,7 @@
                   size="large"
                   placeholder="Email"
                 />
-                <el-button class="cta" color="var(--cta-color)" size="large">Enviar</el-button>
+                <el-button class="cta" color="var(--cta-color)" size="large" v-on:click="sendEmail()">Enviar</el-button>
         </div>
       </div>
       <h2><router-link class="voltar" to="/login"><el-icon><ArrowLeftBold /></el-icon> Voltar para login</router-link></h2>
@@ -24,15 +24,13 @@
 
 <script>
 import axios from 'axios';
-import { ElMessage } from 'element-plus';
+import { ElMessage, ElLoading } from 'element-plus';
 import AuthService from '@/store/authService.js';
 
 export default {
   data() {
       return {
-        login:{
-            email: "",
-        },
+        email: "",
         storeConfig: {
           logo: '',
         },
@@ -57,7 +55,22 @@ export default {
         console.error('Erro ao buscar dados da API:', error);
     });
     },
-  }
+    sendEmail() {
+      const loading = ElLoading.service({
+          lock: true,
+          text: 'Enviando e-mail..',
+          background: 'rgba(0, 0, 0, 0.7)'
+      });
+      axios.put("http://localhost:8081/users/change-password", this.email)
+        .then(response => {
+            loading.close();
+            ElMessage.success("E-mail enviado");
+        })
+        .catch(error => {
+            loading.close();
+        })
+      }
+    },
 };
 </script>
 

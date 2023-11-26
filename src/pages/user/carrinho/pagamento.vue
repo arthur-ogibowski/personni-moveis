@@ -420,36 +420,20 @@ export default {
             }, 1000);
         },
         calcularFrete() {
-            let base = 150;
-            let totalAmount = this.totalAmount();
-            let state = null;
-            let storeState = null;
-            console.log(totalAmount)
 
-            if (this.endereco.state != "") {
-                state = this.endereco.state;
-            } else {
-                state = this.selectedAddress.state;
+            let totalPrice = 0;
+            // Se houverem produtos no carrinho, soma ao valor do total.
+            if (this.products && this.products.length > 0) {
+                totalPrice += this.totalProducts();
+            }
+            // Se houverem cpms, soma ao valor do total.
+            if (this.productCmps && this.productCmps.length > 0) {
+                totalPrice += this.totalCmps();
             }
 
-            if (this.storeConfig.address != null && this.storeConfig.address !== "") {
-                const addressParts = this.storeConfig.address.split(",");
-                if (addressParts.length > 1) {
-                    storeState = addressParts[1].trim();
-                    if (storeState.includes("-")) {
-                        storeState = storeState.split("-")[1].trim();
-                    }
-                }
-            }
+            let frete = parseInt(totalPrice) * 0.1;
 
-            if (state == storeState) {
-                base = 100;
-            }
-
-            base += totalAmount * 80;
-            base -= totalAmount * 80 * 0.05;
-
-            this.frete = base;
+            this.frete = frete;
         },
 
 
@@ -460,7 +444,7 @@ export default {
         //     this.selectedAddress = address;
         // },
         selectExistingAddress(address) {
-            this.selectedAddress = Object.assign({}, address);
+            this.selectedAddress = address;
         },
         clearSelectedAddress() {
             this.selectedAddress = null;
@@ -507,16 +491,55 @@ export default {
                 ));
             }
             // Monta dto para processamento do pedido no back.
-            console.log(this.selectedAddress);
+
+            const deliveryAddress = {
+                addressNickname: this.endereco.addressNickname,
+                cep: this.selectedAddress.cep,
+                state: this.selectedAddress.state,
+                city: this.selectedAddress.city,
+                district: this.selectedAddress.district,
+                street: this.selectedAddress.street,
+                number: this.selectedAddress.number,
+                details: this.selectedAddress.details
+            };
+
+            let newAddress = null;
+            if (this.addressChoice === 'newAddress' && this.newAddress) {
+                newAddress = {
+                    addressNickname: this.endereco.addressNickname,
+                    cep: this.endereco.cep,
+                    state: this.endereco.state,
+                    city: this.endereco.city,
+                    district: this.endereco.district,
+                    street: this.endereco.street,
+                    number: this.endereco.number,
+                    details: this.endereco.details
+                }
+            }
+            // if (this.addressChoice === 'newAddress') {
+            //     ordersReq.deliveryAddress = this.newAddress;
+            // }
+
+            let theAddress = null;
+            if (this.addressChoice === 'existingAddress') {
+                theAddress = deliveryAddress;
+            } else {
+                theAddress = newAddress;
+            }
+
+            const formatString = "CEP: %cep, Cidade: %city, Bairro: %district, Rua: %street, Número: %number, Observações: %details";
+
+            const formattedString = formatString.replace(/%(\w+)/g, (match, key) => {
+                // Substitua cada %chave pelos valores correspondentes do objeto deliveryAddress
+                return theAddress[key.toLowerCase()];
+            });
+
+            console.log(formattedString)
             const ordersReq = {
                 requestProduct: getReqProduct,
                 requestCmp: getReqCmp,
                 shipmentFee: Number(this.frete),
-                deliveryAddress: this.addressChoice === 'existingAddress' ? this.selectedAddress : this.endereco,
-            }
-
-            if (this.addressChoice === 'newAddress') {
-                ordersReq.deliveryAddress = this.newAddress;
+                deliveryAddress: formattedString,
             }
 
             // Faz requisição enviando pedidos.

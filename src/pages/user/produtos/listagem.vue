@@ -340,4 +340,37 @@ div.produtos-listing{
   object-fit: contain;
   padding: 10px;
 }
+
+@media (max-width: 768px) {
+  div.catalogo-content{
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0;
+    margin-bottom: 0;
+
+    .filters-item{
+      margin-bottom: 2rem;
+    }
+    .filters{
+      button{
+        margin-bottom: 3rem;
+      }
+    }
+  }
+  div.produtos-listing{
+    width: 100vw;
+    justify-content: center;
+  }
+  div.produto-card{
+    margin: 0 15px 30px 15px;
+  }
+  div.catalogo-top{
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 2rem;
+    h1{
+      font-size: 4rem;
+    }
+  }
+}
 </style>
