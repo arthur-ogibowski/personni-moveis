@@ -96,7 +96,7 @@
                                                     
                                                 </el-form-item>
                                                 <el-form-item label="Preço">
-                                                    <el-input v-model="option.price" size="small">
+                                                    <el-input v-model="option.price" size="small" required>
                                                         <template #prepend>R$</template></el-input>
                                                 </el-form-item>
 

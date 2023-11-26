@@ -12,9 +12,13 @@ export default {
         return JSON.parse(localStorage.getItem('carrinho')) || [];
     },
     /** Checa se o produto já é presente no localstorage pelo id. */
-    productIsAlreadyInCart(productId) {
-        const cartItens = this.getCartItems();
-        return cartItens.some(product => product.productId === productId)
+    // productIsAlreadyInCart(productId) {
+    //     const cartItens = this.getCartItems();
+    //     return cartItens.some(product => product.productId === productId)
+    // },
+    productIsAlreadyInCart(uniqueIdentifier) {
+        const cartItems = this.getCartItems();
+        return cartItems.some((item) => item.uniqueIdentifier === uniqueIdentifier);
     },
     /** Retorna a qtde de produtos armazenados em localstorage. */
     amountOfProductsInCart() {
@@ -36,11 +40,12 @@ export default {
     /** Adiciona um produto no carrinho. Se o produto ja existe atualiza sua quantidade. */
     addToCart(product, options) {
         const cartItems = this.getCartItems();
-        const index = cartItems.findIndex((item) => item.productId === product.productId);
+        const uniqueIdentifier = this.generateUniqueIdentifier(product.productId, options);
+        const index = cartItems.findIndex((item) => item.uniqueIdentifier === uniqueIdentifier);
     
         // Função para calcular o preço total com base nas opções selecionadas
         const calculateTotalPrice = (product, options) => {
-            let totalPrice = product.value; // Inicializa com o preço base do produto
+            let totalPrice = product.basePrice; // Usando basePrice em vez de value para armazenar o preço base do produto
     
             if (options && options.length > 0) {
                 options.forEach((option) => {
@@ -51,19 +56,27 @@ export default {
             return totalPrice;
         };
     
-        if (!this.productIsAlreadyInCart(product.productId)) {
+        if (!this.productIsAlreadyInCart(uniqueIdentifier)) {
             // Produto está sendo adicionado pela primeira vez
             product.amount = 1;
-            product.value = calculateTotalPrice(product, options); // Calcula o preço total
+            product.options = options;
+            product.basePrice = product.value;
+            product.uniqueIdentifier = uniqueIdentifier; // Adiciona a identificação única ao produto
+            product.value = calculateTotalPrice(product, options);
             cartItems.push(product);
         } else {
             // Adiciona +1 na quantidade do produto já existente
-            const cartProduct = cartItems[index]; // Adquire referência do produto na lista.
+            const cartProduct = cartItems[index];
             cartProduct.amount++;
-            cartProduct.value = calculateTotalPrice(cartProduct, options); // Atualiza o preço total
+            cartProduct.value = calculateTotalPrice(cartProduct, options);
         }
     
         this.updateCart(cartItems);
+    },
+
+    generateUniqueIdentifier(productId, options) {
+        const optionsString = options ? JSON.stringify(options) : '';
+        return `${productId}-${optionsString}`;
     },
     
     /** Atualiza valores do localStorage com uma nova lista recebida como argumento. */
