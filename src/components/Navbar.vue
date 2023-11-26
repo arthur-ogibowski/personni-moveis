@@ -108,6 +108,11 @@ export default {
     flex-wrap: wrap;
     padding-bottom: 2rem;
     padding-right: 0;
+
+    .el-menu-item:first-child {
+      width: 100%;
+      height: 100%;
+    }
   }
   .cta{
     margin: 0 10px;

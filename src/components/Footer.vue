@@ -85,7 +85,8 @@ div.footer{
 
 @media (max-width: 768px) {
     div.footer{
-        height: 50px;
+        height: 100%;
+        padding-bottom: 20px;
 
         h1{
             font-size: 2rem;
