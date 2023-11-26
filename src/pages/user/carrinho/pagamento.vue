@@ -468,103 +468,80 @@ export default {
                 text: 'Carregando...',
                 background: 'rgba(0, 0, 0, 0.7)'
             });
-            const config = {
-                headers: { Authorization: AuthService.getToken() },
-                params: { shipmentFee: Number(this.frete) }
-            }
-            const getReqProduct = [];
-            const getReqCmp = [];
-            // Insere produtos no array de prods.
-            if (cartService.getCartItems().length > 0) {
-                cartService.getCartItems().forEach(prod => getReqProduct.push(
-                    {
-                        product: prod,
-                        amount: prod.amount
-                    }
-                ));
-            }
-            // Insere cmps no array de cmps.
-            if (cartService.getCmpItems().length > 0) {
-                cartService.getCmpItems().forEach(cmp => getReqCmp.push(
-                    {
-                        productCmp: cmp,
-                        amount: cmp.amount
-                    }
-                ));
-            }
-            // Monta dto para processamento do pedido no back.
 
-            const deliveryAddress = {
-                addressNickname: this.endereco.addressNickname,
-                cep: this.selectedAddress.cep,
-                state: this.selectedAddress.state,
-                city: this.selectedAddress.city,
-                district: this.selectedAddress.district,
-                street: this.selectedAddress.street,
-                number: this.selectedAddress.number,
-                details: this.selectedAddress.details
+            // Inicializa ordersReq
+            const ordersReq = {
+                requestProduct: [],
+                requestCmp: [],
+                shipmentFee: Number(this.frete),
+                deliveryAddress: "" // Inicializa com uma string vazia, você pode ajustar conforme necessário
             };
 
-            let newAddress = null;
-            if (this.addressChoice === 'newAddress' && this.newAddress) {
-                newAddress = {
-                    addressNickname: this.endereco.addressNickname,
-                    cep: this.endereco.cep,
-                    state: this.endereco.state,
-                    city: this.endereco.city,
-                    district: this.endereco.district,
-                    street: this.endereco.street,
-                    number: this.endereco.number,
-                    details: this.endereco.details
-                }
-            }
-            // if (this.addressChoice === 'newAddress') {
-            //     ordersReq.deliveryAddress = this.newAddress;
-            // }
-
-            let theAddress = null;
-            if (this.addressChoice === 'existingAddress') {
-                theAddress = deliveryAddress;
-            } else {
-                theAddress = newAddress;
-            }
-
-            const formatString = "CEP: %cep, Cidade: %city, Bairro: %district, Rua: %street, Número: %number, Observações: %details";
-
-            const formattedString = formatString.replace(/%(\w+)/g, (match, key) => {
-                // Substitua cada %chave pelos valores correspondentes do objeto deliveryAddress
-                return theAddress[key.toLowerCase()];
-            });
-
-            console.log(formattedString)
-            const ordersReq = {
-                requestProduct: getReqProduct,
-                requestCmp: getReqCmp,
-                shipmentFee: Number(this.frete),
-                deliveryAddress: formattedString,
-            }
-
-            // Faz requisição enviando pedidos.
-            if ((cartService.getCartItems() != null || cartService.getCartItems().length > 0)
-                && (cartService.getCmpItems() != null || cartService.getCmpItems().length > 0)) {
-                axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
-                    .then(response => {
-                        ElMessage.success('Pedido registrado com sucesso.');
-                        // Seta pix em tela.
-                        this.QrCode = response.data;
-                        /** Limpa carrinho após finalizar o pedido. */
-                        cartService.removeAllFromCarts();
-                        this.currentStep = 3;
-                        this.iniciarTemporizador();
-                        loading.close();
-                    })
-                    .catch(error => {
-                        ElMessage.error('Não foi possível registrar o pedido.');
-                        console.error(error);
-                        loading.close();
+            // Insere produtos no array de prods.
+            if (cartService.getCartItems().length > 0) {
+                cartService.getCartItems().forEach(prod => {
+                    ordersReq.requestProduct.push({
+                        product: prod,
+                        amount: prod.amount
                     });
+                });
+            }
+
+            // Insere cmps no array de cmps.
+            if (cartService.getCmpItems().length > 0) {
+                cartService.getCmpItems().forEach(cmp => {
+                    ordersReq.requestCmp.push({
+                        productCmp: cmp,
+                        amount: cmp.amount
+                    });
+                });
+            }
+
+            // Obtém o endereço escolhido
+            let theAddress = null;
+            if (this.addressChoice === 'existingAddress' && this.selectedAddress) {
+                theAddress = this.selectedAddress;
+            } else if (this.addressChoice === 'newAddress' && this.endereco) {
+                theAddress = this.endereco;
+            }
+
+            if (theAddress) {
+                const formatString = "CEP: %cep, Cidade: %city, Bairro: %district, Rua: %street, Número: %number, Observações: %details";
+
+                ordersReq.deliveryAddress = formatString.replace(/%(\w+)/g, (match, key) => {
+                    return theAddress[key.toLowerCase()];
+                });
+
+                console.log(ordersReq.deliveryAddress);
+
+                // Faz requisição enviando pedidos.
+                if (ordersReq.requestProduct.length > 0 || ordersReq.requestCmp.length > 0) {
+                    const config = {
+                        headers: { Authorization: AuthService.getToken() },
+                        params: { shipmentFee: ordersReq.shipmentFee }
+                    };
+
+                    axios.post('http://localhost:8081/orders/create-order', ordersReq, config)
+                        .then(response => {
+                            ElMessage.success('Pedido registrado com sucesso.');
+                            this.QrCode = response.data;
+                            cartService.removeAllFromCarts();
+                            this.currentStep = 3;
+                            this.iniciarTemporizador();
+                        })
+                        .catch(error => {
+                            ElMessage.error('Não foi possível registrar o pedido.');
+                            console.error(error);
+                        })
+                        .finally(() => {
+                            loading.close();
+                        });
+                } else {
+                    ElMessage.warning('Devem haver produtos no carrinho para realizar o pedido!');
+                    loading.close();
+                }
             } else {
-                ElMessage.warning('Devem haver produtos no carrinho para realizar o pedido!');
+                console.error("Endereço inválido.");
                 loading.close();
             }
         },
