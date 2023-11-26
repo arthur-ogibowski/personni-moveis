@@ -509,36 +509,33 @@ export default {
             // Monta dto para processamento do pedido no back.
 
             const deliveryAddress = {
-                addressNickname: 'casa',
-                cep: '80240320',
-                state: 'PR',
-                city: 'Curitiba',
-                district: 'Centro',
-                street: 'Rua Leôncio Correia',
-                number: '123',
-                details: 'Algumas observações'
+                addressNickname: this.endereco.addressNickname,
+                cep: this.endereco.cep,
+                state: this.endereco.state,
+                city: this.endereco.city,
+                district: this.endereco.district,
+                street: this.endereco.street,
+                number: this.endereco.number,
+                details: this.endereco.details
             };
 
-            const formatString = "CEP: %s, Cidade: %s, Bairro: %s, Rua: %s, Número: %s, Observações: %s";
+            // if (this.addressChoice === 'newAddress') {
+            //     ordersReq.deliveryAddress = this.newAddress;
+            // }
 
-            const formattedString = formatString.replace(/%s/g, match => {
-            // Substitua cada %s pelos valores correspondentes do objeto deliveryAddress
-                return deliveryAddress[match.toLowerCase()]; // Considerando que as chaves são minúsculas no objeto
+            const formatString = "CEP: %cep, Cidade: %city, Bairro: %district, Rua: %street, Número: %number, Observações: %details";
+
+            const formattedString = formatString.replace(/%(\w+)/g, (match, key) => {
+                // Substitua cada %chave pelos valores correspondentes do objeto deliveryAddress
+                return deliveryAddress[key.toLowerCase()];
             });
 
-            console.log(formattedString);
-            
-            // CEP: %s, Cidade: %s, Bairro : %s, Rua: %s, Número: %s, Observações: %s
-
+            console.log(formattedString)
             const ordersReq = {
                 requestProduct: getReqProduct,
                 requestCmp: getReqCmp,
                 shipmentFee: Number(this.frete),
-                deliveryAddress: this.addressChoice === 'existingAddress' ? this.selectedAddress : formattedString,
-            }
-
-            if (this.addressChoice === 'newAddress') {
-                ordersReq.deliveryAddress = this.newAddress;
+                deliveryAddress: formattedString,
             }
 
             // Faz requisição enviando pedidos.

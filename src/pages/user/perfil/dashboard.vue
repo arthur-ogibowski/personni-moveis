@@ -217,7 +217,7 @@
               <h2> Dados do cliente: </h2>
               <h3>{{ order.user.name }}</h3>
               <h3>{{ order.user.email }}</h3>
-              <h3>{{ order.user.deliveryAddress }}</h3>
+              <h3>{{ order.deliveryAddress }}</h3>
             </div>
             <div class="orderInfo">
             <h2>Produtos:</h2>
