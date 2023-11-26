@@ -116,7 +116,7 @@
 
                 <h2>{{ optionInfo.section }}</h2>
                 <div class="revisar-main-section">
-                  <div v-for="element in optionInfo.elements" :key="element">
+                  <div v-for="element in optionInfo.elements" :key="element" class="v-for">
                     <div v-if="element.index == 1" class="revisar-section-item main">
                       <div class="element-image-main" v-if="element.img">
                         <el-image :src="element.img" />
@@ -137,8 +137,8 @@
                     </div>
                   </div>
                   <div class="revisar-secondary-section">
-                    <div v-for="element in optionInfo.elements" :key="element">
-                      <div v-if="element.index == 1" class="revisar-section-item main">
+                    <div v-for="element in optionInfo.elements" :key="element" class="v-for">
+                      <div v-if="element.index > 1" class="revisar-section-item main">
                         <div class="element-image-main" v-if="element.img">
                           <el-image :src="element.img" />
                         </div>
@@ -154,28 +154,6 @@
                           <el-icon class="option-dialog-button" @click="optionDialogResumo(element)">
                             <InfoFilled />
                           </el-icon>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="revisar-secondary-section">
-                      <div v-for="element in optionInfo.elements" :key="element">
-                        <div v-if="element.index > 1" class="revisar-section-item">
-                          <div class="element-image" v-if="element.img">
-                            <el-image :src="element.img" />
-                          </div>
-                          <div class="element-image" v-else>
-                            <img src="../../../assets/img/personniLogo-Grey.png" />
-                          </div>
-                          <div class="revisar-section-item-option">
-                            <div>
-                              <h4>{{ element.element }}</h4>
-                              <h3 class="element-option">{{ element.option }}</h3>
-                            </div>
-                            <h3 class="element-price">{{ element.price != 0 ? "R$ " + element.price : "--" }}</h3>
-                            <el-icon class="option-dialog-button" @click="optionDialogResumo(element)">
-                              <InfoFilled />
-                            </el-icon>
-                          </div>
                         </div>
                       </div>
                     </div>
@@ -345,29 +323,9 @@ export default {
     isCurrentElementMandatory() {
       const currentSection = this.categoria.sectionCmps[this.currentSection];
 
-      // Verifica se a seção não é 'Revisar' e se há uma opção selecionada para a seção atual
-      if (currentSection.name !== 'Revisar') {
-
-        // Verifica se todas as opções obrigatórias foram selecionadas para elementos obrigatórios
-        const areAllMandatoryOptionsSelected = currentSection.elementCmps
-          .filter((element) => element.mandatory)
-          .every((mandatoryElement) => {
-            // Verifica se todas as opções obrigatórias foram selecionadas para este elemento
-            return mandatoryElement.optionCmps.every((mandatoryOption) => {
-              // Verifica se a opção obrigatória está presente nas opções selecionadas
-              return this.selected.includes(mandatoryOption.id);
-            });
-          });
-
-        return !areAllMandatoryOptionsSelected;
-      }
-
-      // Se a seção for 'Revisar' ou nenhum elemento foi selecionado, não é obrigatório
-      return true;
+      // if all mandatory elements in currentSection are selected, return false
+      return !currentSection.elementCmps.filter((element) => element.mandatory).every((element) => this.selected[element.id]);
     },
-
-
-
 
 
 
@@ -835,11 +793,11 @@ h2 {
       margin: 0 10px 0 0;
       padding: 0;
       min-width: 80px;
-      width: 80px;
-      height: 80px;
+      width: 100%;
+      height: 100% !important;
       display: flex;
       justify-content: space-around;
-      flex-direction: column;
+      flex-direction: row !important;
       outline: 1.5px solid $admin-grey-lighter;
 
 
@@ -908,7 +866,7 @@ h2 {
         justify-content: space-between;
         align-items: flex-end;
         margin-left: 20px;
-        width: 100%;
+        width: 90%;
 
         :deep(.el-text) {
           align-self: end !important;
@@ -935,7 +893,8 @@ h2 {
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    height: 180px;
+    justify-content: center;
+    height: 100%;
 
     .revisar-section-item {
       padding: 0;
@@ -1073,6 +1032,170 @@ div.el-radio-group {
   h3 {
     font-weight: 400;
     font-size: 14px;
+  }
+}
+
+@media screen and (max-width: 768px){
+
+  .el-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+
+    h1 {
+      margin-bottom: 10px;
+    }
+  }
+  .cmp-container {
+    flex-direction: column;
+
+    .cmp-sections {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+
+    .resumo {
+      width: 100%;
+    }
+  }
+  .revisar-section-section{
+    flex-direction: column !important; 
+  }
+  .revisar-section {
+
+    .v-for{
+      width: 95%;
+    }
+    
+    .revisar-main-section {
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+
+      .revisar-section-item {
+        width: 100%;
+        margin: 0 0 10px 0;
+        padding: 0;
+        min-width: 80px;
+        height: 80px;
+        display: flex;
+        justify-content: space-around;
+        flex-direction: column;
+        outline: 1.5px solid $admin-grey-lighter;
+
+        .element-option {
+          font-size: 14px;
+          font-weight: 400;
+          color: var(--el-color-success);
+
+        }
+
+        .element-price {
+          font-size: 12px;
+          font-weight: 400;
+          min-width: 50px;
+          text-align: end;
+          color: $text-color;
+        }
+
+        .el-image {
+          width: 180px;
+          height: 180px;
+
+          .el-image__error {
+            min-height: 180px;
+            min-width: 180px;
+
+          }
+        }
+
+        .main{
+          width: 100%;
+          height: 180px;
+          flex-direction: column;
+          padding: 0px 0px 0px 5px;
+        }
+
+        img {
+          width: 180px;
+        }
+
+        .element-image {
+          width: 180px;
+          height: 180px;
+          display: flex;
+          margin: 10px 0;
+          justify-content: center;
+          align-items: center;
+          align-self: center;
+        }
+
+        h4 {
+          margin-top: 0;
+          margin-bottom: 10px;
+          font-size: 12px;
+          text-align: left;
+          color: $text-color;
+          font-weight: 400;
+        }
+
+        .el-text {
+          max-width: 50%;
+          word-break: normal;
+        }
+
+        p {
+          font-size: 12px;
+        }
+      }
+    }
+    .revisar-secondary-section {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      height: 180px;
+      width: 100%;
+
+
+      .revisar-section-item {
+        padding: 0;
+        min-width: 250px;
+        margin: 5px;
+        height: 80px;
+        display: flex;
+        justify-content: flex-start;
+        flex-direction: row;
+        outline: 1.5px solid $admin-grey-lighter;
+        align-content: center;
+      }
+
+      div.element-image,
+      .el-image {
+        width: 80px !important;
+        height: 80px !important;
+        min-width: 80px !important;
+
+        .el-image__error {
+          min-height: 80px !important;
+          min-width: 80px !important;
+
+        }
+      }
+
+      .revisar-section-item-option {
+        display: flex;
+        justify-content: space-between;
+        margin-left: 20px;
+        margin-right: 0;
+        align-items: flex-end !important;
+
+        :deep(.el-text) {
+          align-self: end !important;
+        }
+      }
+    }
   }
 }
 </style>

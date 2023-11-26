@@ -587,5 +587,48 @@ div.carrinho-content{
     }
 }
 
+@media screen and (max-width: 768px) {
+
+    h1.page-title{
+    font-size: 4rem;
+    text-align: center;
+  }
+    #carrinho-container{
+        flex-direction: column;
+
+        .carrinho-content{
+            margin-right: 0;
+        }
+
+        .side-info {
+            flex-basis: 100%;
+            margin: 0 10px;
+        }
+
+        .listagem-produtos{
+            .produto-card{
+                width: 100%;
+
+                .carrinho-item{
+                    width: 100%;
+
+                    :deep(.el-card__body){
+                        flex-direction: column;
+                        align-items: center;
+
+                        div.preco{
+                            margin-top: 10px;
+
+                            h2{
+                                margin-top: 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
 
 </style>
