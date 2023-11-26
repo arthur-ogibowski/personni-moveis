@@ -64,12 +64,36 @@
         
         <div class="clientInfo">
           <h2> Dados do cliente: </h2>
-          <h3>{{ order.user.name }}</h3>
-          <h3>{{ order.user.email }}</h3>
-          <h3>{{ order.user.deliveryAddress }}</h3>
+          <h4>{{ order.user.name }}</h4>
+          <h4>{{ order.user.email }}</h4>
+          <h4>{{ deliveryAddress.Rua }} {{ deliveryAddress.Número }}</h4>
+          <h4>{{ deliveryAddress.Observações }}</h4>
+          <h4>{{ deliveryAddress.Bairro }}</h4>
+          <h4>{{ deliveryAddress.Cidade }}</h4>
+          <h4>{{ deliveryAddress.CEP }}</h4>
         </div>
         <div class="orderInfo">
         <h2>Produtos:</h2>
+          <el-table :data="padroes" style="100%">
+            <el-table-column prop="products[0].productId" label="ID" sortable width="80">
+              <template v-slot="scope">
+                <div class="orderId">
+                  <h4># {{ scope.row.products[0].productId }}</h4>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="selectedAmountOfProducts" label="Quantidade" sortable width="130"/>
+            <el-table-column prop="products[0].name" label="Nome" sortable width="*">
+              <template v-slot="scope">
+                <div class="client_name">
+                  <h3>{{ scope.row.products[0].name }}</h3>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+
+          {{ order }}
+
         <div v-for="item in order.orderItems" v-bind:key="item">
           <div v-for="product in item.products" v-bind:key="product">
             <h3>{{ item.selectedAmountOfProducts }}x - {{ product.name }} ({{ formatPrice(product.value) }})</h3>
@@ -96,6 +120,10 @@ export default {
       pageSize: 10,
       pedidosSearch: '',
       showModal: false,
+      personalizados: [],
+      padroes: [],
+      modelados: [],
+      deliveryAddress: {},
     }
   },
   created() {
@@ -133,6 +161,15 @@ export default {
           const year = data.getFullYear();
           // Atribuir a string formatada de volta a order.date
           order.date = `${day}/${month}/${year}`;
+
+          order.orderItems.forEach(item => {
+            if (item.custom) {
+              this.personalizados.push(item);
+            } else {
+              this.padroes.push(item);
+            }
+          });
+
           return order;
         });
         // Fazendo set dos valores na lista de pedidos em tela.
@@ -151,6 +188,15 @@ export default {
     showDetailsModal(scope) {
       this.showModal = true;
       this.order = this.pedidos.find(o => o.orderId === scope.row.orderId);
+      this.personalizados = this.order.orderItems.filter(item => item.options);
+      // format this "CEP: 82300-310, Cidade: Curitiba, Bairro: São Braz, Rua: Rua João Obrzut, Número: 474, Observações: " into different items into deliveryAddress array and remove text before :
+
+      const address = this.order.deliveryAddress.split(', ');
+      address.forEach(item => {
+        const split = item.split(': ');
+        this.deliveryAddress[split[0]] = split[1];
+      });
+      this.padroes = this.order.orderItems.filter(item => !item.options);
     },
     formatPrice(x) {
       return x.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -168,8 +214,8 @@ export default {
     margin-top: 20px;
     margin-bottom: 0;
   }
-  h3{
-    font-size: 2rem;
+  h4{
+    font-size: 1.6rem;
     font-weight: 400;
     margin-top: 10px !important;
     margin-bottom: 0;
