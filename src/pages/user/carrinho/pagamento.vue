@@ -460,7 +460,7 @@ export default {
         //     this.selectedAddress = address;
         // },
         selectExistingAddress(address) {
-            this.selectedAddress = Object.assign({}, address);
+            this.selectedAddress = address;
         },
         clearSelectedAddress() {
             this.selectedAddress = null;
@@ -510,24 +510,44 @@ export default {
 
             const deliveryAddress = {
                 addressNickname: this.endereco.addressNickname,
-                cep: this.endereco.cep,
-                state: this.endereco.state,
-                city: this.endereco.city,
-                district: this.endereco.district,
-                street: this.endereco.street,
-                number: this.endereco.number,
-                details: this.endereco.details
+                cep: this.selectedAddress.cep,
+                state: this.selectedAddress.state,
+                city: this.selectedAddress.city,
+                district: this.selectedAddress.district,
+                street: this.selectedAddress.street,
+                number: this.selectedAddress.number,
+                details: this.selectedAddress.details
             };
 
+            let newAddress = null;
+            if (this.addressChoice === 'newAddress' && this.newAddress) {
+                newAddress = {
+                    addressNickname: this.endereco.addressNickname,
+                    cep: this.endereco.cep,
+                    state: this.endereco.state,
+                    city: this.endereco.city,
+                    district: this.endereco.district,
+                    street: this.endereco.street,
+                    number: this.endereco.number,
+                    details: this.endereco.details
+                }
+            }
             // if (this.addressChoice === 'newAddress') {
             //     ordersReq.deliveryAddress = this.newAddress;
             // }
+
+            let theAddress = null;
+            if (this.addressChoice === 'existingAddress') {
+                theAddress = deliveryAddress;
+            } else {
+                theAddress = newAddress;
+            }
 
             const formatString = "CEP: %cep, Cidade: %city, Bairro: %district, Rua: %street, Número: %number, Observações: %details";
 
             const formattedString = formatString.replace(/%(\w+)/g, (match, key) => {
                 // Substitua cada %chave pelos valores correspondentes do objeto deliveryAddress
-                return deliveryAddress[key.toLowerCase()];
+                return theAddress[key.toLowerCase()];
             });
 
             console.log(formattedString)
