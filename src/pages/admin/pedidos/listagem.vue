@@ -22,28 +22,30 @@
           <el-table-column prop="totalPrice" label="Valor" sortable width="*">
             <template v-slot="scope">
               <div class="totalPrice">
-                <h3>{{ formatPrice(scope.row.totalPrice) }}</h3>
+                <h2>{{ formatPrice(scope.row.totalPrice) }}</h2>
               </div>
             </template>
           </el-table-column>
           <el-table-column prop="user.name" label="Cliente" sortable width="*">
             <template v-slot="scope">
               <div class="client_name">
-                <h3>{{ scope.row.user.email }}</h3>
+                <h4>{{ scope.row.user.email }}</h4>
               </div>
             </template>
           </el-table-column>
           <el-table-column prop="status" label="Status" sortable width="*">
             <template v-slot="scope">
               <div class="status">
-                <h3>{{ scope.row.status }}</h3>
+                <el-text type="success" v-if="scope.row.status == 'CONCLUIDO'">CONCLUÍDO</el-text>
+                <el-text type="danger" v-else-if="scope.row.status == 'CANCELADO'">CANCELADO</el-text>
+                <el-text type="warning" v-else-if="scope.row.status == 'ATIVO'">ATIVO</el-text>
               </div>
             </template>
           </el-table-column>
           <el-table-column prop="date" label="Data" sortable width="*">
             <template v-slot="scope">
               <div class="date">
-                <h3>{{ scope.row.date }}</h3>
+                <h4>{{ scope.row.date }}</h4>
               </div>
             </template>
           </el-table-column>

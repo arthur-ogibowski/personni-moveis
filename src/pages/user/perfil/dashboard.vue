@@ -124,6 +124,10 @@
                   <el-input v-model="newAddress.number" required :disabled="!cepExists" />
                 </div>
                 <div class="form-group">
+                  <label for="district" class="title">Complemento</label>
+                  <el-input v-model="newAddress.details" :disabled="!cepExists" />
+                </div>
+                <div class="form-group">
                   <label for="district" class="title">Bairro:</label>
                   <el-input v-model="newAddress.district" required :disabled="!cepExists" />
                 </div>
@@ -142,37 +146,49 @@
             </div>
           </div>
 
-          <div class="user-info" v-if="showEditAddressForm">
-            <h1 class="info-title">Editar Endereço</h1>
-            <div class="info-box">
-              <h2 class="info-item title">Apelido: </h2>
+          <div class="address-list" v-if="showEditAddressForm" >
+            <div class="address-list-left">
+              <h1 class="info-title">Editar Endereço</h1>
+              <h2>Preencha os campos para editar um endereço existente.</h2>
+              <el-button @click="showEditAddressForm = false">Cancelar</el-button>
+            </div>
+            <div class="address-list-right add-address-form">
+              <form class="address-form">
+            <div class="form-group">
+              <label class=" title">Apelido: </label>
               <el-input v-model="editedAddress.addressNickname"></el-input>
             </div>
-            <div class="info-box">
-              <h2 class="info-item title">Rua: </h2>
+            <div class="form-group">
+              <label class=" title">Rua: </label>
               <el-input v-model="editedAddress.street"></el-input>
             </div>
-            <div class="info-box">
-              <h2 class="info-item title">Número: </h2>
+            <div class="form-group">
+              <label class=" title">Número: </label>
               <el-input v-model="editedAddress.number"></el-input>
             </div>
-            <div class="info-box">
-              <h2 class="info-item title">Bairro: </h2>
+            <div class="form-group">
+                  <label for="district" class=" title">Complemento</label>
+                  <el-input v-model="newAddress.details"/>
+                </div>
+            <div class="form-group">
+              <label class=" title">Bairro: </label>
               <el-input v-model="editedAddress.district"></el-input>
             </div>
-            <div class="info-box">
-              <h2 class="info-item title">Cidade: </h2>
+            <div class="form-group">
+              <label class=" title">Cidade: </label>
               <el-input v-model="editedAddress.city"></el-input>
             </div>
-            <div class="info-box">
-              <h2 class="info-item title">Estado: </h2>
+            <div class="form-group">
+              <label class="title">Estado: </label>
               <el-input v-model="editedAddress.state"></el-input>
             </div>
-            <div class="info-box">
-              <h2 class="info-item title">CEP: </h2>
+            <div class="form-group">
+              <label class=" title">CEP: </label>
               <el-input v-model="editedAddress.cep"></el-input>
             </div>
-            <el-button type="primary" @click="saveEditedAddress(editedAddress)">Salvar</el-button>
+            <el-button type="primary" class="cta" @click="saveEditedAddress(editedAddress)">Salvar</el-button>
+          </form>
+          </div>
           </div>
 
         </div>
@@ -705,7 +721,7 @@ div.config-container {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      align-items: center;
+      align-items: baseline;
 
       .form-group {
         width: 100%;
@@ -713,6 +729,10 @@ div.config-container {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+
+        :deep(.el-input) {
+          width: 80%;
+        }
       }
     }
   }
@@ -802,6 +822,10 @@ h2 {
   border: 1px solid $grey-border;
   margin-bottom: 20px;
   box-shadow: none !important;
+
+  :deep(.el-input) {
+          width: 80%;
+  }
 }
 
 .section-title {
@@ -906,6 +930,89 @@ h2 {
   span{
     color: var(--cta-color);
     font-weight: 700;
+  }
+}
+
+@media screen and (max-width: 768px) {
+
+  h1.page-title{
+    font-size: 4rem;
+    text-align: center;
+  }
+
+  :deep(.el-dialog){
+    width: 100% !important;
+  }
+  div.dashboard-container {
+    flex-direction: column;
+    align-items: center;
+
+    div.dashboard-left {
+      flex-basis: 100%;
+
+      .sair-text{
+        margin-bottom: 20px;
+      }
+    }
+
+    div.dashboard-right {
+      flex-basis: 100%;
+
+      div.dashboard-enderecos,
+      div.dashboard-pedidos {
+        width: 350px;
+        overflow-x: scroll;
+      }
+    }
+  }
+
+  div.pedidos-container {
+    flex-direction: column;
+    align-items: center;
+
+    div.pedidos-left {
+      flex-basis: 100%;
+      margin-bottom: 20px;
+    }
+
+    div.pedidos-right {
+      flex-basis: 100%;
+       
+      width: 340px;
+      overflow: scroll;
+    }
+  }
+
+  div.config-container {
+    flex-direction: column;
+    align-items: center;
+
+    div.config-left {
+      flex-basis: 100%;
+      margin-bottom: 20px;
+    }
+
+    div.config-right {
+      flex-basis: 100%;
+    }
+  }
+
+  div.address-list {
+    flex-direction: column !important;
+    align-items: center;
+
+    div.address-list-left {
+      flex-basis: 100%;
+      margin-bottom: 20px;
+    }
+
+    div.address-list-right {
+      flex-basis: 100%;
+
+      div.address-summary{
+        width: 100% !important;
+      }
+    }
   }
 }
 </style>

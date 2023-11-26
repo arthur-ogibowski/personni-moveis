@@ -1071,4 +1071,78 @@ input[type="radio"]:checked+.radio-button::before {
             color: green;
         }
     }
-}</style>
+}
+@media screen and (max-width: 768px) {
+    .carrinho-content {
+        flex-direction: column;
+        width: 100%;
+
+        .side-info {
+            margin: 0;
+            margin-top: 20px;
+        }
+
+        .forma-pagamento, .endereco{
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+        }
+    }
+
+    div.finalizar{
+        width: 100%;
+
+        .finalizar-content{
+            flex-direction: column;
+            width: 100%;
+
+            .finalizar-left, .finalizar-right{
+                width: 100%;
+            }
+        }
+
+        h1{
+            text-align: center;
+        }
+    }
+
+    :deep(.el-radio){
+        width: 100%;
+    }
+    :deep(.el-radio-group){
+        width: 100%;
+    }
+    
+    .actions{
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+
+            a{
+                width: 100%;
+            }
+
+            :deep(.el-button){
+                width: 100%;
+                margin: 0;
+                margin-top: 20px;
+            }
+        }
+    .el-menu{
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+
+        li{
+            height: 100px;
+        }
+
+        .checkout-steps{
+            padding: 10px;
+        }
+    }
+}
+</style>

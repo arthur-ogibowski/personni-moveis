@@ -150,6 +150,11 @@ export default {
         .then(response => {
           response.data.forEach(product => this.products.push(product));
           this.filteredProducts = this.products;
+          this.products.forEach(product => {
+          if (product.available == 0) {
+            this.products.splice(this.products.indexOf(product), 1);
+          }
+        });
           this.$forceUpdate();
         })
         setTimeout(() => {
@@ -161,6 +166,12 @@ export default {
       axios.get('http://localhost:8081/products')
       .then(response => {
         this.products = response.data;
+        // if product.available false, remove from array
+        this.products.forEach(product => {
+          if (product.available == 0) {
+            this.products.splice(this.products.indexOf(product), 1);
+          }
+        });
         this.filteredProducts = this.products;
         setTimeout(() => {
           loading.close()
