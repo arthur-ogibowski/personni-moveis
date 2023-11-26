@@ -26,23 +26,19 @@
                             <h2> {{ product.name }} </h2>
                             <el-text v-if="product.custom" type="success">  Personalizado <el-icon class="option-dialog-button" @click="optionDialog(product)"><InfoFilled /></el-icon> </el-text>
                         </div>
-                        <el-dialog v-model="dialogVisible" :title="currentOption.name[0]" width="40%" :before-close="handleClose">
+                        <el-dialog v-model="dialogVisible" :title="product.name" width="40%" :before-close="handleClose">
                             <div class="dialog-content">
                                 <div v-for="(name, index) in currentOption.name" :key="index">
-                                    <!-- <div class="dialog-image" v-if="currentOption.img[index] !== ''">
-                                        <el-image :src="currentOption.img[index]" />
-                                    </div>
-                                    <div class="dialog-image-placeholder" v-else>
-                                        <img :src="storeConfig.placeholder" />
-                                    </div> -->
-                                    <h3>{{ currentOption.description[index] }}</h3>
-                                    <h2>R$ {{ currentOption.price[index] }}</h2>
+                                    <span class="flex-container">
+                                        <h3>{{ currentOption.description[index] }} -</h3>
+                                        <h2>R$ {{ currentOption.price[index] }}</h2>
+                                    </span>
                                 </div>
                             </div>
                             <template #footer>
                                 <span class="dialog-footer">
                                     <!-- Se quiser mostrar apenas o preço da primeira opção, descomente a linha abaixo -->
-                                    <!-- <h2>R$ {{ currentOption.price[0] }}</h2> -->
+                                    <h2> Total: R$ {{ calculateTotalPrice() }}</h2> <!-- Aqui o Preço -->
                                 </span>
                             </template>
                         </el-dialog>
@@ -176,21 +172,16 @@ export default {
                 img: [],
             };
 
-            // Verifica se há seções
-            if (product.sections && product.sections.length > 0) {
-                // Itera sobre todas as seções
-                product.sections.forEach(section => {
-                    // Verifica se há opções dentro da seção
-                    if (section.options && section.options.length > 0) {
-                        // Itera sobre todas as opções da seção
-                        section.options.forEach(option => {
-                            // Adiciona os dados na variável currentOption
-                            this.currentOption.name.push(option.name || ''); // Substitua por sua lógica real
-                            this.currentOption.price.push(option.price || null); // Substitua por sua lógica real
-                            this.currentOption.description.push(option.description || ''); // Substitua por sua lógica real
-                            this.currentOption.img.push(option.mainImg || ''); // Substitua por sua lógica real
-                        });
-                    }
+            // Verifica se há opções
+            if (product.options && product.options.length > 0) {
+                // Itera sobre todas as opções
+                product.options.forEach(option => {
+                    // Adiciona os dados na variável currentOption
+                    this.currentOption.name.push(option.section || ''); // Substitua por sua lógica real
+                    this.currentOption.price.push(option.price || null); // Substitua por sua lógica real
+                    this.currentOption.description.push(option.option || ''); // Substitua por sua lógica real
+                    // Se houver uma imagem associada a essa opção, adicione o caminho da imagem
+                    this.currentOption.img.push(option.img || ''); // Substitua por sua lógica real
                 });
             }
 
@@ -206,6 +197,16 @@ export default {
             }
             if (this.currentOption.img.length === 0) {
                 this.currentOption.img.push('');
+            }
+        },
+        calculateTotalPrice() {
+        // Verifica se há preços para somar
+            if (this.currentOption.price && this.currentOption.price.length > 0) {
+                // Usa a função reduce para somar todos os preços
+                const totalPrice = this.currentOption.price.reduce((total, price) => total + (price || 0), 0);
+                return totalPrice.toFixed(2); // Formata o resultado com duas casas decimais
+            } else {
+                return "0.00"; // Retorna zero se não houver preços
             }
         },
         // Produto.
@@ -370,6 +371,19 @@ export default {
 
 @import "@/assets/styles/scss/basics.scss";
 
+.flex-container {
+        display: flex;
+        // justify-content: space-between;
+        align-items: center;
+    }
+
+.flex-container h3 {
+    margin-right: 1%;
+    font-size: 16px;
+}
+.flex-container h2 {
+    font-size: 16px !important;
+}
 
 #carrinho-container{
     display: flex;
