@@ -183,4 +183,19 @@ h2 {
     align-items: center;
   }
 }
+
+@media screen and (max-width: 768px) {
+  div.login-container{
+    flex-direction: column-reverse;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    .side-image{
+      display: none;
+    }
+    .dialog{
+      width: 100%;
+    }
+  }
+}
 </style>
