@@ -52,7 +52,7 @@
 
 
 <script>
-import { ElLoading } from 'element-plus';
+import { ElLoading, ElMessage } from 'element-plus';
 import cartService from '@/store/cartService.js';
 import axios from 'axios';
 
