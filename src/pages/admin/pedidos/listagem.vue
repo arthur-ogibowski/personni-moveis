@@ -105,6 +105,15 @@
       </div>
       
     </el-dialog>
+
+    <el-dialog v-model="showModalCmp">
+      <template #header>
+        <h2 class="pedidoId">Pedido Modelado<span>#{{ currentProdCmp }}</span></h2>
+      </template>
+        <div class="orderInfo">
+        <h2>Produtos:</h2>
+      </div>
+    </el-dialog>
 </template>
 
 <script>
@@ -117,6 +126,8 @@ export default {
     data() {
     return {
       pedidos: [],
+      showModalCmp: false,
+      currentProdCmp: '',
       order: null,
       page: 1,
       pageSize: 10,

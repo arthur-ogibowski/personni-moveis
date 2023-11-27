@@ -11,6 +11,9 @@ export default {
     getCartItems() {
         return JSON.parse(localStorage.getItem('carrinho')) || [];
     },
+    getPersoCart() {
+        return JSON.parse(localStorage.getItem('carrinho-perso')) || [];
+    },
     /** Checa se o produto já é presente no localstorage pelo id. */
     // productIsAlreadyInCart(productId) {
     //     const cartItens = this.getCartItems();
@@ -40,6 +43,7 @@ export default {
     /** Adiciona um produto no carrinho. Se o produto ja existe atualiza sua quantidade. */
     addToCart(product, options) {
         const cartItems = this.getCartItems();
+        const carrinhoPerso = this.getPersoCart();
         const uniqueIdentifier = this.generateUniqueIdentifier(product.productId, options);
         const index = cartItems.findIndex((item) => item.uniqueIdentifier === uniqueIdentifier);
     
@@ -66,6 +70,7 @@ export default {
             product.uniqueIdentifier = uniqueIdentifier; // Adiciona a identificação única ao produto
             product.value = calculateTotalPrice(product, options);
             cartItems.push(product);
+            carrinhoPerso.push(product);
         } else {
             // Adiciona +1 na quantidade do produto já existente
             const cartProduct = cartItems[index];
@@ -74,6 +79,11 @@ export default {
         }
     
         this.updateCart(cartItems);
+        this.updatePersoCart(carrinhoPerso);
+    },
+
+    updatePersoCart(carrinhoPerso) {
+        localStorage.setItem('carrinho-perso', JSON.stringify(carrinhoPerso));
     },
 
     generateUniqueIdentifier(productId, options) {
@@ -105,6 +115,7 @@ export default {
     /** Remove o localstorage de carrinho e atualiza com lista vazia. */
     removeAllfromCart() {
         this.updateCart([]);
+        this.updatePersoCart([]);
     },
 
     // CMP:
