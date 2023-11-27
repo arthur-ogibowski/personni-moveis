@@ -237,7 +237,9 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                         <h3 v-if="product.name">{{ product.amount }} x {{ product.name }}</h3>
                                         <h3 v-else>{{ product.amount }} x Móvel modelado</h3>
                                         <el-text v-if="product.custom" type="success"> Personalizado </el-text>
-                                        <el-text type="info" size="small" v-if="product.description != 'string' && product.description != ''">{{ product.description }}</el-text>
+                                        <el-text type="info" size="small"
+                                            v-if="product.description != 'string' && product.description != ''">{{
+                                                product.description }}</el-text>
                                     </div>
                                     <div class="card-item-price">
                                         <h4>{{ formatPrice(product.value * product.amount) }}</h4>
@@ -410,16 +412,22 @@ export default {
     },
     methods: {
         iniciarTemporizador() {
-            this.temporizador = setInterval(() => {
-                if (this.tempoRestante > 0) {
-                    this.tempoRestante--;
-                } else {
-                    // Quando o temporizador atinge zero, redirecione para outra tela
-                    clearInterval(this.temporizador);
-                    // Adicione aqui o código para redirecionar para outra tela
-                    this.$router.push('/')
-                }
-            }, 1000);
+            // Verifique se a palavra "checkout" está presente na URL
+            if (window.location.href.includes('checkout')) {
+                this.temporizador = setInterval(() => {
+                    if (this.tempoRestante > 0) {
+                        this.tempoRestante--;
+                    } else {
+                        // Quando o temporizador atinge zero, redirecione para outra tela
+                        clearInterval(this.temporizador);
+                        // Adicione aqui o código para redirecionar para outra tela
+                        this.$router.push('/');
+                    }
+                }, 1000);
+            } else {
+                // Se não estiver na página de checkout, cancele o temporizador
+                console.log('Temporizador cancelado porque não está na página de checkout.');
+            }
         },
         calcularFrete() {
 
@@ -1049,6 +1057,7 @@ input[type="radio"]:checked+.radio-button::before {
         }
     }
 }
+
 @media screen and (max-width: 768px) {
     .carrinho-content {
         flex-direction: column;
@@ -1059,7 +1068,8 @@ input[type="radio"]:checked+.radio-button::before {
             margin-top: 20px;
         }
 
-        .forma-pagamento, .endereco{
+        .forma-pagamento,
+        .endereco {
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -1068,58 +1078,60 @@ input[type="radio"]:checked+.radio-button::before {
         }
     }
 
-    div.finalizar{
+    div.finalizar {
         width: 100%;
 
-        .finalizar-content{
+        .finalizar-content {
             flex-direction: column;
             width: 100%;
 
-            .finalizar-left, .finalizar-right{
+            .finalizar-left,
+            .finalizar-right {
                 width: 100%;
             }
         }
 
-        h1{
+        h1 {
             text-align: center;
         }
     }
 
-    :deep(.el-radio){
+    :deep(.el-radio) {
         width: 100%;
     }
-    :deep(.el-radio-group){
+
+    :deep(.el-radio-group) {
         width: 100%;
     }
-    
-    .actions{
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+
+    .actions {
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+
+        a {
             width: 100%;
-
-            a{
-                width: 100%;
-            }
-
-            :deep(.el-button){
-                width: 100%;
-                margin: 0;
-                margin-top: 20px;
-            }
         }
-    .el-menu{
+
+        :deep(.el-button) {
+            width: 100%;
+            margin: 0;
+            margin-top: 20px;
+        }
+    }
+
+    .el-menu {
         display: flex;
         flex-direction: column;
         height: 100%;
 
-        li{
+        li {
             height: 100px;
         }
 
-        .checkout-steps{
+        .checkout-steps {
             padding: 10px;
         }
     }
-}
-</style>
+}</style>
