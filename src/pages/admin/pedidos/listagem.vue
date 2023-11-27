@@ -19,6 +19,13 @@
               </div>
             </template>
           </el-table-column>
+          <el-table-column prop="type" label="Tipo" sortable width="*">
+            <template v-slot="scope">
+              <div class="client_name">
+                <h4>{{ scope.row.type }}</h4>
+              </div>
+            </template>
+          </el-table-column>
           <el-table-column prop="totalPrice" label="Valor" sortable width="*">
             <template v-slot="scope">
               <div class="totalPrice">
@@ -27,6 +34,13 @@
             </template>
           </el-table-column>
           <el-table-column prop="user.name" label="Cliente" sortable width="*">
+            <template v-slot="scope">
+              <div class="client_name">
+                <h4>{{ scope.row.user.name }}</h4>
+              </div>
+            </template>
+          </el-table-column>
+          <el-table-column prop="user.email" label="Email" sortable width="*">
             <template v-slot="scope">
               <div class="client_name">
                 <h4>{{ scope.row.user.email }}</h4>
@@ -38,7 +52,7 @@
               <div class="status">
                 <el-text type="success" v-if="scope.row.status == 'CONCLUIDO'">CONCLUÍDO</el-text>
                 <el-text type="danger" v-else-if="scope.row.status == 'CANCELADO'">CANCELADO</el-text>
-                <el-text type="warning" v-else-if="scope.row.status == 'ATIVO'">ATIVO</el-text>
+                <el-text type="warning" v-else-if="scope.row.status == 'ATIVA'">ATIVO</el-text>
               </div>
             </template>
           </el-table-column>
@@ -61,7 +75,8 @@
 
     <el-dialog v-model="showModal">
       <template #header>
-        <h2 class="pedidoId">Pedido <span>#{{ order.orderId }}</span></h2>
+        <h2 class="pedidoId" v-if="order.orderCmpId">Pedido móvel modelado <span>#{{ order.orderId }}</span></h2>
+        <h2 class="pedidoId" v-else>Pedido móvel pronto <span>#{{ order.orderId }}</span></h2>
       </template>
         
         <div class="clientInfo">
@@ -74,13 +89,68 @@
           <h4>{{ deliveryAddress.Cidade }}</h4>
           <h4>{{ deliveryAddress.CEP }}</h4>
         </div>
-        <div class="orderInfo">
+        <div class="orderInfo" v-if="order.orderCmpId">
+
+          <h2>Escolhas:</h2>
+            <el-table :data="selectedOptionsTable" style="100%">
+              <el-table-column prop="section" label="Seção" sortable>
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.section }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="element" label="Elemento" sortable>
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.element }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="img" label="Imagem">
+              <template v-slot="scope">
+                <div class="nome">
+                  <div v-if="scope.row.image" class="table-image">
+                    <el-image :src="scope.row.image" />
+                  </div>
+                  <!--<div v-else class="table-image">
+                    <img :src="storeConfig.placeholder" />
+                  </div>-->
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="option" label="Opção" sortable>
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.option }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="price" label="Preço" sortable>
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.price != 0 ? "R$ " + scope.row.price : "--" }}</p>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
+            
+          <h2 class="total">Total: <span>{{ formatPrice(order.totalPrice) }}</span></h2>
+        </div>
+        <div class="orderInfo" v-else>
         <h2>Produtos:</h2>
           <el-table :data="padroes" style="100%">
             <el-table-column prop="products[0].productId" label="ID" sortable width="80">
               <template v-slot="scope">
                 <div class="orderId">
-                  <h4># {{ scope.row.products[0].productId }}</h4>
+                  <h3># {{ scope.row.products[0].productId }}</h3>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="products[0].mainImg" label="Imagem" width="100">
+              <template v-slot="scope">
+                <div class="orderId">
+                  <img :src="scope.row.products[0].mainImg" width="50px" height="50px">
                 </div>
               </template>
             </el-table-column>
@@ -92,15 +162,15 @@
                 </div>
               </template>
             </el-table-column>
+            <el-table-column prop="value" label="Preço" sortable width="*">
+              <template v-slot="scope">
+                <div class="client_name">
+                  <h3>{{ formatPrice(parseInt(scope.row.products[0].value)) }}</h3>
+                </div>
+              </template>
+            </el-table-column>
           </el-table>
 
-          {{ order }}
-
-        <div v-for="item in order.orderItems" v-bind:key="item">
-          <div v-for="product in item.products" v-bind:key="product">
-            <h3>{{ item.selectedAmountOfProducts }}x - {{ product.name }} ({{ formatPrice(product.value) }})</h3>
-          </div>
-        </div>
         <h2 class="total">Total: <span>{{ formatPrice(order.totalPrice) }}</span></h2>
       </div>
       
@@ -130,6 +200,7 @@ export default {
   },
   created() {
     this.getOrders();
+    this.getCmps();
     const token = AuthService.getToken();
 
     if (token) {
@@ -163,19 +234,14 @@ export default {
           const year = data.getFullYear();
           // Atribuir a string formatada de volta a order.date
           order.date = `${day}/${month}/${year}`;
-
-          order.orderItems.forEach(item => {
-            if (item.custom) {
-              this.personalizados.push(item);
-            } else {
-              this.padroes.push(item);
-            }
-          });
+          order.type = 'PRONTO'
+          
+          this.pedidos.reverse()
+          this.pedidos.push(order);
 
           return order;
         });
         // Fazendo set dos valores na lista de pedidos em tela.
-        this.pedidos = response.data;
         setTimeout(() => {
             loading.close()
           }, 250)
@@ -184,13 +250,64 @@ export default {
           console.error('Erro ao obter dados da API:', error);
         });
     },
-    filteredList() {
+    getCmps() {
+      axios.get('http://localhost:8081/orders/cmp')
+        .then(response => {
+          // Transforma datas para formato dia/mes/ano.
+          console.log(response.data)
+          response.data = response.data.map(order => {
+          const dataArray = order.date;
+          const data = new Date(dataArray[0], dataArray[1] - 1, dataArray[2]);
+          const day = data.getDate();
+          const month = data.getMonth() + 1; // Meses em JavaScript são indexados de 0 a 11
+          const year = data.getFullYear();
+          // Atribuir a string formatada de volta a order.date
+          order.date = `${day}/${month}/${year}`;
+          order.type = 'MODELADO'
 
+          
+          order.orderId = order.orderCmpId
+
+          this.pedidos.reverse()
+          this.pedidos.push(order);
+
+          return order;
+        });
+        })
+        .catch(error => {
+          console.error('Erro ao obter dados da API:', error);
+        });
+    
+    },
+    filteredList() {
+      return this.pedidos.filter(pedido => {
+        return pedido.user.name.toLowerCase().includes(this.pedidosSearch.toLowerCase()) || pedido.user.email.toLowerCase().includes(this.pedidosSearch.toLowerCase())
+      })
     },
     showDetailsModal(scope) {
       this.showModal = true;
-      this.order = this.pedidos.find(o => o.orderId === scope.row.orderId);
-      this.personalizados = this.order.orderItems.filter(item => item.options);
+      if (scope.row.orderCmpItems){
+        
+        this.selectedOptionsTable = [];
+        this.order = this.pedidos.find(o => o.orderCmpId === scope.row.orderCmpId);
+        scope.row.orderCmpItems[0].productCmps[0].sectionCmps.forEach((section) => {
+          section.elementCmps.forEach((element) => {
+            this.selectedOptionsTable.push({
+              image: element.optionCmps[0].img,
+              section: section.name,
+              element: element.name,
+              option: element.optionCmps[0].name,
+              price: element.optionCmps[0].price,
+            });
+          });
+        });
+
+      }
+      else {
+        this.order = this.pedidos.find(o => o.orderId === scope.row.orderId);
+      }
+
+      //this.personalizados = this.order.orderItems.filter(item => item.options);
       // format this "CEP: 82300-310, Cidade: Curitiba, Bairro: São Braz, Rua: Rua João Obrzut, Número: 474, Observações: " into different items into deliveryAddress array and remove text before :
 
       const address = this.order.deliveryAddress.split(', ');
@@ -198,11 +315,12 @@ export default {
         const split = item.split(': ');
         this.deliveryAddress[split[0]] = split[1];
       });
-      this.padroes = this.order.orderItems.filter(item => !item.options);
+      //this.padroes = this.order.orderItems.filter(item => !item.options);
     },
     formatPrice(x) {
       return x.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     },
+
   },
 
 }
