@@ -217,7 +217,7 @@ import { LocationFilled, Select, WalletFilled } from '@element-plus/icons-vue';
                                 </div>
                                 <div class="card-item">
                                     <h3>{{ formatPrice(frete) }}</h3>
-                                    <h4>Entrega em até 5 dias úteis</h4>
+                                    <h4>Entrega em até 20 dias úteis</h4>
                                 </div>
                             </el-card>
                         </div>

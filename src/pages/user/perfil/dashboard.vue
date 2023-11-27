@@ -48,11 +48,18 @@
             <div class="dashboard-pedidos">
               <h2> Meus pedidos </h2>
               <el-table :data="pedidosDash" style="width: 100%">
+                <el-table-column prop="orderId" label="ID" sortable width="80">
+                  <template v-slot="scope">
+                    <div class="orderId">
+                      <h4># {{ scope.row.orderId }}</h4>
+                    </div>
+                  </template>
+                </el-table-column>
                 <el-table-column prop="date" label="Data" width="*" />
                 <el-table-column prop="status" label="Status" width="*">
                   <template #default="{ row }">
                     <!-- Mockando o campo status com um texto padrão -->
-                    <span>{{ row.status || 'Ativo' }}</span>
+                    <span>{{ row.status || 'ATIVO' }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="totalPrice" label="Preço Total" width="180">
@@ -202,12 +209,21 @@
             <h2>Veja aqui todos os seus pedidos.</h2>
           </div>
           <div class="pedidos-right">
+            <div class="pedidos-table">
+              <h2>Móveis prontos</h2>
             <el-table :data="pedidosAll" class="perfil-table" style="width: 100%">
+              <el-table-column prop="orderId" label="ID" sortable width="80">
+                <template v-slot="scope">
+                  <div class="orderId">
+                    <h4># {{ scope.row.orderId }}</h4>
+                  </div>
+                </template>
+              </el-table-column>
               <el-table-column prop="date" label="Data" width="300" />
               <el-table-column prop="status" label="Status" width="*">
                 <template #default="{ row }">
                   <!-- Mockando o campo status com um texto padrão -->
-                  <span>{{ row.status || 'Ativo' }}</span>
+                  <span>{{ row.status || 'ATIVO' }}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="totalPrice" label="Preço Total" width="180">
@@ -222,40 +238,93 @@
               </el-table-column>
             </el-table>
           </div>
-        </div>
 
-        <el-table :data="pedidosCmp" style="display: block;">
-          <el-table-column prop="date" label="Data" width="300" />
-          <el-table-column prop="status" label="Status" width="*">
-            <template #default="{ row }">
-              <!-- Mockando o campo status com um texto padrão -->
-              <span>{{ row.status || 'Ativo' }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column prop="totalPrice" label="Preço Total" width="180">
-            <template #default="{ row }">
-              {{ formatPrice(row.totalPrice) }}
-            </template>
-          </el-table-column>
-          <el-table-column prop="" label="Detalhes" width="180">
-            <template #default="scope"> 
-          <el-button plain @click="showDetailCmp(scope)">Detalhes</el-button>
-          </template>
-          </el-table-column>
-        </el-table>
+            <div class="pedidos-table">
+              <h2>Móveis modelados</h2>
+            <el-table :data="pedidosCmp" style="display: block;">
+              <el-table-column prop="date" label="Data" width="300" />
+              <el-table-column prop="status" label="Status" width="*">
+                <template #default="{ row }">
+                  <!-- Mockando o campo status com um texto padrão -->
+                  <span>{{ row.status || 'ATIVO' }}</span>
+                </template>
+              </el-table-column>
+              <el-table-column prop="totalPrice" label="Preço Total" width="180">
+                <template #default="{ row }">
+                  {{ formatPrice(row.totalPrice) }}
+                </template>
+              </el-table-column>
+              <el-table-column prop="" label="Detalhes" width="180">
+                <template #default="scope"> 
+              <el-button plain @click="showDetailCmp(scope)">Detalhes</el-button>
+              </template>
+              </el-table-column>
+            </el-table>
+          </div>
+          </div>
+        </div>
 
         <el-dialog v-model="showModalCmp">
           <template #header>
-            <h2 class="pedidoId">Pedido Modelado<span>#{{ currentProdCmp }}</span></h2>
-          </template>
+            <h2 class="pedidoId">Pedido Modelado<span> #{{ order.orderCmpId }}</span></h2>
 
-            <div class="clientInfo">
-              <h2> Dados do cliente: </h2> 
-              
-            </div>
+          </template>
+              <div class="clientInfo">
+                <h2> Dados do cliente: </h2>
+                <h4>{{ order.user.name }}</h4>
+                <h4>{{ order.user.email }}</h4>
+                <h4>{{ deliveryAddress.Rua }} {{ deliveryAddress.Número }}</h4>
+                <h4>{{ deliveryAddress.Observações }}</h4>
+                <h4>{{ deliveryAddress.Bairro }}</h4>
+                <h4>{{ deliveryAddress.Cidade }}</h4>
+                <h4>{{ deliveryAddress.CEP }}</h4>
+              </div>
             <div class="orderInfo">
-            <h2>Produtos:</h2>
+            <h2>Escolhas:</h2>
+            <el-table :data="selectedOptionsTable" style="100%">
+              <el-table-column prop="section" label="Seção" sortable>
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.section }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="element" label="Elemento" sortable>
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.element }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="img" label="Imagem">
+              <template v-slot="scope">
+                <div class="nome">
+                  <div v-if="scope.row.image" class="table-image">
+                    <el-image :src="scope.row.image" />
+                  </div>
+                  <!--<div v-else class="table-image">
+                    <img :src="storeConfig.placeholder" />
+                  </div>-->
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="option" label="Opção" sortable>
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.option }}</p>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="price" label="Preço" sortable>
+              <template v-slot="scope">
+                <div class="nome">
+                  <p>{{ scope.row.price != 0 ? "R$ " + scope.row.price : "--" }}</p>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
             
+          <h2 class="total">Total: <span>{{ formatPrice(order.totalPrice) }}</span></h2>
             
           </div>
 
@@ -268,17 +337,40 @@
 
             <div class="clientInfo">
               <h2> Dados do cliente: </h2>
-              <h3>{{ order.user.name }}</h3>
-              <h3>{{ order.user.email }}</h3>
-              <h3>{{ order.deliveryAddress }}</h3>
+              <h4>{{ order.user.name }}</h4>
+              <h4>{{ order.user.email }}</h4>
+              <h4>{{ deliveryAddress.Rua }} {{ deliveryAddress.Número }}</h4>
+              <h4>{{ deliveryAddress.Observações }}</h4>
+              <h4>{{ deliveryAddress.Bairro }}</h4>
+              <h4>{{ deliveryAddress.Cidade }}</h4>
+              <h4>{{ deliveryAddress.CEP }}</h4>
             </div>
             <div class="orderInfo">
             <h2>Produtos:</h2>
-            <div v-for="item in order.orderItems" v-bind:key="item">
-              <div v-for="product in item.products" v-bind:key="product">
-                <h3>{{ item.selectedAmountOfProducts }}x - {{ product.name }} ({{ formatPrice(product.value) }})</h3>
-              </div>
-            </div>
+            <el-table :data="order.orderItems" style="100%">
+            <el-table-column prop="products[0].mainImg" label="Imagem" width="100">
+              <template v-slot="scope">
+                <div class="orderId">
+                  <img :src="scope.row.products[0].mainImg" width="50px" height="50px">
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="selectedAmountOfProducts" label="Quantidade" sortable width="130"/>
+            <el-table-column prop="products[0].name" label="Nome" sortable width="*">
+              <template v-slot="scope">
+                <div class="client_name">
+                  <h3>{{ scope.row.products[0].name }}</h3>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column prop="value" label="Preço" sortable width="*">
+              <template v-slot="scope">
+                <div class="client_name">
+                  <h3>{{ formatPrice(parseInt(scope.row.products[0].value)) }}</h3>
+                </div>
+              </template>
+            </el-table-column>
+          </el-table>
             <h2 class="total">Total: <span>{{ formatPrice(order.totalPrice) }}</span></h2>
           </div>
 
@@ -340,37 +432,8 @@ export default {
       user: {},
       pedidosCmp: null,
       showModal: false,
+      selectedOptionsTable: [],
       currentProdCmp: {
-          // orderCmpId: '',
-          // deliveryAddress: '',
-          // totalPrice: '',
-          // date: '',
-          // orderCmpItems: [
-          //   {
-          //     selectedAmountOfCmps: '',
-          //     subtotal: '',
-          //     productCmps: [
-          //       {
-          //         valueTotal: '',
-          //         SectionCmp: [
-          //           {
-          //             name: '',
-          //             elementCmps: [
-          //               {
-          //                 optionCmps: [
-          //                   {
-          //                     name: '',
-
-          //                   }
-          //                 ]
-          //               }
-          //             ]
-          //           }
-          //         ]
-          //       }
-          //     ]
-          //   }
-          // ]
       },
       showModalCmp: false,
       enderecosDash: [],
@@ -408,6 +471,8 @@ export default {
         cep: ""
       },
       cepExists: false,
+      order: null,
+      deliveryAddress: {},
     };
   },
   created() {
@@ -428,7 +493,16 @@ export default {
     },
     showDetailsModal(scope) {
       this.showModal = true;
+
+                
       this.order = this.pedidosAll.find(o => o.orderId === scope.row.orderId);
+
+      const address = this.order.deliveryAddress.split(', ');
+          address.forEach(item => {
+            const split = item.split(': ');
+            this.deliveryAddress[split[0]] = split[1];
+          });
+
     },
     showEditAddress(address) {
       this.getAddressToEdit(address.addressId);
@@ -467,8 +541,13 @@ export default {
             return order;
           });
 
-          // Fazendo set dos valores na lista de pedidos em tela.
+          response.data.reverse();
           this.pedidosDash = response.data.slice(0, 3);
+          
+          
+
+
+          
         })
         .catch((error) => {
           console.error('Erro:', error);
@@ -492,6 +571,7 @@ export default {
 
             return order;
           });
+          response.data.reverse();
           this.pedidosCmp = response.data;
         })
         .catch(error => {
@@ -515,10 +595,12 @@ export default {
 
             // Atribuir a string formatada de volta a order.date
             order.date = `${day}/${month}/${year}`;
+            
 
             return order;
           });
 
+          response.data.reverse();
           // Fazendo set dos valores na lista de pedidos em tela.
           this.pedidosAll = response.data;
 
@@ -709,8 +791,29 @@ export default {
 
     showDetailCmp(scope) {
       this.showModalCmp = true;
+      this.selectedOptionsTable = [];
+      this.order = this.pedidosCmp.find(o => o.orderCmpId === scope.row.orderCmpId);
+      scope.row.orderCmpItems[0].productCmps[0].sectionCmps.forEach((section) => {
+        section.elementCmps.forEach((element) => {
+          this.selectedOptionsTable.push({
+            image: element.optionCmps[0].img,
+            section: section.name,
+            element: element.name,
+            option: element.optionCmps[0].name,
+            price: element.optionCmps[0].price,
+          });
+        });
+      });
 
-      this.currentProdCmp = scope.row;
+      const address = this.order.deliveryAddress.split(', ');
+          address.forEach(item => {
+            const split = item.split(': ');
+            this.deliveryAddress[split[0]] = split[1];
+          });
+
+      
+      
+      //this.currentProdCmp = scope.row;
     },
   },
 
@@ -741,12 +844,23 @@ div.pedidos-container {
 
   .pedidos-right {
     flex-basis: 65%;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    border: 1px solid $grey-border;
-    background-color: $primary-color;
-    padding: 20px;
+     div.pedidos-table{
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid $grey-border;
+      background-color: $primary-color;
+      padding: 20px;
+      margin-bottom: 20px;
+
+      h2{
+        font-size: 2rem;
+        font-weight: 400;
+        margin-top: 0;
+        color: $text-color;
+      
+      }
+     }
   }
 }
 
@@ -915,6 +1029,7 @@ h2 {
   font-size: 2rem;
   font-weight: 400;
   margin-top: 0;
+  color: $text-color;
 }
 
 .user-info {
@@ -996,6 +1111,20 @@ h2 {
 
 :deep(.el-table .cell) {
   word-break: normal;
+
+  h3{
+    font-size: 1.4rem;
+    font-weight: 400;
+    margin-top: 0;
+    color: $text-color;
+    margin-bottom: 0;
+  
+  }
+
+  img{
+    width: 50px;
+    height: 50px;
+  }
 }
 .clientInfo, .orderInfo{
   h2{
@@ -1004,8 +1133,8 @@ h2 {
     margin-top: 20px;
     margin-bottom: 0;
   }
-  h3{
-    font-size: 2rem;
+  h4{
+    font-size: 1.6rem;
     font-weight: 400;
     margin-top: 10px !important;
     margin-bottom: 0;
