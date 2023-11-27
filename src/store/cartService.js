@@ -85,6 +85,7 @@ export default {
     updatePersoCart(carrinhoPerso) {
         localStorage.setItem('carrinho-perso', JSON.stringify(carrinhoPerso));
     },
+    
 
     generateUniqueIdentifier(productId, options) {
         const optionsString = options ? JSON.stringify(options) : '';
