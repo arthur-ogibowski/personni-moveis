@@ -195,4 +195,56 @@ h2 {
   }
 }
 
+@media screen and (max-width: 768px) {
+  div.login-container{
+    flex-direction: column;
+    .side-image{
+      display: none;
+    }
+    .dialog{
+      flex-basis: 100%;
+    }
+  }
+  div.container{
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  div.logo-container{
+    width: 100%;
+    height: 10rem;
+  }
+  h2{
+    font-size: 1.5rem;
+  }
+  .login-container{
+    width: 100%;
+  }
+  .dialog{
+    width: 100%;
+  }
+  .blue-rectangle{
+    width: 100%;
+    height: 100%;
+    background-color: var(--tertiary-color);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .cta{
+    width: 100%;
+  }
+  .register{
+    margin-top: 20px;
+  }
+  .criar-conta{
+    font-size: 1.5rem;
+  }
+  .recuperar-senha{
+    font-size: 1.5rem;
+  }
+}
+
 </style>

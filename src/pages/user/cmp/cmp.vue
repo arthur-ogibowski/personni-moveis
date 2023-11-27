@@ -322,8 +322,6 @@ export default {
   computed: {
     isCurrentElementMandatory() {
       const currentSection = this.categoria.sectionCmps[this.currentSection];
-
-      // if all mandatory elements in currentSection are selected, return false
       return !currentSection.elementCmps.filter((element) => element.mandatory).every((element) => this.selected[element.id]);
     },
 
@@ -402,7 +400,7 @@ export default {
       this.currentOption.name = element.option
       this.currentOption.element = element.element
       this.currentOption.price = element.price
-      this.currentOption.description = option.descriptions
+      this.currentOption.description = element.option.descriptions
       this.currentOption.img = element.img
     },
     encontrarElementoESeçãoPorOpção(optionIds) {
@@ -913,6 +911,7 @@ h2 {
       width: 80px !important;
       height: 80px !important;
       min-width: 80px !important;
+      margin: 0 !important;
 
       .el-image__error {
         min-height: 80px !important;
@@ -1035,8 +1034,15 @@ div.el-radio-group {
   }
 }
 
+
+
+
+
 @media screen and (max-width: 768px){
 
+  :deep(.el-dialog){
+    width: 100% !important;
+  }
   .el-menu {
     display: flex;
     flex-direction: column;
@@ -1062,11 +1068,16 @@ div.el-radio-group {
   }
   .revisar-section-section{
     flex-direction: column !important; 
+
+    h2{
+      text-align: center;
+    }
   }
   .revisar-section {
 
     .v-for{
       width: 95%;
+      margin: 5px;
     }
     
     .revisar-main-section {
@@ -1076,7 +1087,6 @@ div.el-radio-group {
 
       .revisar-section-item {
         width: 100%;
-        margin: 0 0 10px 0;
         padding: 0;
         min-width: 80px;
         height: 80px;
@@ -1155,14 +1165,14 @@ div.el-radio-group {
       display: flex;
       flex-direction: row;
       flex-wrap: wrap;
-      height: 180px;
+      height: 100%;
       width: 100%;
 
 
       .revisar-section-item {
         padding: 0;
         min-width: 250px;
-        margin: 5px;
+        margin: 0;
         height: 80px;
         display: flex;
         justify-content: flex-start;
