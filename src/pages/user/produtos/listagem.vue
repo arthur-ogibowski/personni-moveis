@@ -146,6 +146,8 @@ export default {
         console.error('Erro ao obter dados da API:', error);
     });
     if (this.$route.query.category) {
+      this.filterCategory = this.$route.query.category;
+
       axios.get("http://localhost:8081/category/products-in-category/" + this.$route.query.category)
         .then(response => {
           response.data.forEach(product => this.products.push(product));
@@ -239,6 +241,9 @@ export default {
       this.persoFilter = null;
       this.filterCategory = null;
       this.filteredProducts = this.products;
+      this.$route.query.category = null;
+      this.$router.push({ path: '/produtos' });
+      this.$forceUpdate();
     },
 
     /** Remove filtro de preço após filtro ser selecionado. */
