@@ -58,8 +58,8 @@
                 <el-table-column prop="date" label="Data" width="*" />
                 <el-table-column prop="status" label="Status" width="*">
                   <template #default="{ row }">
-                    <!-- Mockando o campo status com um texto padrão -->
-                    <span>{{ row.status || 'ATIVO' }}</span>
+                    <span v-if="row.status == 'ATIVA'"> ATIVO </span>
+                    <span v-else>{{ row.status }}</span>
                   </template>
                 </el-table-column>
                 <el-table-column prop="totalPrice" label="Preço Total" width="180">
@@ -222,8 +222,8 @@
               <el-table-column prop="date" label="Data" width="300" />
               <el-table-column prop="status" label="Status" width="*">
                 <template #default="{ row }">
-                  <!-- Mockando o campo status com um texto padrão -->
-                  <span>{{ row.status || 'ATIVO' }}</span>
+                  <span v-if="row.status == 'ATIVA'"> ATIVO </span>
+                  <span v-else>{{ row.status }}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="totalPrice" label="Preço Total" width="180">
@@ -245,8 +245,8 @@
               <el-table-column prop="date" label="Data" width="300" />
               <el-table-column prop="status" label="Status" width="*">
                 <template #default="{ row }">
-                  <!-- Mockando o campo status com um texto padrão -->
-                  <span>{{ row.status || 'ATIVO' }}</span>
+                  <span v-if="row.status == 'ATIVA'"> ATIVO </span>
+                  <span v-else>{{ row.status }}</span>
                 </template>
               </el-table-column>
               <el-table-column prop="totalPrice" label="Preço Total" width="180">
@@ -266,7 +266,7 @@
 
         <el-dialog v-model="showModalCmp">
           <template #header>
-            <h2 class="pedidoId">Pedido Modelado<span> #{{ order.orderCmpId }}</span></h2>
+            <h2 class="pedidoId">Pedido móvel modelado<span> #{{ order.orderCmpId }}</span></h2>
 
           </template>
               <div class="clientInfo">
@@ -332,7 +332,7 @@
 
         <el-dialog v-model="showModal">
           <template #header>
-            <h2 class="pedidoId">Pedido <span>#{{ order.orderId }}</span></h2>
+            <h2 class="pedidoId">Pedido móvel pronto <span>#{{ order.orderId }}</span></h2>
           </template>
 
             <div class="clientInfo">
