@@ -162,4 +162,28 @@ h2 {
     align-items: center;
   }
 }
+
+@media screen and (max-width: 768px) {
+  div.login-container{
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    .side-image{
+      display: none;
+    }
+    .dialog{
+      flex-basis: 100%;
+    }
+  }
+  div.container{
+    padding-top: 0;
+    padding-bottom: 0;
+  }
+  div.logo-container{
+    width: 15rem;
+    margin-bottom: 20px;
+    height: 10rem;
+  }
+}
 </style>
