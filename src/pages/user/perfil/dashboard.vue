@@ -250,7 +250,8 @@
           </template>
 
             <div class="clientInfo">
-              <h2> Dados do cliente: </h2>
+              <h2> Dados do cliente: </h2> 
+              
             </div>
             <div class="orderInfo">
             <h2>Produtos:</h2>
