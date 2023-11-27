@@ -210,7 +210,7 @@
           </div>
           <div class="pedidos-right">
             <div class="pedidos-table">
-              <h2>Móveis prontos</h2>
+              <h2>Móveis do catálogo</h2>
             <el-table :data="pedidosAll" class="perfil-table" style="width: 100%">
               <el-table-column prop="orderId" label="ID" sortable width="80">
                 <template v-slot="scope">
@@ -242,6 +242,13 @@
             <div class="pedidos-table">
               <h2>Móveis modelados</h2>
             <el-table :data="pedidosCmp" style="display: block;">
+              <el-table-column prop="orderCmpId" label="ID" sortable>
+              <template v-slot="scope">
+                <div class="nome">
+                  <h4># {{ scope.row.orderCmpId }}</h4>
+                </div>
+              </template>
+            </el-table-column>
               <el-table-column prop="date" label="Data" width="300" />
               <el-table-column prop="status" label="Status" width="*">
                 <template #default="{ row }">
@@ -332,7 +339,8 @@
 
         <el-dialog v-model="showModal">
           <template #header>
-            <h2 class="pedidoId">Pedido móvel pronto <span>#{{ order.orderId }}</span></h2>
+            <h2 class="pedidoId">Pedido móvel catálogo <span>#{{ order.orderId }}</span></h2>
+
           </template>
 
             <div class="clientInfo">
@@ -371,6 +379,21 @@
               </template>
             </el-table-column>
           </el-table>
+          
+          <span v-if="hasPerso == true">
+            <h2>Personalizações:</h2>
+            <el-table :data="order?.orderItems?.options" style="100%">
+              <el-table-column prop="section" label="Seção" width="*"/>
+              <el-table-column prop="option" label="Opção" sortable width="*"/>
+              <el-table-column prop="price" label="Preço" sortable width="*">
+                <template v-slot="scope">
+                <div class="client_name">
+                  <h3>{{ formatPrice(parseInt(scope.row.price)) }}</h3>
+                </div>
+              </template>
+            </el-table-column>
+            </el-table>
+          </span>
             <h2 class="total">Total: <span>{{ formatPrice(order.totalPrice) }}</span></h2>
           </div>
 
@@ -423,6 +446,7 @@
 
 <script>
 import axios from 'axios';
+import cartService from '@/store/cartService.js';
 import AuthService from '@/store/authService.js';
 import { ElMessage } from 'element-plus';
 
@@ -430,6 +454,7 @@ export default {
   data() {
     return {
       user: {},
+      hasPerso: false,
       pedidosCmp: null,
       showModal: false,
       selectedOptionsTable: [],
@@ -470,6 +495,7 @@ export default {
         state: "",
         cep: ""
       },
+      persoProducts: [],
       cepExists: false,
       order: null,
       deliveryAddress: {},
@@ -488,14 +514,41 @@ export default {
     this.getPedidosAll();
   },
   methods: {
+    getPersoProducts(order) {
+            order.orderItems.options = [];
+            this.persoProducts = cartService.getPersoCart();
+
+            if (this.persoProducts == []) {
+              return;
+            }
+
+            else {
+              order.orderItems.forEach((item) => {
+                this.persoProducts.forEach((product) => {
+                  if (item.products[0].productId === product.productId) {
+                    this.hasPerso = true;
+                    order.orderItems.options = product.options;
+                  }
+                });
+              });
+              
+            }
+
+
+            console.log(this.order)
+        },
     formatPrice(price) {
       return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(price);
     },
     showDetailsModal(scope) {
       this.showModal = true;
+      this.showCmpModal = false;
 
                 
       this.order = this.pedidosAll.find(o => o.orderId === scope.row.orderId);
+      this.hasPerso = false;
+      console.log(this.order)
+      this.getPersoProducts(this.order);
 
       const address = this.order.deliveryAddress.split(', ');
           address.forEach(item => {
@@ -791,6 +844,7 @@ export default {
 
     showDetailCmp(scope) {
       this.showModalCmp = true;
+      this.showModal = false;
       this.selectedOptionsTable = [];
       this.order = this.pedidosCmp.find(o => o.orderCmpId === scope.row.orderCmpId);
       scope.row.orderCmpItems[0].productCmps[0].sectionCmps.forEach((section) => {

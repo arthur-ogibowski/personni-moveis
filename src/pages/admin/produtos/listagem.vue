@@ -20,10 +20,10 @@
           </div>
         </template>
         </el-table-column>
-        <el-table-column prop="category.name" label="Categoria" sortable width="150">
+        <el-table-column prop="categoryName" label="Categoria" sortable width="150">
         <template v-slot="scope">
           <div class="categoria">
-            <h4>{{ scope.row.category.name}}</h4>
+            <h4>{{ scope.row.categoryName }}</h4>
           </div>
         </template>
       </el-table-column>
@@ -143,23 +143,38 @@ export default {
           console.error('Não foi possível remover o produto.', error);
         });
     },
-    getProducts() {
+    async getProducts() {
       const loading = ElLoading.service({
-            lock: true,
-            text: 'Carregando produtos...',
-            background: 'rgba(0, 0, 0, 0.7)'
+        lock: true,
+        text: 'Carregando produtos...',
+        background: 'rgba(0, 0, 0, 0.7)'
       });
-      axios.get('http://localhost:8081/products')
-        .then(response => {
-          this.tableData = response.data;
-          setTimeout(() => {
-            loading.close()
-          }, 250)
-        })
-        .catch(error => {
-          console.error('Erro ao obter dados da API:', error);
-        });
+    
+      try {
+        const response = await axios.get('http://localhost:8081/products');
+        this.tableData = response.data;
+      
+        for (const product of this.tableData) {
+          product.categoryName = await this.getCategoryName(product.categoryId);
+        }
+      
+        setTimeout(() => {
+          loading.close();
+        }, 250);
+      } catch (error) {
+        console.error('Erro ao obter dados da API:', error);
+      }
     },
+    
+    async getCategoryName(id) {
+      try {
+        const response = await axios.get(`http://localhost:8081/category/${id}`);
+        return response.data.name;
+      } catch (error) {
+        console.error('Erro ao obter dados da API:', error);
+      }
+    },
+
     trueOrFalse(isEditable) {
       return isEditable ? 'Sim' : 'Não';
     },

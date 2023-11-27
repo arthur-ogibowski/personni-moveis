@@ -76,7 +76,7 @@
     <el-dialog v-model="showModal">
       <template #header>
         <h2 class="pedidoId" v-if="order.orderCmpId">Pedido móvel modelado <span>#{{ order.orderId }}</span></h2>
-        <h2 class="pedidoId" v-else>Pedido móvel pronto <span>#{{ order.orderId }}</span></h2>
+        <h2 class="pedidoId" v-else>Pedido móvel catálogo <span>#{{ order.orderId }}</span></h2>
       </template>
         
         <div class="clientInfo">
@@ -245,7 +245,7 @@ export default {
           const year = data.getFullYear();
           // Atribuir a string formatada de volta a order.date
           order.date = `${day}/${month}/${year}`;
-          order.type = 'PRONTO'
+          order.type = 'CATALOGO'
           
           this.pedidos.reverse()
           this.pedidos.push(order);

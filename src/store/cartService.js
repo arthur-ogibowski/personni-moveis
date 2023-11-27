@@ -116,7 +116,6 @@ export default {
     /** Remove o localstorage de carrinho e atualiza com lista vazia. */
     removeAllfromCart() {
         this.updateCart([]);
-        this.updatePersoCart([]);
     },
 
     // CMP:

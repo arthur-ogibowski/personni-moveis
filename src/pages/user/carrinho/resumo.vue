@@ -30,15 +30,21 @@
                             <div class="dialog-content">
                                 <div v-for="(name, index) in currentOption.name" :key="index">
                                     <span class="flex-container">
-                                        <h3>{{ currentOption.description[index] }} -</h3>
-                                        <h2>R$ {{ currentOption.price[index] }}</h2>
+                                        <img :src="currentOption.img[index]" class="image" />
+                                        <div class="dialog-info">
+                                            <div class="name">
+                                                <h4>{{ currentOption.name[index] }}</h4>
+                                                <h3>{{ currentOption.description[index] }}</h3>
+                                            </div>
+                                            <h2>R$ {{ currentOption.price[index] }}</h2>
+                                        </div>
                                     </span>
                                 </div>
                             </div>
                             <template #footer>
                                 <span class="dialog-footer">
                                     <!-- Se quiser mostrar apenas o preço da primeira opção, descomente a linha abaixo -->
-                                    <h2> Total: R$ {{ calculateTotalPrice() }}</h2> <!-- Aqui o Preço -->
+                                    <h2> <span>Total: R$</span> {{ calculateTotalPrice() }}</h2> <!-- Aqui o Preço -->
                                 </span>
                             </template>
                         </el-dialog>
@@ -136,6 +142,7 @@ export default {
             dialogVisible: false,
             cmpProducts: [],
             products: [],
+            persoProducts: [],
             totalProducts: 0, // preco dos itens padrao do carrinho
             totalCmps: 0, // preco dos itens modelados do carrinho
             storeConfig: {
@@ -229,7 +236,6 @@ export default {
         getCartProductsFromLocalStorage() {
             this.cartProducts = cartService.getCartItems();
         },
-
         calcularTotalProdutosProntos() {
             let totalProdutosProntos = 0;
 
@@ -371,6 +377,50 @@ export default {
 
 @import "@/assets/styles/scss/basics.scss";
 
+:deep(.el-dialog){
+
+    .dialog__footer span{
+            font-size: 16px !important;
+            color: $user-grey !important;
+        }
+
+    .dialog-content{
+        padding: 0 20px;
+        .dialog-info {
+          width: 100%;
+          display: flex;
+          align-items: end;
+          justify-content: space-between;
+        }
+
+        .flex-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .flex-container h3 {
+            margin-right: 1%;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        .flex-container h2 {
+            font-size: 16px !important;
+            font-weight: 400;
+        }
+
+        img{
+            width: 100px !important;
+            height: 100px !important;
+            object-fit: contain;
+            margin-bottom: 10px;
+        }
+        .name{
+            margin-left: 20px;
+            width: 80%;
+        }
+    }
+
+}
 .flex-container {
         display: flex;
         // justify-content: space-between;
