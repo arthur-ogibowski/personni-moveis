@@ -224,6 +224,42 @@
           </div>
         </div>
 
+        <el-table :data="pedidosCmp" style="display: block;">
+          <el-table-column prop="date" label="Data" width="300" />
+          <el-table-column prop="status" label="Status" width="*">
+            <template #default="{ row }">
+              <!-- Mockando o campo status com um texto padrão -->
+              <span>{{ row.status || 'Ativo' }}</span>
+            </template>
+          </el-table-column>
+          <el-table-column prop="totalPrice" label="Preço Total" width="180">
+            <template #default="{ row }">
+              {{ formatPrice(row.totalPrice) }}
+            </template>
+          </el-table-column>
+          <el-table-column prop="" label="Detalhes" width="180">
+            <template #default="scope"> 
+          <el-button plain @click="showDetailCmp(scope)">Detalhes</el-button>
+          </template>
+          </el-table-column>
+        </el-table>
+
+        <el-dialog v-model="showModalCmp">
+          <template #header>
+            <h2 class="pedidoId">Pedido Modelado<span>#{{ currentProdCmp }}</span></h2>
+          </template>
+
+            <div class="clientInfo">
+              <h2> Dados do cliente: </h2>
+            </div>
+            <div class="orderInfo">
+            <h2>Produtos:</h2>
+            
+            
+          </div>
+
+        </el-dialog>
+
         <el-dialog v-model="showModal">
           <template #header>
             <h2 class="pedidoId">Pedido <span>#{{ order.orderId }}</span></h2>
@@ -288,7 +324,6 @@
       </el-tab-pane>
 
 
-
     </el-tabs>
   </div>
 </template>
@@ -302,7 +337,41 @@ export default {
   data() {
     return {
       user: {},
+      pedidosCmp: null,
       showModal: false,
+      currentProdCmp: {
+          // orderCmpId: '',
+          // deliveryAddress: '',
+          // totalPrice: '',
+          // date: '',
+          // orderCmpItems: [
+          //   {
+          //     selectedAmountOfCmps: '',
+          //     subtotal: '',
+          //     productCmps: [
+          //       {
+          //         valueTotal: '',
+          //         SectionCmp: [
+          //           {
+          //             name: '',
+          //             elementCmps: [
+          //               {
+          //                 optionCmps: [
+          //                   {
+          //                     name: '',
+
+          //                   }
+          //                 ]
+          //               }
+          //             ]
+          //           }
+          //         ]
+          //       }
+          //     ]
+          //   }
+          // ]
+      },
+      showModalCmp: false,
       enderecosDash: [],
       pedidosDash: [],
       pedidosAll: [],
@@ -345,12 +414,12 @@ export default {
       // Interrompe carregamento da tela já que usuário não logou ainda, senão erros aparecem em tela.
       return;
     }
+    this.getCmps()
+    this.getPedidos(),
     this.getUserInfo();
     this.loadAddresses();
     this.updateUserInfo();
-    this.getPedidos();
     this.getPedidosAll();
-    // this.getAddressToEdit();
   },
   methods: {
     formatPrice(price) {
@@ -359,7 +428,7 @@ export default {
     showDetailsModal(scope) {
       this.showModal = true;
       this.order = this.pedidosAll.find(o => o.orderId === scope.row.orderId);
-      },
+    },
     showEditAddress(address) {
       this.getAddressToEdit(address.addressId);
       this.showEditAddressForm = true;
@@ -405,6 +474,30 @@ export default {
         });
     },
 
+    getCmps() {
+      const config = { headers: { Authorization: AuthService.getToken() } };
+      axios.get('http://localhost:8081/orders/client-cmp-orders', config)
+        .then((response) => {
+          response.data = response.data.map(order => {
+            const dataArray = order.date;
+            const data = new Date(dataArray[0], dataArray[1] - 1, dataArray[2]);
+
+            const day = data.getDate();
+            const month = data.getMonth() + 1; // Meses em JavaScript são indexados de 0 a 11
+            const year = data.getFullYear();
+
+            // Atribuir a string formatada de volta a order.date
+            order.date = `${day}/${month}/${year}`;
+
+            return order;
+          });
+          this.pedidosCmp = response.data;
+        })
+        .catch(error => {
+          console.log(error)
+        })
+    },
+
     getPedidosAll() {
       const config = { headers: { Authorization: AuthService.getToken() } };
 
@@ -427,6 +520,7 @@ export default {
 
           // Fazendo set dos valores na lista de pedidos em tela.
           this.pedidosAll = response.data;
+
         })
         .catch((error) => {
           console.error('Erro:', error);
@@ -610,6 +704,12 @@ export default {
             ElMessage.error('CEP não encontrado.');
           });
       }
+    },
+
+    showDetailCmp(scope) {
+      this.showModalCmp = true;
+
+      this.currentProdCmp = scope.row;
     },
   },
 
